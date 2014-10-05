@@ -29,3 +29,7 @@
 
 # OSX Files
 *.DS_Store
+
+# Test image originals
+OPENFRAMEWORKS_openNI/bin/data/images/_originals/*
+OPENFRAMEWORKS_openNI/bin/data/test*
