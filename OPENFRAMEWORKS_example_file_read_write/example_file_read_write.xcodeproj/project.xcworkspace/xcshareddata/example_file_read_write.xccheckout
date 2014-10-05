@@ -14,6 +14,8 @@
 		<string>https://github.com/jefftimesten/ofxJSON.git</string>
 		<key>8F1F367E496878BDF1052FE4B0BD6259C9632D3C</key>
 		<string>https://github.com/ludimation/digiluminescence.git</string>
+		<key>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</key>
+		<string>https://github.com/ludimation/harlequin.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>OPENFRAMEWORKS_example_file_read_write/example_file_read_write.xcodeproj</string>
@@ -22,14 +24,16 @@
 		<key>5DB7C332A3A89035E93556A2A38BF414005BA671</key>
 		<string>../../../../addons/ofxJSON</string>
 		<key>8F1F367E496878BDF1052FE4B0BD6259C9632D3C</key>
+		<string>../../../../_digiluminescence</string>
+		<key>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/ludimation/digiluminescence.git</string>
+	<string>https://github.com/ludimation/harlequin.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>8F1F367E496878BDF1052FE4B0BD6259C9632D3C</string>
+	<string>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -39,6 +43,14 @@
 			<string>8F1F367E496878BDF1052FE4B0BD6259C9632D3C</string>
 			<key>IDESourceControlWCCName</key>
 			<string>_digiluminescence</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>harlequin</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
