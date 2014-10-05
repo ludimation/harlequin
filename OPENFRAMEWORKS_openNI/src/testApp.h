@@ -42,6 +42,12 @@ public:
 
 private:
     GRT::SVM svm;
+    GRT::ClassificationData trainingData;
+    GRT::UINT label;
+    GRT::UINT lbl;
+    vector<double> trackedUserJointsDouble;
+    
+    string img_name;
     
 };
 

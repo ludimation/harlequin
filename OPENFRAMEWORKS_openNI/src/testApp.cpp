@@ -162,14 +162,17 @@ public:
 
 //--------------------------------------------------------------
 void testApp::setup() {
-    
-    GRT::ClassificationData trainingData;
-    trainingData.loadDatasetFromCSVFile("training-data.csv");
+    testFileName = "testJointData.txt";
     
     GRT::SVM svm(GRT::SVM::LINEAR_KERNEL);
-    svm.train(trainingData);
-    svm.saveModelToFile("data-model.txt");
     
+    trainingData.setDatasetName("harlequin");
+    trainingData.setNumDimensions(48);
+    
+    img_name = "1";
+    label = 0;
+    
+    //trainingData.loadDatasetFromFile(testFileName);
     
     ofSetLogLevel(OF_LOG_VERBOSE);
     
@@ -196,11 +199,10 @@ void testApp::setup() {
     
     displayState = 'd'; //start in debug mode
     
-    testFileName = "testJointData.csv";
     
-    file.open(ofToDataPath(testFileName), ofFile::ReadWrite, false);
+//    file.open(ofToDataPath(testFileName), ofFile::ReadWrite, false);
 //    file.create();
-    testFileBuff = file.readToBuffer();
+//    testFileBuff = file.readToBuffer();
     
     // read the directory for the images
     // we know that they are named in seq
@@ -243,6 +245,14 @@ void testApp::update(){
             
         }
     }
+    
+    trackedUserJointsDouble.clear();
+    
+    for (int i = 0; i<trackedUserJoints.size(); ++i) {
+        trackedUserJointsDouble.push_back(trackedUserJoints[i][0]);
+        trackedUserJointsDouble.push_back(trackedUserJoints[i][1]);
+        trackedUserJointsDouble.push_back(trackedUserJoints[i][2]);
+    }
 
     // TODO: create vector of data for image(s) to be displayed
     // build data associated with current tracked joint positions (L1 or L2 norm) to use for query
@@ -257,9 +267,20 @@ void testApp::draw(){
         case 'i':
             //TODO: display graphics in "installation" mode
             // draw image(s)
+            if (svm.predict(trackedUserJointsDouble))
+            {
+                lbl = svm.getPredictedClassLabel();
+                cout << "label:" << svm.getPredictedClassLabel() << endl;
+                img_name = ofToString(lbl) + ".jpg";
+            }
+            else
+            {
+                cout << "svm could not predict" << endl;
+            }
             break;
         case 'd':
         default:
+            
             ofSetColor(255, 255, 255);
             
             ofPushMatrix();
@@ -282,7 +303,7 @@ void testApp::draw(){
             }
             
             msg = msg + "\n" + ofToString(trackedUserJoints);
-            msg = msg + "\n" + testFileBuff.getText();
+ //           msg = msg + "\n" + testFileBuff.getText();
             // cout << msg;
             
             verdana.drawString(msg, 20, 20);
@@ -293,7 +314,13 @@ void testApp::draw(){
             break;
     }
     
-    
+    ofPushStyle();
+    ofSetColor(255, 255, 255);
+    ofImage img;
+    if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
+    img.draw(300,0);
+    ofPopStyle();
+
 }
 
 //--------------------------------------------------------------
@@ -319,6 +346,9 @@ void testApp::keyPressed(int key){
     string fileName = "test_20140501_1904.oni";
     bool fileWritten;
     string testJointBuff;
+    
+    ofImage img;
+    
     switch (key) {
         case ' ':
             //            if(!openNIRecorder.isRecording()){
@@ -345,24 +375,46 @@ void testApp::keyPressed(int key){
         case 's':
             if (displayState == 'd'){
                 // TODO:  save built data into the database for the displayed image
-                testFileBuff.append(ofToString(trackedUserJoints) + "\n");
+                // testFileBuff.append(ofToString(trackedUserJoints) + "\n");
+                ++label;
+                
+                trainingData.addSample(label, trackedUserJointsDouble);
             } else {
                 // TODO: display some kind of error message that says data can only be saved in debug mode?
             }
-            break;
             
+            trainingData.saveDatasetToFile(testFileName);
+            break;
         case 'S':
             //TODO: save test data
             // fill the buffer with something important
             //fileWritten = file.writeFromBuffer(testFileBuff);
 //            file << testFileBuff.getText();
 //            file = testFileBuff.getText();
-            file << testFileBuff.getText();
-            file.close();
-            cout << "file written";
+//            file << testFileBuff.getText();
+//            file.close();
+//            cout << "file written";
+            
+//            trainingData.saveDatasetToFile(testFileName);
+            
 //            file.open(ofToDataPath(testFileName), ofFile::ReadWrite, false);
 //            file.create();
 //            testFileBuff = file.readToBuffer();
+            break;
+        case 'c':
+            svm.train(trainingData);
+            svm.saveModelToFile("testJointData_model.txt");
+            
+            if (svm.predict(trackedUserJointsDouble))
+            {
+                lbl = svm.getPredictedClassLabel();
+                cout << "label:" << svm.getPredictedClassLabel() << endl;
+                img_name = ofToString(lbl) + ".jpg";
+            }
+            else
+            {
+                cout << "svm could not predict" << endl;
+            }
             break;
         case 'i':
             // switch displayState to "installation"
