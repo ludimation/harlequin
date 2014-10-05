@@ -21,12 +21,18 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
 
-//	ofxOpenNI               openNIRecorder;
+    //	ofxOpenNI               openNIRecorder;
     ofxOpenNI               openNIPlayer;
     ofxOpenNIUser           nTrackedUser;
     vector<ofPoint>         trackedUserJoints;
-//    vector<ofxOpenNIJoint>  trackedUserJoints;
+    //    vector<ofxOpenNIJoint>  trackedUserJoints;
     int                     nTrackedUsers;
+    char                    displayState;
+    vector <ofImage>        images;
+    ofFile                  file;
+    string                  testJointData;
+    string                  testFileName;
+    ofBuffer                testFileBuff;
     
     ofTrueTypeFont verdana;
     
