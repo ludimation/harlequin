@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>FACE96A8-8A27-40D6-9E11-DE6262689018</string>
+	<key>IDESourceControlProjectName</key>
+	<string>dragDropExample</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</key>
+		<string>https://github.com/ludimation/harlequin.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>dragDropExample/dragDropExample.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/ludimation/harlequin.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>harlequin</string>
+		</dict>
+	</array>
+</dict>
+</plist>
