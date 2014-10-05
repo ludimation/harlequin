@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>62BBDEE9-3A73-4E80-86A4-9F8FC0131C92</string>
+	<key>IDESourceControlProjectName</key>
+	<string>openNiSample007</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>8F1F367E496878BDF1052FE4B0BD6259C9632D3C</key>
+		<string>https://github.com/ludimation/digiluminescence.git</string>
+		<key>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</key>
+		<string>https://github.com/ludimation/harlequin.git</string>
+		<key>D8811CE32924E36E8903BAF4011407E4BAF64556</key>
+		<string>https://github.com/ludimation/ofxOpenNI.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>OPENFRAMEWORKS_openNI/openNiSample007.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>8F1F367E496878BDF1052FE4B0BD6259C9632D3C</key>
+		<string>../../../../_digiluminescence</string>
+		<key>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</key>
+		<string>../../..</string>
+		<key>D8811CE32924E36E8903BAF4011407E4BAF64556</key>
+		<string>../../../../addons/ofxOpenNI</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/ludimation/harlequin.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>8F1F367E496878BDF1052FE4B0BD6259C9632D3C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>_digiluminescence</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>harlequin</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D8811CE32924E36E8903BAF4011407E4BAF64556</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxOpenNI</string>
+		</dict>
+	</array>
+</dict>
+</plist>
