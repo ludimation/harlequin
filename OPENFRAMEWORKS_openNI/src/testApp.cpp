@@ -133,6 +133,14 @@ public:
 //--------------------------------------------------------------
 void testApp::setup() {
     
+    GRT::ClassificationData trainingData;
+    trainingData.loadDatasetFromCSVFile("training-data.csv");
+    
+    GRT::SVM svm(GRT::SVM::LINEAR_KERNEL);
+    svm.train(trainingData);
+    svm.saveModelToFile("data-model.txt");
+    
+    
     ofSetLogLevel(OF_LOG_VERBOSE);
     
     // TODO:

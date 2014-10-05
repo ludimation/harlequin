@@ -3,6 +3,7 @@
 
 #include "ofxOpenNI.h"
 #include "ofMain.h"
+#include "GRT.h"
 
 class testApp : public ofBaseApp{
 
@@ -32,6 +33,9 @@ public:
     
     void userEvent(ofxOpenNIUserEvent & event);
     void gestureEvent(ofxOpenNIGestureEvent & event);
+
+private:
+    GRT::SVM svm;
     
 };
 
