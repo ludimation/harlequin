@@ -169,8 +169,8 @@ void testApp::setup() {
     trainingData.setDatasetName("harlequin");
     trainingData.setNumDimensions(48);
     
-    img_name = "1";
-    label = 0;
+    img_name = "1.jpg";
+    label = 1;
     
     //trainingData.loadDatasetFromFile(testFileName);
     
@@ -263,6 +263,12 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+
+    ofImage img;
+    
+    ofPushStyle();
+    ofSetColor(255, 255, 255);
+
     switch (displayState) {
         case 'i':
             //TODO: display graphics in "installation" mode
@@ -277,12 +283,20 @@ void testApp::draw(){
             {
                 cout << "svm could not predict" << endl;
             }
+            
+            if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
+            img.draw(300,0, img.width * 0.5f, img.height * 0.5f);
+            ofPopStyle();
             break;
+            
         case 'd':
         default:
-            
-            ofSetColor(255, 255, 255);
-            
+
+            if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
+            img.draw(300,0, img.width * 0.5f, img.height * 0.5f);
+
+            ofPopStyle();
+            ofPushStyle();
             ofPushMatrix();
             
             //    openNIRecorder.drawDebug(0, 0);
@@ -291,7 +305,7 @@ void testApp::draw(){
             
             ofPushMatrix();
             
-            ofSetColor(0, 255, 0);
+            ofSetColor(255, 255, 255);
             string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
             
             // add bone data for tracked user to display message
@@ -313,13 +327,6 @@ void testApp::draw(){
             
             break;
     }
-    
-    ofPushStyle();
-    ofSetColor(255, 255, 255);
-    ofImage img;
-    if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
-    img.draw(300,0);
-    ofPopStyle();
 
 }
 
@@ -376,7 +383,6 @@ void testApp::keyPressed(int key){
             if (displayState == 'd'){
                 // TODO:  save built data into the database for the displayed image
                 // testFileBuff.append(ofToString(trackedUserJoints) + "\n");
-                ++label;
                 
                 trainingData.addSample(label, trackedUserJointsDouble);
             } else {
@@ -384,6 +390,16 @@ void testApp::keyPressed(int key){
             }
             
             trainingData.saveDatasetToFile(testFileName);
+            svm.train(trainingData);
+            svm.saveModelToFile("testJointData_model.txt");
+            break;
+        case '[':
+            label--;
+            img_name = ofToString(label) + ".jpg";
+            break;
+        case ']':
+            label++;
+            img_name = ofToString(label) + ".jpg";
             break;
         case 'S':
             //TODO: save test data
