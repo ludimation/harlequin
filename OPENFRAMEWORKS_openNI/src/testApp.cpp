@@ -243,6 +243,8 @@ void testApp::keyPressed(int key){
             //openNIPlayer.startPlayer(fileName);
             break;
         case 'b': // NOTE: updated to 'b' for BUILD DATA
+            if (displayState == 'i') break; // do not train data during installation mode
+
             // Store data to associate with currently displayed image
             //  - joint positions (0–15) — 0 = center, 1–15 = joints
             
@@ -256,6 +258,8 @@ void testApp::keyPressed(int key){
         case '<':
         case ',':
         case '[':
+            if (displayState == 'i') break; // do not train data during installation mode
+            
             // display previous image in database
             label--;
             img_name = ofToString(label) + ".jpg";
@@ -265,6 +269,8 @@ void testApp::keyPressed(int key){
         case '>':
         case '.':
         case ']':
+            if (displayState == 'i') break; // do not train data during installation mode
+
             // display next image in database
             label++;
             img_name = ofToString(label) + ".jpg";
@@ -272,12 +278,16 @@ void testApp::keyPressed(int key){
             // openNIPlayer.nextFrame();
             break;
         case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
+            if (displayState == 'i') break; // do not train data during installation mode
+            
             trainingData.saveDatasetToFile(ofToDataPath(testFileName));
             svm.train(trainingData);
             svm.saveModelToFile(ofToDataPath(testFileModelName));
             
             break;
         case 'c': // TODO: clean  up?
+            if (displayState == 'i') break; // do not train data during installation mode
+
             svm.train(trainingData);
             svm.saveModelToFile(ofToDataPath(testFileModelName));
             
