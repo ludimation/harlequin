@@ -135,10 +135,10 @@ void testApp::draw(){
         case 'i':
             
             // manage style and drawing matrix
+            ofSetBackgroundColor(255, 245, 235); // light tan BG
             ofPushStyle();
             ofPushMatrix();
             ofSetColor(255, 255, 255); // white drawing color
-            ofSetBackgroundColor(255, 245, 235); // light tan BG
             
             // draw image(s)
             if (svm.predict(trackedUserJointsDouble))
@@ -165,16 +165,16 @@ void testApp::draw(){
         default:
 
             // manage style and drawing matrix
+            ofSetBackgroundColorHex(000000); // Black BG // TODO: fix this because it doesn't seem to be working
             ofPushStyle();
             ofPushMatrix();
             ofSetColor(255, 255, 255); // white drawing color
-            ofSetBackgroundColor(0, 0, 0); // Black BG
 
             // draw image(s)
             if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
             img.draw(300,0, img.width * 0.5f, img.height * 0.5f);
 
-            // draw live input from kinect
+            // draw live input from kinect // TODO: make this multiply over image in BG so pose can still be clearly visible
             //  openNIRecorder.drawDebug(0, 0);
             openNIPlayer.drawDebug(0, 240);
             openNIPlayer.drawSkeletons(0, 240);
