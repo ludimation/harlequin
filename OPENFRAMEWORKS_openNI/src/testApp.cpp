@@ -72,9 +72,9 @@ void testApp::setup() {
     displayState = 'd'; //start in debug mode
     
     
-//    file.open(ofToDataPath(testFileName), ofFile::ReadWrite, false);
-//    file.create();
-//    testFileBuff = file.readToBuffer();
+    //    file.open(ofToDataPath(testFileName), ofFile::ReadWrite, false);
+    //    file.create();
+    //    testFileBuff = file.readToBuffer();
     
     // read the directory for the images
     // we know that they are named in seq
@@ -154,28 +154,33 @@ void testApp::draw(){
             
             if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
             img.draw(300,0, img.width * 0.5f, img.height * 0.5f);
+            
+            // reset drawing matrix and style
+            ofPushMatrix();
             ofPopStyle();
+            
             break;
             
         case 'd':
         default:
 
+            // manage style and drawing matrix
+            ofPushStyle();
+            ofPushMatrix();
+            ofSetColor(255, 255, 255); // white drawing color
+            ofSetBackgroundColor(0, 0, 0); // Black BG
+
+            // draw image(s)
             if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
             img.draw(300,0, img.width * 0.5f, img.height * 0.5f);
 
-            ofPopStyle();
-            ofPushStyle();
-            ofPushMatrix();
-            
-            //    openNIRecorder.drawDebug(0, 0);
+            // draw live input from kinect
+            //  openNIRecorder.drawDebug(0, 0);
             openNIPlayer.drawDebug(0, 240);
             openNIPlayer.drawSkeletons(0, 240);
             
-            ofPushMatrix();
-            
-            ofSetColor(255, 255, 255);
+            // Build debug message string
             string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
-            
             // add bone data for tracked user to display message
             if (trackedUserJoints.size() > 0) {
                 // display joint data
@@ -183,19 +188,20 @@ void testApp::draw(){
                     msg = msg + "\n joint[" + ofToString(i) + "] = " + ofToString(trackedUserJoints[i]);
                 }
             }
-            
-            msg = msg + "\n" + ofToString(trackedUserJoints);
- //           msg = msg + "\n" + testFileBuff.getText();
+            if (trackedUserJoints.size()) msg = msg + "\n" + ofToString(trackedUserJoints);
             // cout << msg;
             
+            // draw debug message
             verdana.drawString(msg, 20, 20);
             
+            // reset drawing matrix and style
             ofPopMatrix();
-            ofPopMatrix();
-            
+            ofPopStyle();
+
             break;
     }
 
+    ofPopStyle();
 }
 
 //--------------------------------------------------------------
