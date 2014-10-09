@@ -272,12 +272,12 @@ void testApp::keyPressed(int key){
             // openNIPlayer.nextFrame();
             break;
         case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
-            trainingData.saveDatasetToFile(testFileName);
+            trainingData.saveDatasetToFile(ofToDataPath(testFileName));
             svm.train(trainingData);
             svm.saveModelToFile(ofToDataPath(testFileModelName));
             
             break;
-        case 'c':
+        case 'c': // TODO: clean  up?
             svm.train(trainingData);
             svm.saveModelToFile(ofToDataPath(testFileModelName));
             
