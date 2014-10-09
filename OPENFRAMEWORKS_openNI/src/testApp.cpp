@@ -32,6 +32,7 @@ public:
 //--------------------------------------------------------------
 void testApp::setup() {
     testFileName = "testJointData.txt";
+    testFileModelName = "testJointData_model.txt";
     
     GRT::SVM svm(GRT::SVM::LINEAR_KERNEL);
     
@@ -41,7 +42,9 @@ void testApp::setup() {
     img_name = "1.jpg";
     label = 1;
     
-    //trainingData.loadDatasetFromFile(testFileName);
+    // TODO: test these to make sure they work
+    trainingData.loadDatasetFromFile(ofToDataPath(testFileName));
+    svm.loadModelFromFile(ofToDataPath(testFileModelName));
     
     ofSetLogLevel(OF_LOG_VERBOSE);
     
@@ -214,8 +217,8 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 
+    // string fileName = "test_20140501_1904.oni";
     int cloudRes = -1;
-    string fileName = "test_20140501_1904.oni";
     bool fileWritten;
     string testJointBuff;
     
@@ -231,51 +234,46 @@ void testApp::keyPressed(int key){
             //            }
             break;
         case 'p':
-            openNIPlayer.startPlayer(fileName);
+            //openNIPlayer.startPlayer(fileName);
             break;
-        case 'b':
-            break;
-        case 's':
+        case 'b': // NOTE: updated to 'b' for BUILD DATA
+            // Store data to associate with currently displayed image
+            //  - joint positions (0–15) — 0 = center, 1–15 = joints
+            
             if (displayState == 'd'){
-                // TODO:  save built data into the database for the displayed image
-                // testFileBuff.append(ofToString(trackedUserJoints) + "\n");
-                
                 trainingData.addSample(label, trackedUserJointsDouble);
             } else {
                 // TODO: display some kind of error message that says data can only be saved in debug mode?
             }
             
-            trainingData.saveDatasetToFile(testFileName);
-            svm.train(trainingData);
-            svm.saveModelToFile("testJointData_model.txt");
             break;
+        case '<':
+        case ',':
         case '[':
+            // display previous image in database
             label--;
             img_name = ofToString(label) + ".jpg";
+
+            // openNIPlayer.previousFrame();
             break;
+        case '>':
+        case '.':
         case ']':
+            // display next image in database
             label++;
             img_name = ofToString(label) + ".jpg";
+
+            // openNIPlayer.nextFrame();
             break;
-        case 'S':
-            //TODO: save test data
-            // fill the buffer with something important
-            //fileWritten = file.writeFromBuffer(testFileBuff);
-//            file << testFileBuff.getText();
-//            file = testFileBuff.getText();
-//            file << testFileBuff.getText();
-//            file.close();
-//            cout << "file written";
+        case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
+            trainingData.saveDatasetToFile(testFileName);
+            svm.train(trainingData);
+            svm.saveModelToFile(ofToDataPath(testFileModelName));
             
-//            trainingData.saveDatasetToFile(testFileName);
-            
-//            file.open(ofToDataPath(testFileName), ofFile::ReadWrite, false);
-//            file.create();
-//            testFileBuff = file.readToBuffer();
             break;
         case 'c':
             svm.train(trainingData);
-            svm.saveModelToFile("testJointData_model.txt");
+            svm.saveModelToFile(ofToDataPath(testFileModelName));
             
             if (svm.predict(trackedUserJointsDouble))
             {
@@ -296,22 +294,10 @@ void testApp::keyPressed(int key){
             displayState = key;
             break;
         case '/':
-            openNIPlayer.setPaused(!openNIPlayer.isPaused());
+            // openNIPlayer.setPaused(!openNIPlayer.isPaused());
             break;
         case 'm':
-            openNIPlayer.firstFrame();
-            break;
-        case '<':
-        case ',':
-            openNIPlayer.previousFrame();
-            // TODO: display next image in database
-            //          - include bone data
-            break;
-        case '>':
-        case '.':
-            openNIPlayer.nextFrame();
-            // TODO: display previous image in database
-            //          - including any existing bone data and calculation
+            // openNIPlayer.firstFrame();
             break;
         case 'x':
             //            openNIRecorder.stop();
@@ -341,6 +327,7 @@ void testApp::mouseDragged(int x, int y, int button){
     //          - sift = rotation
     //          - ctrl = scale
     //          - opt = reference point
+    //  - or maybe take a "tool" approach where 'w' = translate, 'e' = rotate, 'r' = scale
 }
 
 //--------------------------------------------------------------

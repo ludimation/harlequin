@@ -33,6 +33,7 @@ public:
     ofFile                  file;
     string                  testJointData;
     string                  testFileName;
+    string                  testFileModelName;
     ofBuffer                testFileBuff;
     
     ofTrueTypeFont verdana;
