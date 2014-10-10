@@ -26,7 +26,6 @@ public:
 //  - optimize image loading/display by creating an image buffer
 //  - query for short list of potential images (instead of returning just one as we do now)
 //  - loop through list performing bone-by-bone comparison?
-//  - calculate image positions, scales, and rotations based on user locations
 
 
 //--------------------------------------------------------------
@@ -130,6 +129,17 @@ void testApp::update(){
 void testApp::draw(){
 
     ofImage img;
+    ofPoint jointsCenter;
+    ofPoint imgRef;
+    ofPoint screenCenter = ofVec3f(WIDTH/2.0f, - HEIGHT/2.0f, 1.0f);
+    if (openNIPlayer.getNumTrackedUsers() > 0) {
+        jointsCenter = openNIPlayer.getTrackedUser(0).getCenter(); // ranges {(±500),(-350+250),(
+    } else {
+        jointsCenter = ofVec3f(0.0f, 0.0f, 1400.0f);
+    }
+    imgRef[2] = 700.0f / jointsCenter[2];
+    imgRef[0] =   jointsCenter[0] - (img.width  * imgRef[2]) + screenCenter[0];
+    imgRef[1] = - jointsCenter[1] - (img.height * imgRef[2]) + screenCenter[1];
 
     switch (displayState) {
         case 'i':
@@ -153,7 +163,12 @@ void testApp::draw(){
             }
             
             if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
-            img.draw(300,0, img.width * 0.5f, img.height * 0.5f);
+            
+            // draw image at position and scale relative to center of screen and image
+            img.draw(imgRef[0],
+                     imgRef[1],
+                     img.width * imgRef[2],
+                     img.height * imgRef[2]);
             
             // reset drawing matrix and style
             ofPushMatrix();
