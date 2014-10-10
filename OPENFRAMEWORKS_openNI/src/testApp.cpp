@@ -43,7 +43,8 @@ void testApp::setup() {
     
     // TODO: test these to make sure they work
     trainingData.loadDatasetFromFile(ofToDataPath(testFileName));
-    svm.loadModelFromFile(ofToDataPath(testFileModelName));
+    svm.loadModelFromFile(ofToDataPath(testFileModelName)); // TODO: this doesn't seem to work
+    svm.train(trainingData); // TODO: put this somewhere that works (doesn't seem to work here in startup())
     
     ofSetLogLevel(OF_LOG_VERBOSE);
     
@@ -141,6 +142,9 @@ void testApp::draw(){
     imgRef[0] =   jointsCenter[0] - (img.width  * imgRef[2]) + screenCenter[0];
     imgRef[1] = - jointsCenter[1] - (img.height * imgRef[2]) + screenCenter[1];
 
+    // Build debug message string
+    string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
+    
     switch (displayState) {
         case 'i':
             
@@ -174,6 +178,11 @@ void testApp::draw(){
             ofPushMatrix();
             ofPopStyle();
             
+            // Build debug message string
+            msg = msg + "/n imgRef = " + ofToString(imgRef);
+            msg = msg + "/n sceenCenter = " + ofToString(screenCenter);
+
+            
             break;
             
         case 'd':
@@ -194,8 +203,6 @@ void testApp::draw(){
             openNIPlayer.drawDebug(0, 240);
             openNIPlayer.drawSkeletons(0, 240);
             
-            // Build debug message string
-            string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
             // add bone data for tracked user to display message
             if (trackedUserJoints.size() > 0) {
                 // display joint data
@@ -206,9 +213,6 @@ void testApp::draw(){
             if (trackedUserJoints.size()) msg = msg + "\n" + ofToString(trackedUserJoints);
             // cout << msg;
             
-            // draw debug message
-            verdana.drawString(msg, 20, 20);
-            
             // reset drawing matrix and style
             ofPopMatrix();
             ofPopStyle();
@@ -216,6 +220,9 @@ void testApp::draw(){
             break;
     }
 
+    // draw debug message
+    verdana.drawString(msg, 20, 20);
+    
     ofPopStyle();
 }
 
