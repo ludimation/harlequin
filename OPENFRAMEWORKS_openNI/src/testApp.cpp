@@ -65,7 +65,7 @@ void testApp::setup() {
     openNIPlayer.setRegister(true);
     openNIPlayer.setMirror(true);
     openNIPlayer.addUserGenerator();
-    openNIPlayer.setMaxNumUsers(2); // could be as many as 4?
+    openNIPlayer.setMaxNumUsers(4); // was 2
 	openNIPlayer.start();
     
     verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
