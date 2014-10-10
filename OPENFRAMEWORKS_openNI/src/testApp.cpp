@@ -108,15 +108,15 @@ void testApp::update(){
     // clear joint data for next iteration
     trackedUserJoints.clear(); // TODO: multiple user input — make trackedUserJoints a vector of vectors, and allocate 4 (or max users) joints vectors within it
 
-    vector<ofPoint> singleUserJoints;
+    vector< ofPoint > singleUserJoints;
 
     // build joint position vector
-    if (openNIPlayer.getNumTrackedUsers() > 0) {
+    if (openNIPlayer.getNumTrackedUsers()) {
         for (int j = 0; j < openNIPlayer.getNumTrackedUsers(); ++j) {
             singleUserJoints.clear();
             singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).getCenter());
             for (int i = 0; i < openNIPlayer.getTrackedUser(j).joints.size(); ++i) {
-                singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition());
+                singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition() - singleUserJoints[0]);
             }
             trackedUserJoints.push_back(singleUserJoints);
             
@@ -128,13 +128,19 @@ void testApp::update(){
         }
     }
     
+    vector< double > singleUserDoubles;
     trackedUserJointsDouble.clear();
     
-    for (int j = 0; j < trackedUserJoints.size(); ++j) {
-        for (int i = 0; i < trackedUserJoints[j].size(); ++i) {
-            trackedUserJointsDouble[j].push_back(trackedUserJoints[j][i].x);
-            trackedUserJointsDouble[j].push_back(trackedUserJoints[j][i].y);
-            trackedUserJointsDouble[j].push_back(trackedUserJoints[j][i].z);
+    if (trackedUserJoints.size())
+    {
+        for (int j = 0; j < trackedUserJoints.size(); ++j) {
+            singleUserDoubles.clear();
+            for (int i = 0; i < trackedUserJoints[j].size(); ++i) {
+                singleUserDoubles.push_back(trackedUserJoints[j][i][0]); // x
+                singleUserDoubles.push_back(trackedUserJoints[j][i][1]); // y
+                singleUserDoubles.push_back(trackedUserJoints[j][i][2]); // z
+            }
+            trackedUserJointsDouble.push_back(singleUserDoubles);
         }
     }
 }
@@ -145,7 +151,7 @@ void testApp::draw(){
     ofImage img;
     ofPoint jointsCenter;
     ofPoint imgRef;
-    ofPoint screenCenter = ofVec3f(WIDTH/2.0f, - HEIGHT/2.0f, 1.0f);
+    ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
 
     // Build debug message string
     string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
@@ -159,7 +165,7 @@ void testApp::draw(){
             ofPushMatrix();
             ofSetColor(255, 255, 255); // white drawing color
             
-            for (int j = 0; j<trackedUserJointsDouble.size(); ++j) {
+            for (int j = 0; j < trackedUserJointsDouble.size(); ++j) {
                 
                 // draw image(s)
                 if (svm.predict(trackedUserJointsDouble[j]))
@@ -176,30 +182,29 @@ void testApp::draw(){
                 // TODO: find another image if image could not be loaded?
                 if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
 
-                if (openNIPlayer.getNumTrackedUsers() > 0) {
-                    jointsCenter = openNIPlayer.getTrackedUser(j).getCenter(); // ranges {(±500),(-350+250),(
+                if (openNIPlayer.getNumTrackedUsers() >= j) {
+                    jointsCenter = openNIPlayer.getTrackedUser(j).getCenter(); // ranges {(±500),(-350+250),(200–2,000?)}
                 } else {
                     jointsCenter = ofVec3f(0.0f, 0.0f, 1400.0f);
                 }
-                imgRef[2] = 700.0f / jointsCenter[2];
-                imgRef[0] =   jointsCenter[0] - (img.width  * imgRef[2]) + screenCenter[0];
-                imgRef[1] = - jointsCenter[1] - (img.height * imgRef[2]) + screenCenter[1];
+                imgRef.z = 700.0f / jointsCenter.z; // (-50, -200, 1800)
+                imgRef.x = screenCenter.x + jointsCenter.x - (img.width  * imgRef.z);
+                imgRef.y = screenCenter.y - jointsCenter.y - (img.height * imgRef.z);
                 
                 // draw image at position and scale relative to center of screen and image
-                img.draw(imgRef[0],
-                         imgRef[1],
-                         img.width * imgRef[2],
-                         img.height * imgRef[2]);
+                img.draw(imgRef.x,
+                         imgRef.y,
+                         img.width * imgRef.z,
+                         img.height * imgRef.z);
+
+                // Build debug message string
+                msg = msg + "/n imgRef = " + ofToString(imgRef);
+                msg = msg + "/n sceenCenter = " + ofToString(screenCenter);
             }
 
             // reset drawing matrix and style
             ofPushMatrix();
             ofPopStyle();
-            
-            // Build debug message string
-            msg = msg + "/n imgRef = " + ofToString(imgRef);
-            msg = msg + "/n sceenCenter = " + ofToString(screenCenter);
-
             
             break;
             
