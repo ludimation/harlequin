@@ -25,8 +25,8 @@ public:
     //	ofxOpenNI               openNIRecorder;
     ofxOpenNI               openNIPlayer;
     ofxOpenNIUser           nTrackedUser;
-    vector<ofPoint>         trackedUserJoints;
-    //    vector<ofxOpenNIJoint>  trackedUserJoints;
+//    vector<ofPoint>         trackedUserJoints;
+    vector< vector< ofPoint > > trackedUserJoints;
     int                     nTrackedUsers;
     char                    displayState;
     vector <ofImage>        images;
@@ -46,7 +46,8 @@ private:
     GRT::ClassificationData trainingData;
     GRT::UINT label;
     GRT::UINT lbl;
-    vector<double> trackedUserJointsDouble;
+    vector< vector< double > >     trackedUserJointsDouble;
+//    vector<double> trackedUserJointsDouble;
     
     string img_name;
     

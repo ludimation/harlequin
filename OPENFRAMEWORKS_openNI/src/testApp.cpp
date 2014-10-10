@@ -106,26 +106,36 @@ void testApp::update(){
     openNIPlayer.update();
 
     // clear joint data for next iteration
-    trackedUserJoints.clear();
+    trackedUserJoints.clear(); // TODO: multiple user input — make trackedUserJoints a vector of vectors, and allocate 4 (or max users) joints vectors within it
+
+    vector<ofPoint> singleUserJoints;
 
     // build joint position vector
-    // TODO: make trackedUserJoints a vector of vectors, and allocate 4 (or max users) joints vectors within it
     if (openNIPlayer.getNumTrackedUsers() > 0) {
         for (int j = 0; j < openNIPlayer.getNumTrackedUsers(); ++j) {
-            trackedUserJoints.push_back(openNIPlayer.getTrackedUser(0).getCenter());
-            for (int i = 0; i < openNIPlayer.getTrackedUser(0).joints.size(); ++i) {
-                trackedUserJoints.push_back(openNIPlayer.getTrackedUser(0).joints[i].getWorldPosition());
+            singleUserJoints.clear();
+            singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).getCenter());
+            for (int i = 0; i < openNIPlayer.getTrackedUser(j).joints.size(); ++i) {
+                singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition());
             }
+            trackedUserJoints.push_back(singleUserJoints);
+            
+//            trackedUserJoints.push_back(openNIPlayer.getTrackedUser(0).getCenter());
+//            for (int i = 0; i < openNIPlayer.getTrackedUser(0).joints.size(); ++i) {
+//                trackedUserJoints.push_back(openNIPlayer.getTrackedUser(0).joints[i].getWorldPosition());
+//            }
             
         }
     }
     
     trackedUserJointsDouble.clear();
     
-    for (int i = 0; i<trackedUserJoints.size(); ++i) {
-        trackedUserJointsDouble.push_back(trackedUserJoints[i][0]);
-        trackedUserJointsDouble.push_back(trackedUserJoints[i][1]);
-        trackedUserJointsDouble.push_back(trackedUserJoints[i][2]);
+    for (int j = 0; j < trackedUserJoints.size(); ++j) {
+        for (int i = 0; i < trackedUserJoints[j].size(); ++i) {
+            trackedUserJointsDouble[j].push_back(trackedUserJoints[j][i].x);
+            trackedUserJointsDouble[j].push_back(trackedUserJoints[j][i].y);
+            trackedUserJointsDouble[j].push_back(trackedUserJoints[j][i].z);
+        }
     }
 }
 
@@ -136,14 +146,6 @@ void testApp::draw(){
     ofPoint jointsCenter;
     ofPoint imgRef;
     ofPoint screenCenter = ofVec3f(WIDTH/2.0f, - HEIGHT/2.0f, 1.0f);
-    if (openNIPlayer.getNumTrackedUsers() > 0) {
-        jointsCenter = openNIPlayer.getTrackedUser(0).getCenter(); // ranges {(±500),(-350+250),(
-    } else {
-        jointsCenter = ofVec3f(0.0f, 0.0f, 1400.0f);
-    }
-    imgRef[2] = 700.0f / jointsCenter[2];
-    imgRef[0] =   jointsCenter[0] - (img.width  * imgRef[2]) + screenCenter[0];
-    imgRef[1] = - jointsCenter[1] - (img.height * imgRef[2]) + screenCenter[1];
 
     // Build debug message string
     string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
@@ -157,26 +159,39 @@ void testApp::draw(){
             ofPushMatrix();
             ofSetColor(255, 255, 255); // white drawing color
             
-            // draw image(s)
-            if (svm.predict(trackedUserJointsDouble))
-            {
+            for (int j = 0; j<trackedUserJointsDouble.size(); ++j) {
+                
+                // draw image(s)
+                if (svm.predict(trackedUserJointsDouble[j]))
+                {
                 lbl = svm.getPredictedClassLabel();
                 cout << "label:" << svm.getPredictedClassLabel() << endl;
                 img_name = ofToString(lbl) + ".jpg";
+                }
+                else
+                {
+                    cout << "svm could not predict" << endl;
+                }
+                
+                // TODO: find another image if image could not be loaded?
+                if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
+
+                if (openNIPlayer.getNumTrackedUsers() > 0) {
+                    jointsCenter = openNIPlayer.getTrackedUser(j).getCenter(); // ranges {(±500),(-350+250),(
+                } else {
+                    jointsCenter = ofVec3f(0.0f, 0.0f, 1400.0f);
+                }
+                imgRef[2] = 700.0f / jointsCenter[2];
+                imgRef[0] =   jointsCenter[0] - (img.width  * imgRef[2]) + screenCenter[0];
+                imgRef[1] = - jointsCenter[1] - (img.height * imgRef[2]) + screenCenter[1];
+                
+                // draw image at position and scale relative to center of screen and image
+                img.draw(imgRef[0],
+                         imgRef[1],
+                         img.width * imgRef[2],
+                         img.height * imgRef[2]);
             }
-            else
-            {
-                cout << "svm could not predict" << endl;
-            }
-            
-            if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
-            
-            // draw image at position and scale relative to center of screen and image
-            img.draw(imgRef[0],
-                     imgRef[1],
-                     img.width * imgRef[2],
-                     img.height * imgRef[2]);
-            
+
             // reset drawing matrix and style
             ofPushMatrix();
             ofPopStyle();
@@ -209,11 +224,15 @@ void testApp::draw(){
             // add bone data for tracked user to display message
             if (trackedUserJoints.size() > 0) {
                 // display joint data
-                for (int i=0; i < trackedUserJoints.size(); ++i) {
-                    msg = msg + "\n joint[" + ofToString(i) + "] = " + ofToString(trackedUserJoints[i]);
+                for (int j=0; j < trackedUserJoints.size(); ++j) {
+                    msg = msg + "\n====\n== User[" + ofToString(j) + "]\n----";
+                    for (int i=0; i < trackedUserJoints[j].size(); ++i) {
+                        msg = msg + "\n    joint[" + ofToString(i) + "] = " + ofToString(trackedUserJoints[j][i]);
+                    }
+                    msg = msg + "\n====";
                 }
             }
-            if (trackedUserJoints.size()) msg = msg + "\n" + ofToString(trackedUserJoints);
+            // if (trackedUserJoints.size()) msg = msg + "\n" + ofToString(trackedUserJoints);
             // cout << msg;
             
             // reset drawing matrix and style
@@ -274,7 +293,7 @@ void testApp::keyPressed(int key){
             //  - joint positions (0–15) — 0 = center, 1–15 = joints
             
             if (displayState == 'd'){
-                trainingData.addSample(label, trackedUserJointsDouble);
+                trainingData.addSample(label, trackedUserJointsDouble[0]);
             } else {
                 // TODO: display some kind of error message that says data can only be saved in debug mode?
             }
@@ -316,7 +335,7 @@ void testApp::keyPressed(int key){
             svm.train(trainingData);
             svm.saveModelToFile(ofToDataPath(testFileModelName));
             
-            if (svm.predict(trackedUserJointsDouble))
+            if (svm.predict(trackedUserJointsDouble[0]))
             {
                 lbl = svm.getPredictedClassLabel();
                 cout << "label:" << svm.getPredictedClassLabel() << endl;
