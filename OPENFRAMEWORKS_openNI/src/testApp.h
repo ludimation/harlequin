@@ -29,7 +29,6 @@ public:
     vector< vector< ofPoint > > trackedUserJoints;
     int                     nTrackedUsers;
     char                    displayState;
-    vector <ofImage>        images;
     ofFile                  file;
     string                  testJointData;
     string                  testFileName;
@@ -51,6 +50,7 @@ private:
     
     string img_name;
     vector< string >        imageNames;
+    vector <ofImage>        images;
     
 };
 

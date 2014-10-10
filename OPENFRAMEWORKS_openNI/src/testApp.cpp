@@ -83,20 +83,24 @@ void testApp::setup() {
     
     //int nFiles;
     int nFiles = dir.listDir("images");
+    ofImage imgTMP;
+    string filePath;
     imageNames.clear();
     if(nFiles) {
         
         for(int i=0; i < dir.numFiles(); i++) {
             
             // add the image name to a list
-            string filePath = dir.getPath(i);
+            filePath = dir.getPath(i);
             imageNames.push_back(filePath);
+            if (imgTMP.loadImage(filePath)) images.push_back(imgTMP);
             //            images.push_back(ofImage());
             //            images.back().loadImage(filePath);
+            cout << "loading image [" << ofToString(i) << "] : " << filePath << endl;
         }
         
     } else printf("Could not find \"images\" directory\n");
-    label = 1;
+    label = 0;
     img_name = imageNames[label];
 
 }
@@ -149,7 +153,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-    ofImage img;
+    ofImage img = images[label];
     ofPoint jointsCenter;
     ofPoint imgRef;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
@@ -181,7 +185,7 @@ void testApp::draw(){
                 }
                 
                 // TODO: find another image if image could not be loaded?
-                if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
+                //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
 
                 if (openNIPlayer.getNumTrackedUsers() >= j) {
                     jointsCenter = openNIPlayer.getTrackedUser(j).getCenter(); // ranges {(±500),(-350+250),(200–2,000?)}
@@ -219,7 +223,7 @@ void testApp::draw(){
             ofSetColor(255, 255, 255); // white drawing color
 
             // draw image(s)
-            if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
+            // if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
             float imgRatioX = float(ofGetWidth()) / float(img.width);
             float imgRatioY = float(ofGetHeight()) / float(img.height);
             float imgRatio;
