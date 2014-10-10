@@ -41,8 +41,6 @@ void testApp::setup() {
     trainingData.setDatasetName("harlequin");
     trainingData.setNumDimensions(48);
     
-    img_name = "1.jpg";
-    label = 1;
     
     // TODO: test these to make sure they work
     trainingData.loadDatasetFromFile(ofToDataPath(testFileName));
@@ -83,20 +81,23 @@ void testApp::setup() {
     // we know that they are named in seq
     ofDirectory dir;
     
-    int nFiles;
-//    int nFiles = dir.listDir("images");
+    //int nFiles;
+    int nFiles = dir.listDir("images");
+    imageNames.clear();
     if(nFiles) {
         
-        for(int i=0; i<dir.numFiles(); i++) {
+        for(int i=0; i < dir.numFiles(); i++) {
             
-            // add the image to the vector
+            // add the image name to a list
             string filePath = dir.getPath(i);
-            images.push_back(ofImage());
-            images.back().loadImage(filePath);
+            imageNames.push_back(filePath);
+            //            images.push_back(ofImage());
+            //            images.back().loadImage(filePath);
         }
         
-    }
-    else printf("Could not find \"images\" directory\n");
+    } else printf("Could not find \"images\" directory\n");
+    label = 1;
+    img_name = imageNames[label];
 
 }
 
@@ -219,12 +220,47 @@ void testApp::draw(){
 
             // draw image(s)
             if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
-            img.draw(300,0, img.width * 0.5f, img.height * 0.5f);
+            float imgRatioX = float(ofGetWidth()) / float(img.width);
+            float imgRatioY = float(ofGetHeight()) / float(img.height);
+            float imgRatio;
+            if (imgRatioX < imgRatioY)
+            {
+                imgRatio = imgRatioX;
+            } else        {
+                imgRatio = imgRatioY;
+            }
+            
+            // debug
+            msg = msg + "\n" + "img.width = "       + ofToString(img.width);
+            msg = msg + "\n" + "img.height = "      + ofToString(img.height);
+            msg = msg + "\n" + "ofGetWidth() = "    + ofToString(ofGetWidth());
+            msg = msg + "\n" + "ofGetHeight() = "   + ofToString(ofGetHeight());
+            msg = msg + "\n" + "imgRatioX = "       + ofToString(imgRatioX);
+            msg = msg + "\n" + "imgRatioY = "       + ofToString(imgRatioY);
+            msg = msg + "\n" + "imgRatio = "        + ofToString(imgRatio);
+    
+            img.draw(
+                     (ofGetWidth() - img.width * imgRatio) / 2.0f,
+                     (ofGetHeight() - img.height * imgRatio) / 2.0f,
+                     img.width * imgRatio,
+                     img.height * imgRatio
+                     );
+            // debug
+            msg = msg + "\nimg_name = " + img_name;
+            msg = msg + "\n draw(" + ofToString((ofGetWidth()/2.0f) - (img.width * imgRatio));
+            msg = msg + ", " + ofToString((ofGetHeight()/2.0f) - (img.height * imgRatio));
+            msg = msg + ", " + ofToString(img.width * imgRatio);
+            msg = msg + ", " + ofToString(img.height * imgRatio);
+            msg = msg + ")";
+            
 
-            // draw live input from kinect // TODO: make this multiply over image in BG so pose can still be clearly visible
-            //  openNIRecorder.drawDebug(0, 0);
-            openNIPlayer.drawDebug(0, 240);
-            openNIPlayer.drawSkeletons(0, 240);
+            ofPushStyle();
+                ofEnableBlendMode(OF_BLENDMODE_ADD);
+                // draw live input from kinect // TODO: make this multiply over image in BG so pose can still be clearly visible
+                //  openNIRecorder.drawDebug(0, 0);
+                openNIPlayer.drawDebug(0, 240);
+                openNIPlayer.drawSkeletons(0, 240);
+            ofPopStyle();
             
             // add bone data for tracked user to display message
             if (trackedUserJoints.size() > 0) {
@@ -307,24 +343,35 @@ void testApp::keyPressed(int key){
         case '<':
         case ',':
         case '[':
+            trainingData.saveDatasetToFile(ofToDataPath(testFileName));
             if (displayState == 'i') break; // do not train data during installation mode
             
             // display previous image in database
-            label--;
-            img_name = ofToString(label) + ".jpg";
+            if (label > 0) label--;
+            img_name = imageNames[label];
 
             // openNIPlayer.previousFrame();
             break;
         case '>':
         case '.':
         case ']':
+            trainingData.saveDatasetToFile(ofToDataPath(testFileName));
             if (displayState == 'i') break; // do not train data during installation mode
 
             // display next image in database
-            label++;
-            img_name = ofToString(label) + ".jpg";
+            if (label < imageNames.size()) label++;
+            img_name = imageNames[label];
 
             // openNIPlayer.nextFrame();
+            break;
+        case 'r': // random image
+            trainingData.saveDatasetToFile(ofToDataPath(testFileName));
+            if (displayState == 'i') break; // do not train data during installation mode
+            
+            // display next image in database
+            label = ofRandom(0, imageNames.size() - 1);
+            img_name = imageNames[label];
+
             break;
         case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
             if (displayState == 'i') break; // do not train data during installation mode
