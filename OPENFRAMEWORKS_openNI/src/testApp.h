@@ -5,7 +5,7 @@
 #include "ofMain.h"
 #include "GRT.h"
 
-class testApp : public ofBaseApp{
+class testApp : public ofBaseApp {
 
 public:
     
@@ -50,6 +50,7 @@ private:
 //    vector<double> trackedUserJointsDouble;
     
     string img_name;
+    vector< string >        imageNames;
     
 };
 
