@@ -47,26 +47,7 @@ void testApp::setup() {
     svm.loadModelFromFile(ofToDataPath(testFileModelName)); // TODO: this doesn't seem to work
     svm.train(trainingData); // TODO: put this somewhere that works (doesn't seem to work here in startup())
     
-    ofSetLogLevel(OF_LOG_VERBOSE);
-    
-    // TODO: clean up?
-    //    openNIRecorder.setup();
-    //    openNIRecorder.addDepthGenerator();
-    //    openNIRecorder.addImageGenerator();
-    //    openNIRecorder.setRegister(true);
-    //    openNIRecorder.setMirror(true);
-    //    openNIRecorder.addUserGenerator();
-    //    openNIRecorder.setMaxNumUsers(2);
-    //    openNIRecorder.start();
-
-    openNIPlayer.setup();
-    openNIPlayer.addDepthGenerator();
-    openNIPlayer.addImageGenerator();
-    openNIPlayer.setRegister(true);
-    openNIPlayer.setMirror(true);
-    openNIPlayer.addUserGenerator();
-    openNIPlayer.setMaxNumUsers(4); // was 2
-	openNIPlayer.start();
+    setupKinects();
     
     verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
     
@@ -465,4 +446,27 @@ void testApp::mouseReleased(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
 
+}
+
+void testApp::setupKinects() {
+    ofSetLogLevel(OF_LOG_VERBOSE);
+    
+    // TODO: clean up?
+    //    openNIRecorder.setup();
+    //    openNIRecorder.addDepthGenerator();
+    //    openNIRecorder.addImageGenerator();
+    //    openNIRecorder.setRegister(true);
+    //    openNIRecorder.setMirror(true);
+    //    openNIRecorder.addUserGenerator();
+    //    openNIRecorder.setMaxNumUsers(2);
+    //    openNIRecorder.start();
+    
+    openNIPlayer.setup();
+    openNIPlayer.addDepthGenerator();
+    openNIPlayer.addImageGenerator();
+    openNIPlayer.setRegister(true);
+    openNIPlayer.setMirror(true);
+    openNIPlayer.addUserGenerator();
+    openNIPlayer.setMaxNumUsers(4); // was 2
+    openNIPlayer.start();
 }
