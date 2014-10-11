@@ -333,6 +333,8 @@ void testApp::keyPressed(int key){
     int cloudRes = -1;
     bool fileWritten;
     string testJointBuff;
+    bool saveData;
+    bool saveModel;
     
     ofImage img;
     
@@ -364,7 +366,9 @@ void testApp::keyPressed(int key){
         case '<':
         case ',':
         case '[':
-            trainingData.saveDatasetToFile(ofToDataPath(testFileName));
+           
+            saveData = true;
+            
             if (displayState == 'i') break; // do not train data during installation mode
             
             // display previous image in database
@@ -376,7 +380,9 @@ void testApp::keyPressed(int key){
         case '>':
         case '.':
         case ']':
-            trainingData.saveDatasetToFile(ofToDataPath(testFileName));
+            
+            saveData = true;
+            
             if (displayState == 'i') break; // do not train data during installation mode
 
             // display next image in database
@@ -386,7 +392,9 @@ void testApp::keyPressed(int key){
             // openNIPlayer.nextFrame();
             break;
         case 'r': // random image
-            trainingData.saveDatasetToFile(ofToDataPath(testFileName));
+            
+            saveData = true;
+
             if (displayState == 'i') break; // do not train data during installation mode
             
             // display next image in database
@@ -397,16 +405,15 @@ void testApp::keyPressed(int key){
         case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
             if (displayState == 'i') break; // do not train data during installation mode
             
-            trainingData.saveDatasetToFile(ofToDataPath(testFileName));
-            svm.train(trainingData);
-            svm.saveModelToFile(ofToDataPath(testFileModelName));
+            saveData = true;
+            saveModel = true;
             
             break;
         case 'c': // TODO: clean  up?
             if (displayState == 'i') break; // do not train data during installation mode
 
-            svm.train(trainingData);
-            svm.saveModelToFile(ofToDataPath(testFileModelName));
+            saveData = true;
+            saveModel = true;
             
             if (svm.predict(trackedUserJointsDouble[0]))
             {
@@ -421,6 +428,9 @@ void testApp::keyPressed(int key){
             break;
         case 'i':
             // switch displayState to "installation"
+            saveData = true;
+            saveModel = true;
+
             // fall through (intentional)
         case 'd':
             // switch displayState to "debug"
@@ -443,7 +453,13 @@ void testApp::keyPressed(int key){
             //            openNIRecorder.toggleRegister();
             break;
     }
-
+    
+    if (saveData) trainingData.saveDatasetToFile(ofToDataPath(testFileName));
+    
+    if (saveModel) {
+        svm.train(trainingData);
+        svm.saveModelToFile(ofToDataPath(testFileModelName));
+    }
 }
 
 //--------------------------------------------------------------
