@@ -386,7 +386,7 @@ void testApp::keyPressed(int key){
             if (displayState == 'i') break; // do not train data during installation mode
             
             // display next image in database
-            label = ofRandom(0, imageNames.size() - 1);
+            label = getRandomExcluding(0, imageNames.size() - 1, label);
             img_name = imageNames[label];
 
             break;
@@ -506,4 +506,19 @@ void testApp::setupKinects() {
     openNIPlayer.addUserGenerator();
     openNIPlayer.setMaxNumUsers(4); // was 2
     openNIPlayer.start();
+}
+
+int testApp::getRandomExcluding(int min, int max, int i) {
+    // TODO: Might want to simply hand over a vector of things to select from, and a second vector of filters to exclude?
+    
+    // exceptions
+    if (max - min <= 1 and i <= max and i >= min) return -1;
+    
+    int value = i;
+
+    while (value == i) {
+        value = ofRandom(min, max);
+    }
+    
+    return value;
 }

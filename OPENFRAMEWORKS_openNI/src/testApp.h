@@ -23,6 +23,7 @@ public:
 	void windowResized(int w, int h);
     
     void setupKinects();
+    int getRandomExcluding(int min, int max, int i);
 
     //	ofxOpenNI               openNIRecorder;
     ofxOpenNI               openNIPlayer;
