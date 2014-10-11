@@ -94,36 +94,84 @@ void testApp::update(){
     openNIPlayer.update();
 
     // clear joint data for next iteration
-    trackedUserJoints.clear(); // TODO: multiple user input — make trackedUserJoints a vector of vectors, and allocate 4 (or max users) joints vectors within it
+    trackedUserJointsPosABS.clear();
+    trackedUserJointsPosABSDouble.clear();
+    trackedUserJointsPosRel.clear();
+    trackedUserJointsPosRelDouble.clear();
+    trackedUserJointsRotAxisA.clear();
+    trackedUserJointsRotAxisADouble.clear();
+    trackedUserCentersProjective.clear();
 
-    vector< ofPoint > singleUserJoints;
-
-    // build joint position vector
+    // create some local vectors for user position storage
+    vector< ofPoint >   singleUserJointsPosABS;
+    vector< double >    singleUserJointsPosABSDoubles;
+    vector< ofPoint >   singleUserJointsPosRel;
+    vector< double >    singleUserJointsPosRelDoubles;
+    vector< ofPoint >   singleUserJointsAxisA;
+    vector< double >    singleUserJointsAxisADoubles;
+    
+    // build joint position vectors
     if (openNIPlayer.getNumTrackedUsers()) {
         for (int j = 0; j < openNIPlayer.getNumTrackedUsers(); ++j) {
-            singleUserJoints.clear();
-            singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).getCenter());
+            singleUserJointsPosABS.clear();
+            singleUserJointsPosRel.clear();
+            singleUserJointsAxisA.clear();
+
+            // store center positions in both world space and projective space
+//            ofPoint userJCenter = openNIPlayer.getTrackedUser(j).getCenter();
+//            ofPoint userJcenterProjective = openNIPlayer.worldToProjective(userJCenter);
+            ofPoint userJCenter = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition();
+            ofPoint userJcenterProjective = userJCenter;
+            trackedUserCentersProjective.push_back(
+                                                   userJcenterProjective *
+                                                   ofPoint(
+                                                           float( ofGetWidth() ) / 640.0f,
+                                                           float( ofGetHeight()  ) / 480.0f,
+                                                           1
+                                                           )
+                                                   );
+                                                                            //*/
+//            trackedUserCentersProjective.push_back(
+//                                                   userJcenterProjective *
+//                                                   ofPoint(
+//                                                           float( ofGetWidth() ) / 800.0f,
+//                                                           float( ofGetHeight()  ) / 600.0f,
+//                                                           1
+//                                                           )
+//                                                   );
+            
+            //            singleUserJointsPosABS.push_back(userCenter); // TODO: clean up?
             for (int i = 0; i < openNIPlayer.getTrackedUser(j).joints.size(); ++i) {
-                singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition());
-//                singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition() - singleUserJoints[0]);
+                ofPoint jointIworldPos = openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition();
+                singleUserJointsPosABS.push_back(jointIworldPos);
+                singleUserJointsPosRel.push_back(jointIworldPos - userJCenter);
+                // TODO: singleUserJointsAxisA.push_back(findAxisAngle(userCenter, jointIworldPos));
             }
-            trackedUserJoints.push_back(singleUserJoints);
+            trackedUserJointsPosABS.push_back(singleUserJointsPosABS);
+            trackedUserJointsPosRel.push_back(singleUserJointsPosRel);
+            trackedUserJointsPosRel.push_back(singleUserJointsAxisA);
         }
     }
     
-    vector< double > singleUserDoubles;
-    trackedUserJointsDouble.clear();
-    
-    if (trackedUserJoints.size())
+    // build training vectors based on joint positions
+    if (trackedUserJointsPosABS.size())
     {
-        for (int j = 0; j < trackedUserJoints.size(); ++j) {
-            singleUserDoubles.clear();
-            for (int i = 0; i < trackedUserJoints[j].size(); ++i) {
-                singleUserDoubles.push_back(trackedUserJoints[j][i][0]); // x
-                singleUserDoubles.push_back(trackedUserJoints[j][i][1]); // y
-                singleUserDoubles.push_back(trackedUserJoints[j][i][2]); // z
+        for (int j = 0; j < trackedUserJointsPosABS.size(); ++j) {
+            singleUserJointsPosABSDoubles.clear();
+            singleUserJointsPosRelDoubles.clear();
+            singleUserJointsAxisADoubles.clear();
+            for (int i = 0; i < trackedUserJointsPosABS[j].size(); ++i) {
+                for (int axis = 0; axis < 3; ++axis)
+                {
+                    // axis = {0,1,2} which correlates to ofPoint {x, y, z}
+                    singleUserJointsPosABSDoubles.push_back(trackedUserJointsPosABS[j][i][axis]);
+                    // TODO: singleUserJointsPosRelDoubles.push_back(trackedUserJointsPosRel[j][i][axis]);
+                    // TODO: singleUserJointsAxisA.push_back(trackedUserJointsPosRel[j][i][axis]);
+                }
             }
-            trackedUserJointsDouble.push_back(singleUserDoubles);
+            trackedUserJointsPosABSDouble.push_back(singleUserJointsPosABSDoubles);
+            trackedUserJointsPosRelDouble.push_back(singleUserJointsPosRelDoubles);
+            trackedUserJointsRotAxisADouble.push_back(singleUserJointsAxisADoubles);
         }
     }
 }
@@ -132,7 +180,7 @@ void testApp::update(){
 void testApp::draw(){
 
     ofImage img;
-    ofPoint jointsCenter;
+    ofPoint jointsCenterProjective;
     ofPoint imgRef;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
 
@@ -158,10 +206,10 @@ void testApp::draw(){
             ofPushMatrix();
             ofSetColor(255, 255, 255); // white drawing color
             
-            for (int j = 0; j < trackedUserJointsDouble.size(); ++j) {
+            for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
                 
                 // draw image(s)
-                if (svm.predict(trackedUserJointsDouble[j]))
+                if (svm.predict(trackedUserJointsPosABSDouble[j]))
                 {
                     label = svm.getPredictedClassLabel();
                     cout << "predicted label:" << svm.getPredictedClassLabel() << endl;
@@ -184,28 +232,42 @@ void testApp::draw(){
                 //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
 
                 if (openNIPlayer.getNumTrackedUsers() >= j) {
-                    jointsCenter = openNIPlayer.getTrackedUser(j).getCenter(); // ranges {(±500),(-350+250),(200–2,000?)}
+                    jointsCenterProjective = trackedUserCentersProjective[j];
+                    //                    jointsCenterProjective = openNIPlayer.getTrackedUser(j).getCenter(); // ranges {(±500),(-350+250),(200–2,000?)}
+                    cout << "jointsCenterProjective = trackedUserCentersProjective[j];" << endl;
                 } else {
-                    jointsCenter = ofVec3f(0.0f, 0.0f, 1400.0f);
+                    jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);
+                    cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
                 }
-                imgRef.z = 700.0f / jointsCenter.z; // (-50, -200, 1800)
-                imgRef.x = screenCenter.x + jointsCenter.x - (img.width  * imgRef.z);
-                imgRef.y = screenCenter.y - jointsCenter.y - (img.height * imgRef.z);
                 
+                // set image to draw
                 img = images[label];
+                
+                // calculate reference points for drawing
+                imgRef.z = 1500.0f / float( jointsCenterProjective.z ); // scale
+                float xOffset = float( img.width  ) * imgRef.z / 2.0f;
+                float yOffset = float( img.height  ) * imgRef.z / 2.0f;
+                imgRef.x = jointsCenterProjective.x - xOffset; // left side
+                imgRef.y = jointsCenterProjective.y - yOffset; // top side
+//                imgRef.x = jointsCenterProjective.x - (img.width  * imgRef.z / 2.0f);
+//                imgRef.y = jointsCenterProjective.y - (img.height * imgRef.z / 2.0f);
+                
                 // draw image at position and scale relative to center of screen and image
                 img.draw(imgRef.x,
-                         screenCenter.y - (img.height * imgRef.z / 2),
+                         imgRef.y,
                          img.width * imgRef.z,
                          img.height * imgRef.z);
                 
                 // Build debug message string
+                msg = msg + "\n jointsCenterProjective = " + ofToString(jointsCenterProjective);
+                msg = msg + "\n xOffset = " + ofToString(xOffset);
+                msg = msg + "\n yOffset = " + ofToString(yOffset);
                 msg = msg + "\n imgRef = " + ofToString(imgRef);
                 msg = msg + "\n sceenCenter = " + ofToString(screenCenter);
             }
-
+            
             // reset drawing matrix and style
-            ofPushMatrix();
+            ofPopMatrix();
             ofPopStyle();
             
             drawMSG = true;
@@ -258,41 +320,40 @@ void testApp::draw(){
     
     if (drawSkeletons or drawDepth){
         ofPushStyle();
-        ofEnableBlendMode(OF_BLENDMODE_ADD);
-        // draw live input from kinect // TODO: make this multiply over image in BG so pose can still be clearly visible
         //  openNIRecorder.drawDebug(0, 0);
-        if (drawSkeletons)
-        {
-            openNIPlayer.drawSkeletons(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
-            
-        }
-        
         if (drawDepth)
         {
+            ofEnableBlendMode(OF_BLENDMODE_ADD);
             openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
         }
+        if (drawSkeletons)
+        {
+            ofEnableBlendMode(OF_BLENDMODE_SUBTRACT);
+            openNIPlayer.drawSkeletons(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+        }
+        
         ofPopStyle();
     }
     
     if (drawJoints2MSG) {
         // add bone data for tracked user to display message
-        if (trackedUserJoints.size() > 0) {
+        if (trackedUserJointsPosABS.size() > 0) {
             // display joint data
-            for (int j=0; j < trackedUserJoints.size(); ++j) {
+            for (int j=0; j < trackedUserJointsPosABS.size(); ++j) {
                 msg = msg + "\n====\n== User[" + ofToString(j) + "]\n----";
-                for (int i=0; i < trackedUserJoints[j].size(); ++i) {
-                    msg = msg + "\n    joint[" + ofToString(i) + "] = " + ofToString(trackedUserJoints[j][i]);
+                for (int i=0; i < trackedUserJointsPosABS[j].size(); ++i) {
+                    msg = msg + "\n    joint[" + ofToString(i) + "] = " + ofToString(trackedUserJointsPosABS[j][i]);
                 }
                 msg = msg + "\n====";
             }
         }
-        // if (trackedUserJoints.size()) msg = msg + "\n" + ofToString(trackedUserJoints);
-        // cout << msg;
+        // if (trackedUserJointsPosABS.size()) msg = msg + "\n" + ofToString(trackedUserJointsPosABS);
     }
 
     if (drawMSG) {
         // draw debug message
         verdana.drawString(msg, 20, 20);
+        cout << msg << endl;
     }
     
     ofPopStyle();
@@ -345,7 +406,7 @@ void testApp::keyPressed(int key){
             //  - joint positions (0–15) — 0 = center, 1–15 = joints
             
             if (displayState == 'd'){
-                trainingData.addSample(label, trackedUserJointsDouble[0]);
+                trainingData.addSample(label, trackedUserJointsPosABSDouble[0]);
             } else {
                 // TODO: display some kind of error message that says data can only be saved in debug mode?
             }
@@ -403,7 +464,7 @@ void testApp::keyPressed(int key){
             saveData = true;
             saveModel = true;
             
-            if (svm.predict(trackedUserJointsDouble[0]))
+            if (svm.predict(trackedUserJointsPosABSDouble[0]))
             {
                 label = svm.getPredictedClassLabel();
                 cout << "label:" << svm.getPredictedClassLabel() << endl;
