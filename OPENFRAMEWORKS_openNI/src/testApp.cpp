@@ -108,12 +108,6 @@ void testApp::update(){
 //                singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition() - singleUserJoints[0]);
             }
             trackedUserJoints.push_back(singleUserJoints);
-            
-//            trackedUserJoints.push_back(openNIPlayer.getTrackedUser(0).getCenter());
-//            for (int i = 0; i < openNIPlayer.getTrackedUser(0).joints.size(); ++i) {
-//                trackedUserJoints.push_back(openNIPlayer.getTrackedUser(0).joints[i].getWorldPosition());
-//            }
-            
         }
     }
     
@@ -204,12 +198,6 @@ void testApp::draw(){
                          screenCenter.y - (img.height * imgRef.z / 2),
                          img.width * imgRef.z,
                          img.height * imgRef.z);
-                
-//                // draw image at position and scale relative to center of screen and image
-//                img.draw(imgRef.x,
-//                         imgRef.y,
-//                         img.width * imgRef.z,
-//                         img.height * imgRef.z);
                 
                 // Build debug message string
                 msg = msg + "\n imgRef = " + ofToString(imgRef);
@@ -447,7 +435,7 @@ void testApp::keyPressed(int key){
             openNIPlayer.stop();
             break;
         case 'k':
-            // setupKinects(); // TODO: debug this, doesn't seem to work properly.
+            setupKinects(); // TODO: debug this, doesn't seem to work properly.
             break;
         case 't':
             //            openNIRecorder.toggleRegister();
