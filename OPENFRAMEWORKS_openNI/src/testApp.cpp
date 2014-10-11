@@ -33,19 +33,19 @@ public:
 
 //--------------------------------------------------------------
 void testApp::setup() {
-    testFileName = "testJointData.txt";
-    testFileModelName = "testJointData_model.txt";
+    trainingDataJointsPosABSfileName = "JointsPosABSData.txt";
+    trainingModelJointsPosABSfileName = "JointsPosABSmodel.txt";
     
-    GRT::SVM svm(GRT::SVM::LINEAR_KERNEL);
+    GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
     
-    trainingData.setDatasetName("harlequin");
-    trainingData.setNumDimensions(48);
+    trainingDataJointsPosABS.setDatasetName("harlequin");
+    trainingDataJointsPosABS.setNumDimensions(45);
     
     
     // TODO: test these to make sure they work
-    trainingData.loadDatasetFromFile(ofToDataPath(testFileName));
-    svm.loadModelFromFile(ofToDataPath(testFileModelName)); // TODO: this doesn't seem to work
-    svm.train(trainingData); // TODO: put this somewhere that works (doesn't seem to work here in startup())
+    trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
+    trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName)); // TODO: this doesn't seem to work
+    trainingModelJointsPosABS.train(trainingDataJointsPosABS); // TODO: put this somewhere that works (doesn't seem to work here in startup())
     
     setupKinects();
     
@@ -54,7 +54,7 @@ void testApp::setup() {
     displayState = 'd'; //start in debug mode
     
     
-    //    file.open(ofToDataPath(testFileName), ofFile::ReadWrite, false);
+    //    file.open(ofToDataPath(trainingDataJointsPosABSfileName), ofFile::ReadWrite, false);
     //    file.create();
     //    testFileBuff = file.readToBuffer();
     
@@ -209,10 +209,10 @@ void testApp::draw(){
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
                 
                 // draw image(s)
-                if (svm.predict(trackedUserJointsPosABSDouble[j]))
+                if (trainingModelJointsPosABS.predict(trackedUserJointsPosABSDouble[j]))
                 {
-                    label = svm.getPredictedClassLabel();
-                    cout << "predicted label:" << svm.getPredictedClassLabel() << endl;
+                    label = trainingModelJointsPosABS.getPredictedClassLabel();
+                    cout << "predicted label:" << trainingModelJointsPosABS.getPredictedClassLabel() << endl;
                     
                     if (label > imageNames.size())
                     {
@@ -225,7 +225,7 @@ void testApp::draw(){
                 }
                 else
                 {
-                    cout << "svm could not predict" << endl;
+                    cout << "trainingModelJointsPosABS could not predict" << endl;
                 }
                 
                 // TODO: find another image if image could not be loaded?
@@ -406,7 +406,7 @@ void testApp::keyPressed(int key){
             //  - joint positions (0–15) — 0 = center, 1–15 = joints
             
             if (displayState == 'd'){
-                trainingData.addSample(label, trackedUserJointsPosABSDouble[0]);
+                trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
             } else {
                 // TODO: display some kind of error message that says data can only be saved in debug mode?
             }
@@ -464,15 +464,15 @@ void testApp::keyPressed(int key){
             saveData = true;
             saveModel = true;
             
-            if (svm.predict(trackedUserJointsPosABSDouble[0]))
+            if (trainingModelJointsPosABS.predict(trackedUserJointsPosABSDouble[0]))
             {
-                label = svm.getPredictedClassLabel();
-                cout << "label:" << svm.getPredictedClassLabel() << endl;
+                label = trainingModelJointsPosABS.getPredictedClassLabel();
+                cout << "label:" << trainingModelJointsPosABS.getPredictedClassLabel() << endl;
                 img_name = imageNames[label] + ".jpg";
             }
             else
             {
-                cout << "svm could not predict" << endl;
+                cout << "trainingModelJointsPosABS could not predict" << endl;
             }
             break;
         case 'i':
@@ -503,11 +503,11 @@ void testApp::keyPressed(int key){
             break;
     }
     
-    if (saveData) trainingData.saveDatasetToFile(ofToDataPath(testFileName));
+    if (saveData) trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
     
     if (saveModel) {
-        svm.train(trainingData);
-        svm.saveModelToFile(ofToDataPath(testFileModelName));
+        trainingModelJointsPosABS.train(trainingDataJointsPosABS);
+        trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
     }
 }
 

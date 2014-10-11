@@ -31,7 +31,14 @@ public:
     int                     nTrackedUsers;
     char                    displayState;
     ofFile                  file;
-    string                  testJointData;
+//    string                  testJointData;
+    string                  trainingModelJointsPosABSfileName;
+    string                  trainingDataJointsPosABSfileName;
+    // TODO:
+//    string                  trainingModelJointsPosRelfileName;
+//    string                  trainingDataJointsPosRelfileName;
+//    string                  trainingModelJointsRotAxisAfileName;
+//    string                  trainingDataJointsRotAxisAfileName;
     string                  testFileName;
     string                  testFileModelName;
     ofBuffer                testFileBuff;
@@ -42,8 +49,13 @@ public:
     void gestureEvent(ofxOpenNIGestureEvent & event);
 
 private:
-    GRT::SVM svm;
-    GRT::ClassificationData trainingData;
+    GRT::SVM                        trainingModelJointsPosABS;
+    GRT::ClassificationData         trainingDataJointsPosABS;
+    // TODO:
+//    GRT::SVM                        trainingModelJointsPosRel;
+//    GRT::ClassificationData         trainingDataJointsPosRel;
+//    GRT::SVM                        trainingModelJointsRotAxisA;
+//    GRT::ClassificationData         trainingDataJointsRotAxisA;
     GRT::UINT label;
     GRT::UINT lbl;
     vector< vector< ofPoint > >     trackedUserJointsPosABS;
