@@ -86,9 +86,11 @@ void testApp::setup() {
     ofImage imgTMP;
     string filePath;
     imageNames.clear();
+//    int maxFilesToLoad = dir.numFiles();
+    int maxFilesToLoad = 64;
+    
     if(nFiles) {
-        
-        for(int i=0; i < dir.numFiles(); i++) {
+        for(int i=0; i < maxFilesToLoad; i++) {
             
             // add the image name to a list
             filePath = dir.getPath(i);
@@ -96,7 +98,7 @@ void testApp::setup() {
             if (imgTMP.loadImage(filePath)) images.push_back(imgTMP);
             //            images.push_back(ofImage());
             //            images.back().loadImage(filePath);
-            cout << "loading image [" << ofToString(i) << "] : " << filePath << endl;
+            cout << "loading image [" << ofToString(i) << "/" << ofToString(maxFilesToLoad) << "] : " << filePath << endl;
         }
         
     } else printf("Could not find \"images\" directory\n");
@@ -121,7 +123,8 @@ void testApp::update(){
             singleUserJoints.clear();
             singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).getCenter());
             for (int i = 0; i < openNIPlayer.getTrackedUser(j).joints.size(); ++i) {
-                singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition() - singleUserJoints[0]);
+                singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition());
+//                singleUserJoints.push_back(openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition() - singleUserJoints[0]);
             }
             trackedUserJoints.push_back(singleUserJoints);
             
@@ -153,7 +156,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-    ofImage img = images[label];
+    ofImage img;
     ofPoint jointsCenter;
     ofPoint imgRef;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
@@ -175,9 +178,12 @@ void testApp::draw(){
                 // draw image(s)
                 if (svm.predict(trackedUserJointsDouble[j]))
                 {
-                lbl = svm.getPredictedClassLabel();
-                cout << "label:" << svm.getPredictedClassLabel() << endl;
-                img_name = ofToString(lbl) + ".jpg";
+                    label = svm.getPredictedClassLabel();
+                    cout << "predicted label:" << svm.getPredictedClassLabel() << endl;
+                    
+                    img_name = imageNames[label];
+                    cout << "img_name = " << img_name << endl;
+//                    img_name = ofToString(label) + ".jpg";
                 }
                 else
                 {
@@ -196,12 +202,19 @@ void testApp::draw(){
                 imgRef.x = screenCenter.x + jointsCenter.x - (img.width  * imgRef.z);
                 imgRef.y = screenCenter.y - jointsCenter.y - (img.height * imgRef.z);
                 
+                img = images[label];
                 // draw image at position and scale relative to center of screen and image
                 img.draw(imgRef.x,
-                         imgRef.y,
+                         screenCenter.y - (img.height * imgRef.z / 2),
                          img.width * imgRef.z,
                          img.height * imgRef.z);
-
+                
+//                // draw image at position and scale relative to center of screen and image
+//                img.draw(imgRef.x,
+//                         imgRef.y,
+//                         img.width * imgRef.z,
+//                         img.height * imgRef.z);
+                
                 // Build debug message string
                 msg = msg + "/n imgRef = " + ofToString(imgRef);
                 msg = msg + "/n sceenCenter = " + ofToString(screenCenter);
@@ -211,6 +224,14 @@ void testApp::draw(){
             ofPushMatrix();
             ofPopStyle();
             
+            ofPushStyle();
+            ofEnableBlendMode(OF_BLENDMODE_ADD);
+            // draw live input from kinect // TODO: make this multiply over image in BG so pose can still be clearly visible
+            //  openNIRecorder.drawDebug(0, 0);
+            openNIPlayer.drawDepth(0, 0, ofGetWidth(), ofGetHeight());
+            openNIPlayer.drawSkeletons(screenCenter.x, screenCenter.y, ofGetWidth(), ofGetHeight());
+            ofPopStyle();
+
             break;
             
         case 'd':
@@ -224,6 +245,7 @@ void testApp::draw(){
 
             // draw image(s)
             // if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
+            img = images[label];
             float imgRatioX = float(ofGetWidth()) / float(img.width);
             float imgRatioY = float(ofGetHeight()) / float(img.height);
             float imgRatio;
@@ -393,9 +415,9 @@ void testApp::keyPressed(int key){
             
             if (svm.predict(trackedUserJointsDouble[0]))
             {
-                lbl = svm.getPredictedClassLabel();
+                label = svm.getPredictedClassLabel();
                 cout << "label:" << svm.getPredictedClassLabel() << endl;
-                img_name = ofToString(lbl) + ".jpg";
+                img_name = imageNames[label] + ".jpg";
             }
             else
             {
