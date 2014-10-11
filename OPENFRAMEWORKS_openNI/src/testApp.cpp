@@ -142,11 +142,21 @@ void testApp::draw(){
     ofPoint imgRef;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
 
+    bool drawDepth;
+    bool drawSkeletons;
+    bool drawJoints2MSG;
+    bool drawMSG;
+    
     // Build debug message string
     string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
     
     switch (displayState) {
         case 'i':
+            
+            drawMSG = true;
+            drawJoints2MSG = true;
+            drawDepth = true;
+            drawSkeletons = true;
             
             // manage style and drawing matrix
             ofSetBackgroundColor(255, 245, 235); // light tan BG
@@ -161,6 +171,11 @@ void testApp::draw(){
                 {
                     label = svm.getPredictedClassLabel();
                     cout << "predicted label:" << svm.getPredictedClassLabel() << endl;
+                    
+                    if (label > imageNames.size())
+                    {
+                        label = ofRandom(0, imageNames.size() - 1);
+                    }
                     
                     img_name = imageNames[label];
                     cout << "img_name = " << img_name << endl;
@@ -197,26 +212,28 @@ void testApp::draw(){
 //                         img.height * imgRef.z);
                 
                 // Build debug message string
-                msg = msg + "/n imgRef = " + ofToString(imgRef);
-                msg = msg + "/n sceenCenter = " + ofToString(screenCenter);
+                msg = msg + "\n imgRef = " + ofToString(imgRef);
+                msg = msg + "\n sceenCenter = " + ofToString(screenCenter);
             }
 
             // reset drawing matrix and style
             ofPushMatrix();
             ofPopStyle();
             
-            ofPushStyle();
-            ofEnableBlendMode(OF_BLENDMODE_ADD);
-            // draw live input from kinect // TODO: make this multiply over image in BG so pose can still be clearly visible
-            //  openNIRecorder.drawDebug(0, 0);
-            openNIPlayer.drawDepth(0, 0, ofGetWidth(), ofGetHeight());
-            openNIPlayer.drawSkeletons(screenCenter.x, screenCenter.y, ofGetWidth(), ofGetHeight());
-            ofPopStyle();
+            drawMSG = true;
+            drawJoints2MSG = true;
+            drawDepth = true;
+            drawSkeletons = true;
 
             break;
             
         case 'd':
         default:
+
+            drawMSG = true;
+            drawJoints2MSG = true;
+            drawDepth = true;
+            drawSkeletons = true;
 
             // manage style and drawing matrix
             ofSetBackgroundColorHex(000000); // Black BG // TODO: fix this because it doesn't seem to be working
@@ -244,38 +261,51 @@ void testApp::draw(){
                      img.height * imgRatio
                      );
             
-
-            ofPushStyle();
-                ofEnableBlendMode(OF_BLENDMODE_ADD);
-                // draw live input from kinect // TODO: make this multiply over image in BG so pose can still be clearly visible
-                //  openNIRecorder.drawDebug(0, 0);
-                openNIPlayer.drawDebug(0, 240);
-                openNIPlayer.drawSkeletons(0, 240);
-            ofPopStyle();
-            
-            // add bone data for tracked user to display message
-            if (trackedUserJoints.size() > 0) {
-                // display joint data
-                for (int j=0; j < trackedUserJoints.size(); ++j) {
-                    msg = msg + "\n====\n== User[" + ofToString(j) + "]\n----";
-                    for (int i=0; i < trackedUserJoints[j].size(); ++i) {
-                        msg = msg + "\n    joint[" + ofToString(i) + "] = " + ofToString(trackedUserJoints[j][i]);
-                    }
-                    msg = msg + "\n====";
-                }
-            }
-            // if (trackedUserJoints.size()) msg = msg + "\n" + ofToString(trackedUserJoints);
-            // cout << msg;
-            
             // reset drawing matrix and style
             ofPopMatrix();
             ofPopStyle();
 
             break;
     }
+    
+    if (drawSkeletons or drawDepth){
+        ofPushStyle();
+        ofEnableBlendMode(OF_BLENDMODE_ADD);
+        // draw live input from kinect // TODO: make this multiply over image in BG so pose can still be clearly visible
+        //  openNIRecorder.drawDebug(0, 0);
+        if (drawSkeletons)
+        {
+            openNIPlayer.drawSkeletons(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+            
+        }
+        
+        if (drawDepth)
+        {
+            openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+        }
+        ofPopStyle();
+    }
+    
+    if (drawJoints2MSG) {
+        // add bone data for tracked user to display message
+        if (trackedUserJoints.size() > 0) {
+            // display joint data
+            for (int j=0; j < trackedUserJoints.size(); ++j) {
+                msg = msg + "\n====\n== User[" + ofToString(j) + "]\n----";
+                for (int i=0; i < trackedUserJoints[j].size(); ++i) {
+                    msg = msg + "\n    joint[" + ofToString(i) + "] = " + ofToString(trackedUserJoints[j][i]);
+                }
+                msg = msg + "\n====";
+            }
+        }
+        // if (trackedUserJoints.size()) msg = msg + "\n" + ofToString(trackedUserJoints);
+        // cout << msg;
+    }
 
-    // draw debug message
-    verdana.drawString(msg, 20, 20);
+    if (drawMSG) {
+        // draw debug message
+        verdana.drawString(msg, 20, 20);
+    }
     
     ofPopStyle();
 }
