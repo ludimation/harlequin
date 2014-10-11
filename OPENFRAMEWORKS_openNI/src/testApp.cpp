@@ -11,7 +11,6 @@ public:
 ///////////
 // TODO:
 ////////////
-//  - multiple user input (multiple harlequins on-screen at the same time)
 //  - make data image name-labeled so we can just read all of the images in a directory and include them in the data set
 //  - do not display the same image more than once every 3 frames
 //  - slow down frame rate to 30, or even as low as 12 or so?
