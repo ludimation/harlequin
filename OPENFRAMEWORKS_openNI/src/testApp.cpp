@@ -256,28 +256,12 @@ void testApp::draw(){
                 imgRatio = imgRatioY;
             }
             
-            // debug
-            msg = msg + "\n" + "img.width = "       + ofToString(img.width);
-            msg = msg + "\n" + "img.height = "      + ofToString(img.height);
-            msg = msg + "\n" + "ofGetWidth() = "    + ofToString(ofGetWidth());
-            msg = msg + "\n" + "ofGetHeight() = "   + ofToString(ofGetHeight());
-            msg = msg + "\n" + "imgRatioX = "       + ofToString(imgRatioX);
-            msg = msg + "\n" + "imgRatioY = "       + ofToString(imgRatioY);
-            msg = msg + "\n" + "imgRatio = "        + ofToString(imgRatio);
-    
             img.draw(
                      (ofGetWidth() - img.width * imgRatio) / 2.0f,
                      (ofGetHeight() - img.height * imgRatio) / 2.0f,
                      img.width * imgRatio,
                      img.height * imgRatio
                      );
-            // debug
-            msg = msg + "\nimg_name = " + img_name;
-            msg = msg + "\n draw(" + ofToString((ofGetWidth()/2.0f) - (img.width * imgRatio));
-            msg = msg + ", " + ofToString((ofGetHeight()/2.0f) - (img.height * imgRatio));
-            msg = msg + ", " + ofToString(img.width * imgRatio);
-            msg = msg + ", " + ofToString(img.height * imgRatio);
-            msg = msg + ")";
             
 
             ofPushStyle();
