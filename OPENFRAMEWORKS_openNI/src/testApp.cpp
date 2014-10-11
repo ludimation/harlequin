@@ -436,6 +436,9 @@ void testApp::keyPressed(int key){
             //            openNIRecorder.stop();
             openNIPlayer.stop();
             break;
+        case 'k':
+            // setupKinects(); // TODO: debug this, doesn't seem to work properly.
+            break;
         case 't':
             //            openNIRecorder.toggleRegister();
             break;
