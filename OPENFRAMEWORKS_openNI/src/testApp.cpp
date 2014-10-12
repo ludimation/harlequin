@@ -563,7 +563,8 @@ void testApp::setupKinects() {
     openNIPlayer.addDepthGenerator();
     openNIPlayer.addImageGenerator();
     openNIPlayer.setRegister(true);
-    openNIPlayer.setMirror(true);
+//    openNIPlayer.setMirror(true);
+    openNIPlayer.setMirror(false);
     openNIPlayer.addUserGenerator();
     openNIPlayer.setMaxNumUsers(4); // was 2
     openNIPlayer.start();
