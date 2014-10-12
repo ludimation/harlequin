@@ -251,6 +251,7 @@ void testApp::draw(){
 //                imgRef.x = jointsCenterProjective.x - (img.width  * imgRef.z / 2.0f);
 //                imgRef.y = jointsCenterProjective.y - (img.height * imgRef.z / 2.0f);
                 
+                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
                 // draw image at position and scale relative to center of screen and image
                 img.draw(imgRef.x,
                          imgRef.y,
