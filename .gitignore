@@ -33,3 +33,5 @@
 # Test image originals
 OPENFRAMEWORKS_openNI/bin/data/images/_originals/*
 OPENFRAMEWORKS_openNI/bin/data/test*
+TECH_TEST*
+OPENFRAMEWORKS_openNI/src_BKUP/GRT/*
