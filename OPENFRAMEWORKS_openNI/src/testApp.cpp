@@ -243,7 +243,11 @@ void testApp::draw(){
                 img = images[label];
                 
                 // calculate reference points for drawing
-                imgRef.z = 1500.0f / float( jointsCenterProjective.z ); // scale
+                if(jointsCenterProjective.z != 0) { // scale
+                    imgRef.z = 1500.0f / float( jointsCenterProjective.z);
+                } else {
+                    imgRef.z = 1.0f;
+                }
                 float xOffset = float( img.width  ) * imgRef.z / 2.0f;
                 float yOffset = float( img.height  ) * imgRef.z / 2.0f;
                 imgRef.x = jointsCenterProjective.x - xOffset; // left side
@@ -294,13 +298,25 @@ void testApp::draw(){
             // draw image(s)
             // if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
             img = images[label];
-            float imgRatioX = float(ofGetWidth()) / float(img.width);
-            float imgRatioY = float(ofGetHeight()) / float(img.height);
+            float imgRatioX;
+            float imgRatioY;
             float imgRatio;
-            if (imgRatioX < imgRatioY)
-            {
+
+            if (img.width) {
+                imgRatioX = float(ofGetWidth()) / float(img.width);
+            } else {
+                imgRatioX = 1.0f;
+            }
+
+            if (img.height) {
+                imgRatioY = float(ofGetHeight()) / float(img.height);
+            } else {
+                imgRatioY = 1.0f;
+            }
+            
+            if (imgRatioX < imgRatioY) {
                 imgRatio = imgRatioX;
-            } else        {
+            } else {
                 imgRatio = imgRatioY;
             }
             
