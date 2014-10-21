@@ -181,7 +181,7 @@ void testApp::update(){
 void testApp::draw(){
 
     ofPoint jointsCenterProjective;
-    ofPoint imgRef;
+    ofPoint imgRefPoint;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
 
     bool drawDepth;
@@ -269,27 +269,27 @@ void testApp::draw(){
                 
                 // calculate reference points for drawing
                 if(jointsCenterProjective.z != 0) { // scale
-                    imgRef.z = 1500.0f / float( jointsCenterProjective.z);
+                    imgRefPoint.z = 1500.0f / float( jointsCenterProjective.z);
                 } else {
-                    imgRef.z = 1.0f;
+                    imgRefPoint.z = 1.0f;
                 }
-                float xOffset = float( img.width  ) * imgRef.z / 2.0f;
-                float yOffset = float( img.height  ) * imgRef.z / 2.0f;
-                imgRef.x = jointsCenterProjective.x - xOffset; // left side
-                imgRef.y = jointsCenterProjective.y - yOffset; // top side
+                float xOffset = float( img.width  ) * imgRefPoint.z / 2.0f;
+                float yOffset = float( img.height  ) * imgRefPoint.z / 2.0f;
+                imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
+                imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
                 
                 ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
                 // draw image at position and scale relative to center of screen and image
-                img.draw(imgRef.x,
-                         imgRef.y,
-                         img.width * imgRef.z,
-                         img.height * imgRef.z);
+                img.draw(imgRefPoint.x,
+                         imgRefPoint.y,
+                         img.width * imgRefPoint.z,
+                         img.height * imgRefPoint.z);
                 
                 // Build debug message string
                 msg = msg + "\n jointsCenterProjective = " + ofToString(jointsCenterProjective);
                 msg = msg + "\n xOffset = " + ofToString(xOffset);
                 msg = msg + "\n yOffset = " + ofToString(yOffset);
-                msg = msg + "\n imgRef = " + ofToString(imgRef);
+                msg = msg + "\n imgRef = " + ofToString(imgRefPoint);
                 msg = msg + "\n sceenCenter = " + ofToString(screenCenter);
             }
             
