@@ -78,7 +78,7 @@ void testApp::setup() {
     string filePath;
     imageNames.clear();
 //    int maxFilesToLoad = dir.numFiles();
-    int maxFilesToLoad = 64;
+    int maxFilesToLoad = 127;
     
     if(nFiles) {
         for(int i=0; i < maxFilesToLoad; i++) {
