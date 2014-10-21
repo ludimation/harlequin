@@ -11,7 +11,6 @@ public:
 ///////////
 // TODO:
 ////////////
-//  - relative joint positions // haven't done these yet. Are they necessary?
 //  - optimize image loading/display (image buffer currently seems to crash after 64 images are loaded)
 //  - do not display the same image more than once every 3 frames
 //  - slow down frame rate to 30, or even as low as 12 or so?
