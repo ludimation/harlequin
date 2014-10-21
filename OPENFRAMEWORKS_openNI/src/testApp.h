@@ -49,6 +49,7 @@ public:
     void gestureEvent(ofxOpenNIGestureEvent & event);
 
 private:
+    ofImage                         img;
     GRT::SVM                        trainingModelJointsPosABS;
     GRT::ClassificationData         trainingDataJointsPosABS;
     // TODO:

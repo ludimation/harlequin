@@ -180,7 +180,6 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-    ofImage img;
     ofPoint jointsCenterProjective;
     ofPoint imgRef;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
