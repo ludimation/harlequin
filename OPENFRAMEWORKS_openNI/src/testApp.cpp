@@ -32,19 +32,36 @@ public:
 
 //--------------------------------------------------------------
 void testApp::setup() {
-    trainingDataJointsPosABSfileName = "JointsPosABSData.txt";
-    trainingModelJointsPosABSfileName = "JointsPosABSmodel.txt";
+    trainingDataJointsPosABSfileName    = "JointsPosABSdata.txt";
+    trainingModelJointsPosABSfileName   = "JointsPosABSmodel.txt";
+    trainingDataJointsPosRelfileName    = "JointsPosReldata.txt";
+    trainingModelJointsPosRelfileName   = "JointsPosRelmodel.txt";
+    trainingDataJointsRotAxisAfileName  = "JointsRotAxisAdata.txt";
+    trainingModelJointsRotAxisAfileName = "JointsRotAxisAmodel.txt";
+    
     
     GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
+    GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
+    GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
     
-    trainingDataJointsPosABS.setDatasetName("harlequin");
+    trainingDataJointsPosABS.setDatasetName("harlequinPosABS");
     trainingDataJointsPosABS.setNumDimensions(45);
+    trainingDataJointsPosRel.setDatasetName("harlequinPosRel");
+    trainingDataJointsPosRel.setNumDimensions(45);
+    trainingDataJointsRotAxisA.setDatasetName("harlequinRotAxisA");
+    trainingDataJointsRotAxisA.setNumDimensions(45);
     
     
     // TODO: test these to make sure they work
     trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
     trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName)); // TODO: this doesn't seem to work
     trainingModelJointsPosABS.train(trainingDataJointsPosABS); // TODO: put this somewhere that works (doesn't seem to work here in startup())
+    trainingDataJointsPosRel.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosRelfileName));
+    trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
+    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
+    trainingDataJointsRotAxisA.loadDatasetFromFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
+    trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
+    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
     
     setupKinects();
     
@@ -106,21 +123,20 @@ void testApp::update(){
     vector< double >    singleUserJointsPosABSDoubles;
     vector< ofPoint >   singleUserJointsPosRel;
     vector< double >    singleUserJointsPosRelDoubles;
-    vector< ofPoint >   singleUserJointsAxisA;
-    vector< double >    singleUserJointsAxisADoubles;
+    vector< ofPoint >   singleUserJointsRotAxisA;
+    vector< double >    singleUserJointsRotAxisADoubles;
     
     // build joint position vectors
     if (openNIPlayer.getNumTrackedUsers()) {
         for (int j = 0; j < openNIPlayer.getNumTrackedUsers(); ++j) {
             singleUserJointsPosABS.clear();
             singleUserJointsPosRel.clear();
-            singleUserJointsAxisA.clear();
+            singleUserJointsRotAxisA.clear();
 
             // store center positions in both world space and projective space
-//            ofPoint userJCenter = openNIPlayer.getTrackedUser(j).getCenter();
-//            ofPoint userJcenterProjective = openNIPlayer.worldToProjective(userJCenter);
-            ofPoint userJCenter = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition();
-            ofPoint userJcenterProjective = userJCenter;
+            ofPoint userJCenter = openNIPlayer.getTrackedUser(j).getCenter();
+            ofPoint userJcenterProjective = openNIPlayer.worldToProjective(userJCenter);
+//            ofPoint userJcenterProjective = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition();
             trackedUserCentersProjective.push_back(
                                                    userJcenterProjective *
                                                    ofPoint(
@@ -144,11 +160,12 @@ void testApp::update(){
                 ofPoint jointIworldPos = openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition();
                 singleUserJointsPosABS.push_back(jointIworldPos);
                 singleUserJointsPosRel.push_back(jointIworldPos - userJCenter);
-                // TODO: singleUserJointsAxisA.push_back(findAxisAngle(userCenter, jointIworldPos));
+                singleUserJointsRotAxisA.push_back(jointIworldPos);
+                // todo: singleUserJointsAxisA.push_back(findAxisAngle(userJCenter, jointIworldPos));
             }
             trackedUserJointsPosABS.push_back(singleUserJointsPosABS);
             trackedUserJointsPosRel.push_back(singleUserJointsPosRel);
-            trackedUserJointsPosRel.push_back(singleUserJointsAxisA);
+            trackedUserJointsRotAxisA.push_back(singleUserJointsRotAxisA);
         }
     }
     
@@ -158,19 +175,19 @@ void testApp::update(){
         for (int j = 0; j < trackedUserJointsPosABS.size(); ++j) {
             singleUserJointsPosABSDoubles.clear();
             singleUserJointsPosRelDoubles.clear();
-            singleUserJointsAxisADoubles.clear();
+            singleUserJointsRotAxisADoubles.clear();
             for (int i = 0; i < trackedUserJointsPosABS[j].size(); ++i) {
                 for (int axis = 0; axis < 3; ++axis)
                 {
                     // axis = {0,1,2} which correlates to ofPoint {x, y, z}
                     singleUserJointsPosABSDoubles.push_back(trackedUserJointsPosABS[j][i][axis]);
-                    // TODO: singleUserJointsPosRelDoubles.push_back(trackedUserJointsPosRel[j][i][axis]);
-                    // TODO: singleUserJointsAxisA.push_back(trackedUserJointsPosRel[j][i][axis]);
+                    singleUserJointsPosRelDoubles.push_back(trackedUserJointsPosRel[j][i][axis]);
+                    singleUserJointsRotAxisADoubles.push_back(trackedUserJointsRotAxisA[j][i][axis]);
                 }
             }
             trackedUserJointsPosABSDouble.push_back(singleUserJointsPosABSDoubles);
             trackedUserJointsPosRelDouble.push_back(singleUserJointsPosRelDoubles);
-            trackedUserJointsRotAxisADouble.push_back(singleUserJointsAxisADoubles);
+            trackedUserJointsRotAxisADouble.push_back(singleUserJointsRotAxisADoubles);
         }
     }
 }
@@ -207,7 +224,8 @@ void testApp::draw(){
             
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
                 
-                // draw image(s)
+                // select label: Absolute Position model
+                /*
                 if (trainingModelJointsPosABS.predict(trackedUserJointsPosABSDouble[j]))
                 {
                     label = trainingModelJointsPosABS.getPredictedClassLabel();
@@ -216,6 +234,7 @@ void testApp::draw(){
                     if (label > imageNames.size())
                     {
                         label = ofRandom(0, imageNames.size() - 1);
+                        cout << "predicted label is too high for imageNames.size() = " << ofToString(imageNames.size()) << endl;
                     }
                     
                     img_name = imageNames[label];
@@ -226,13 +245,36 @@ void testApp::draw(){
                 {
                     cout << "trainingModelJointsPosABS could not predict" << endl;
                 }
+                //*/
+
+                // select label: Relative Position model
+                ///*
+                if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]))
+                {
+                    label = trainingModelJointsPosRel.getPredictedClassLabel();
+                    cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
+                    
+                    if (label > imageNames.size())
+                    {
+                        label = ofRandom(0, imageNames.size() - 1);
+                        cout << "predicted label is too high for imageNames.size() = " << ofToString(imageNames.size()) << endl;
+                    }
+                    
+                    img_name = imageNames[label];
+                    cout << "img_name = " << img_name << endl;
+                    //                    img_name = ofToString(label) + ".jpg";
+                }
+                else
+                {
+                    cout << "trainingModelJointsPosRel could not predict" << endl;
+                }
+                //*/
                 
                 // TODO: find another image if image could not be loaded?
                 //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
 
                 if (openNIPlayer.getNumTrackedUsers() >= j) {
                     jointsCenterProjective = trackedUserCentersProjective[j];
-                    //                    jointsCenterProjective = openNIPlayer.getTrackedUser(j).getCenter(); // ranges {(±500),(-350+250),(200–2,000?)}
                     cout << "jointsCenterProjective = trackedUserCentersProjective[j];" << endl;
                 } else {
                     jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);
@@ -423,6 +465,8 @@ void testApp::keyPressed(int key){
             
             if (displayState == 'd'){
                 trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
+                trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
+                trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
             } else {
                 // TODO: display some kind of error message that says data can only be saved in debug mode?
             }
@@ -480,16 +524,55 @@ void testApp::keyPressed(int key){
             saveData = true;
             saveModel = true;
             
-            if (trainingModelJointsPosABS.predict(trackedUserJointsPosABSDouble[0]))
+            // TODO:
+            //  - separate out into a function so it can be called from both here and draw()
+            //  - include prediction mode as one of the arguments
+
+            // select label: Absolute Position model
+            /*
+             if (trainingModelJointsPosABS.predict(trackedUserJointsPosABSDouble[0]))
+             {
+             label = trainingModelJointsPosABS.getPredictedClassLabel();
+             cout << "predicted label:" << trainingModelJointsPosABS.getPredictedClassLabel() << endl;
+             
+             if (label > imageNames.size())
+             {
+             label = ofRandom(0, imageNames.size() - 1);
+             cout << "predicted label is too high for imageNames.size() = " << ofToString(imageNames.size()) << endl;
+             }
+             
+             img_name = imageNames[label];
+             cout << "img_name = " << img_name << endl;
+             }
+             else
+             {
+             cout << "trainingModelJointsPosABS could not predict" << endl;
+             }
+             //*/
+            
+            // select label: Relative Position model
+            ///*
+            if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[0]))
             {
-                label = trainingModelJointsPosABS.getPredictedClassLabel();
-                cout << "label:" << trainingModelJointsPosABS.getPredictedClassLabel() << endl;
-                img_name = imageNames[label] + ".jpg";
+                label = trainingModelJointsPosRel.getPredictedClassLabel();
+                cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
+                
+                if (label > imageNames.size())
+                {
+                    label = ofRandom(0, imageNames.size() - 1);
+                    cout << "predicted label is too high for imageNames.size() = " << ofToString(imageNames.size()) << endl;
+                }
+                
+                img_name = imageNames[label];
+                cout << "img_name = " << img_name << endl;
+                //                    img_name = ofToString(label) + ".jpg";
             }
             else
             {
-                cout << "trainingModelJointsPosABS could not predict" << endl;
+                cout << "trainingModelJointsPosRel could not predict" << endl;
             }
+            //*/
+            
             break;
         case 'i':
             // switch displayState to "installation"
@@ -519,11 +602,21 @@ void testApp::keyPressed(int key){
             break;
     }
     
-    if (saveData) trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
+    if (saveData) {
+        trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
+        trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
+        trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
+    }
     
     if (saveModel) {
         trainingModelJointsPosABS.train(trainingDataJointsPosABS);
         trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
+        
+        trainingModelJointsPosRel.train(trainingDataJointsPosRel);
+        trainingModelJointsPosRel.saveModelToFile(ofToDataPath(trainingModelJointsPosRelfileName));
+        
+        trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+        trainingModelJointsRotAxisA.saveModelToFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
     }
 }
 

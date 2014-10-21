@@ -35,10 +35,10 @@ public:
     string                  trainingModelJointsPosABSfileName;
     string                  trainingDataJointsPosABSfileName;
     // TODO:
-//    string                  trainingModelJointsPosRelfileName;
-//    string                  trainingDataJointsPosRelfileName;
-//    string                  trainingModelJointsRotAxisAfileName;
-//    string                  trainingDataJointsRotAxisAfileName;
+    string                  trainingModelJointsPosRelfileName;
+    string                  trainingDataJointsPosRelfileName;
+    string                  trainingModelJointsRotAxisAfileName;
+    string                  trainingDataJointsRotAxisAfileName;
     string                  testFileName;
     string                  testFileModelName;
     ofBuffer                testFileBuff;
@@ -52,10 +52,10 @@ private:
     GRT::SVM                        trainingModelJointsPosABS;
     GRT::ClassificationData         trainingDataJointsPosABS;
     // TODO:
-//    GRT::SVM                        trainingModelJointsPosRel;
-//    GRT::ClassificationData         trainingDataJointsPosRel;
-//    GRT::SVM                        trainingModelJointsRotAxisA;
-//    GRT::ClassificationData         trainingDataJointsRotAxisA;
+    GRT::SVM                        trainingModelJointsPosRel;
+    GRT::ClassificationData         trainingDataJointsPosRel;
+    GRT::SVM                        trainingModelJointsRotAxisA;
+    GRT::ClassificationData         trainingDataJointsRotAxisA;
     GRT::UINT label;
     GRT::UINT lbl;
     vector< vector< ofPoint > >     trackedUserJointsPosABS;
