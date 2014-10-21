@@ -83,6 +83,8 @@ private:
 // - http://stackoverflow.com/questions/tagged/kinect?page=2&sort=newest&pagesize=15
 // - http://stackoverflow.com/questions/23467476/kinect-skeleton-algorithm-from-depth-images?answertab=active#tab-top
 
+// Couldn't find any openFrameworks axis angles, but maybe ofNode might be of use: http://www.openframeworks.cc/documentation/3d/ofNode.html
+
 //-- functions and properties which might be useful for recording skeletal data
 //////////////////////
 // ofxOpenNITypes.cpp
