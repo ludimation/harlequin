@@ -69,11 +69,6 @@ void testApp::setup() {
     
     displayState = 'd'; //start in debug mode
     
-    
-    //    file.open(ofToDataPath(trainingDataJointsPosABSfileName), ofFile::ReadWrite, false);
-    //    file.create();
-    //    testFileBuff = file.readToBuffer();
-    
     // read the directory for the images
     // we know that they are named in seq
     ofDirectory dir;
@@ -145,17 +140,7 @@ void testApp::update(){
                                                            1
                                                            )
                                                    );
-                                                                            //*/
-//            trackedUserCentersProjective.push_back(
-//                                                   userJcenterProjective *
-//                                                   ofPoint(
-//                                                           float( ofGetWidth() ) / 800.0f,
-//                                                           float( ofGetHeight()  ) / 600.0f,
-//                                                           1
-//                                                           )
-//                                                   );
-            
-            //            singleUserJointsPosABS.push_back(userCenter); // TODO: clean up?
+
             for (int i = 0; i < openNIPlayer.getTrackedUser(j).joints.size(); ++i) {
                 ofPoint jointIworldPos = openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition();
                 singleUserJointsPosABS.push_back(jointIworldPos);
@@ -239,7 +224,6 @@ void testApp::draw(){
                     
                     img_name = imageNames[label];
                     cout << "img_name = " << img_name << endl;
-//                    img_name = ofToString(label) + ".jpg";
                 }
                 else
                 {
@@ -294,8 +278,6 @@ void testApp::draw(){
                 float yOffset = float( img.height  ) * imgRef.z / 2.0f;
                 imgRef.x = jointsCenterProjective.x - xOffset; // left side
                 imgRef.y = jointsCenterProjective.y - yOffset; // top side
-//                imgRef.x = jointsCenterProjective.x - (img.width  * imgRef.z / 2.0f);
-//                imgRef.y = jointsCenterProjective.y - (img.height * imgRef.z / 2.0f);
                 
                 ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
                 // draw image at position and scale relative to center of screen and image
