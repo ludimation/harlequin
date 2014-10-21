@@ -488,7 +488,7 @@ void testApp::keyPressed(int key){
 
             if (displayState == 'i') break; // do not train data during installation mode
             
-            // display next image in database
+            // display random image from database
             label = getRandomExcluding(0, imageNames.size() - 1, label);
             img_name = imageNames[label];
 
