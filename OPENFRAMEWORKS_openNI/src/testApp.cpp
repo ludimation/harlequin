@@ -11,12 +11,13 @@ public:
 ///////////
 // TODO:
 ////////////
-//  - make data image name-labeled so we can just read all of the images in a directory and include them in the data set
+//  - relative joint positions // haven't done these yet. Are they necessary?
+//  - optimize image loading/display (image buffer currently seems to crash after 64 images are loaded)
 //  - do not display the same image more than once every 3 frames
 //  - slow down frame rate to 30, or even as low as 12 or so?
+//  - make data image name-labeled so we can just read all of the images in a directory and include them in the data set
 //  - display data associated with current image
 //  - translation, scale, and rotation controls for current image
-//  - relative joint positions // haven't done these yet. Are they necessary?
 //  - joint rotations (axis-angles?)
 //  - L1 norm
 //  - L2 norm
@@ -25,7 +26,6 @@ public:
 //      > rotation
 //      > scale (might need to just store corners so that image can be scaled independent of file size changes
 //  - clean out old oni recording functionality? Doesn't seem useful at this point. Could write a separate app for recording and include bone data for testing input.
-//  - optimize image loading/display by creating an image buffer
 //  - query for short list of potential images (instead of returning just one as we do now)
 //  - loop through list performing bone-by-bone comparison?
 
