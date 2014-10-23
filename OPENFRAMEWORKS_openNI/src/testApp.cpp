@@ -77,8 +77,10 @@ void testApp::setup() {
     ofImage imgTMP;
     string filePath;
     imageNames.clear();
-//    int maxFilesToLoad = dir.numFiles();
+//    int maxFilesToLoad = dir.size();
     int maxFilesToLoad = 127;
+    
+    images.resize(maxFilesToLoad);
     
     if(nFiles) {
         for(int i=0; i < maxFilesToLoad; i++) {
@@ -86,9 +88,9 @@ void testApp::setup() {
             // add the image name to a list
             filePath = dir.getPath(i);
             imageNames.push_back(filePath);
-            if (imgTMP.loadImage(filePath)) images.push_back(imgTMP);
-            //            images.push_back(ofImage());
-            //            images.back().loadImage(filePath);
+//            if (imgTMP.loadImage(filePath)) images.push_back(imgTMP);
+            if (imgTMP.loadImage(filePath)) images[i] = imgTMP;
+
             cout << "loading image [" << ofToString(i) << "/" << ofToString(maxFilesToLoad) << "] : " << filePath << endl;
         }
         
