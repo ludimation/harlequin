@@ -91,7 +91,7 @@ void testApp::setup() {
 //            if (imgTMP.loadImage(filePath)) images.push_back(imgTMP);
             if (imgTMP.loadImage(filePath)) images[i] = imgTMP;
 
-            cout << "loading image [" << ofToString(i) << "/" << ofToString(maxFilesToLoad) << "] : " << filePath << endl;
+            cout << "loading image [" << ofToString(i+1) << "/" << ofToString(maxFilesToLoad) << "] : " << filePath << endl;
         }
         
     } else printf("Could not find \"images\" directory\n");
