@@ -69,18 +69,21 @@ void testApp::setup() {
     displayState = 'd'; //start in debug mode
     
     // read the directory for the images
-    // we know that they are named in seq
-    ofDirectory dir;
-    
-    //int nFiles;
-    int nFiles = dir.listDir("images");
-    ofImage imgTMP;
+    string directoryPath;
     string filePath;
-    imageNames.clear();
-//    int maxFilesToLoad = dir.size();
-    int maxFilesToLoad = 127;
+    ofDirectory dir;
+    int nFiles;
+    int maxFilesToLoad;
+    ofImage imgTMP;
     
+//    directoryPath = "images/_1080";
+    directoryPath = "images/_540";
+    nFiles = dir.listDir(directoryPath);
+    maxFilesToLoad = dir.size();
+//    maxFilesToLoad = 127;
+    imageNames.clear();
     images.resize(maxFilesToLoad);
+    imgTMP.setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
     
     if(nFiles) {
         for(int i=0; i < maxFilesToLoad; i++) {
@@ -88,13 +91,13 @@ void testApp::setup() {
             // add the image name to a list
             filePath = dir.getPath(i);
             imageNames.push_back(filePath);
-//            if (imgTMP.loadImage(filePath)) images.push_back(imgTMP);
+            //            if (imgTMP.loadImage(filePath)) images.push_back(imgTMP);
             if (imgTMP.loadImage(filePath)) images[i] = imgTMP;
 
             cout << "loading image [" << ofToString(i+1) << "/" << ofToString(maxFilesToLoad) << "] : " << filePath << endl;
         }
         
-    } else printf("Could not find \"images\" directory\n");
+    } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
     label = 0;
     img_name = imageNames[label];
 
