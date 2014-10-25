@@ -126,7 +126,7 @@ void testApp::setup() {
     //
     // Select image to start with
     label = 0;
-    img_name = imageNames[label]; // TO DO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
+    img_name = imageNames[label]; // TODO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
 
     
     ////////////////////
@@ -789,7 +789,7 @@ void testApp::setupKinects() {
     openNIPlayer.setRegister(true);
     openNIPlayer.setMirror(drawMirrored);
     openNIPlayer.addUserGenerator();
-    openNIPlayer.setMaxNumUsers(4); // was 2
+    openNIPlayer.setMaxNumUsers(4); // was 2 —— TODO: how high can this go?
     openNIPlayer.start();
 }
 
