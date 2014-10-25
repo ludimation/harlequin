@@ -132,13 +132,17 @@ void testApp::setup() {
     gui -> addFPSSlider("fps");
     gui -> addSpacer();
     gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
+    gui -> addSpacer();
+    gui -> addTextArea("text", "'m' to mirror kinect input");
     gui -> addToggle("mirror image", &drawMirrored);
+    gui -> addSpacer();
+    gui -> addTextArea("text", "'i' or 't' to switch between 'interactive' and 'training' modes");
     gui -> addToggle("draw depth image", &drawDepth);
     gui -> addToggle("draw skeletons", &drawSkeletons);
     gui -> addToggle("drawJoints2MSG", &drawJoints2MSG);
     gui -> addToggle("draw MSG", &drawMSG);
     gui -> addSpacer();
-    gui -> addTextArea("text", "'h' to hide");
+    gui -> addTextArea("text", "'h' to hide this panel");
     gui -> autoSizeToFitWidgets();
 
 }
