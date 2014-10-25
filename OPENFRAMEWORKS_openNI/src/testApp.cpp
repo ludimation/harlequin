@@ -106,7 +106,7 @@ void testApp::setup() {
     directoryPath = "images/_540"; //    directoryPath = "images/_1080";
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
-    maxFilesToLoad = 64; // for testing purposes only (quick load)
+//    maxFilesToLoad = 64; // for testing purposes only (quick load)
     imageNames.clear();
     images.resize(maxFilesToLoad);
     imgTMP.setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
@@ -258,11 +258,6 @@ void testApp::draw(){
     ofPoint jointsCenterProjective;
     ofPoint imgRefPoint;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
-
-//    bool drawDepth;
-//    bool drawSkeletons;
-//    bool drawJoints2MSG;
-//    bool drawMSG;
     
     // Build debug message string
     string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
