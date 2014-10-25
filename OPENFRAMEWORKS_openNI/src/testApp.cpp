@@ -135,6 +135,7 @@ void testApp::setup() {
     gui = new ofxUISuperCanvas("harlequin");
     gui -> addFPSSlider("fps");
     gui -> addSpacer();
+    gui -> addTextArea("text", "'+' or '-' to change frame rate");
     gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
     gui -> addSpacer();
     gui -> addTextArea("text", "'m' to mirror kinect input");
