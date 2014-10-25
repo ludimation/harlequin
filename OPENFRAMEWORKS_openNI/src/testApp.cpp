@@ -83,7 +83,8 @@ void testApp::setup() {
     /////////////////////////
     // Initialize settings //
     /////////////////////////
-    ofSetBackgroundColor(0); // black BG
+    ofBackground(0); // black BG
+//    ofSetBackgroundColor(0); // black BG
 //    ofSetBackgroundColor(0, 0, 0); // black BG
 //    ofSetBackgroundColor(255, 245, 235); // light tan BG
 //    ofSetBackgroundColorHex(0x000000); // Black BG // TODO: fix this because it doesn't seem to be working
@@ -272,7 +273,8 @@ void testApp::draw(){
             // manage style and drawing matrix
             ofPushStyle();
             ofPushMatrix();
-            ofSetColor(255, 255, 255); // white drawing color
+//            ofSetColor(255, 255, 255); // white drawing color
+            ofSetColor(127); // grey drawing color
             
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
                 
@@ -346,7 +348,8 @@ void testApp::draw(){
                 imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
                 imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
                 
-                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
+//                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
+                ofEnableBlendMode(OF_BLENDMODE_ADD);
                 // draw image at position and scale relative to center of screen and image
                 img.draw(imgRefPoint.x,
                          imgRefPoint.y,
