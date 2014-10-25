@@ -83,6 +83,10 @@ void testApp::setup() {
     /////////////////////////
     // Initialize settings //
     /////////////////////////
+    ofSetBackgroundColor(0); // black BG
+//    ofSetBackgroundColor(0, 0, 0); // black BG
+//    ofSetBackgroundColor(255, 245, 235); // light tan BG
+//    ofSetBackgroundColorHex(0x000000); // Black BG // TODO: fix this because it doesn't seem to be working
     drawNextFrameMilliseconds = 0;
     setDisplayState('i'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes)
     
@@ -267,7 +271,6 @@ void testApp::draw(){
         case 'i':
             
             // manage style and drawing matrix
-            ofSetBackgroundColor(255, 245, 235); // light tan BG
             ofPushStyle();
             ofPushMatrix();
             ofSetColor(255, 255, 255); // white drawing color
@@ -370,7 +373,6 @@ void testApp::draw(){
         default:
 
             // manage style and drawing matrix
-            ofSetBackgroundColorHex(000000); // Black BG // TODO: fix this because it doesn't seem to be working
             ofPushStyle();
             ofPushMatrix();
             ofSetColor(255, 255, 255); // white drawing color
