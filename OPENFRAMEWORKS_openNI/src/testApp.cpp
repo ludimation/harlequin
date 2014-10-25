@@ -123,6 +123,24 @@ void testApp::setup() {
     // Select image to start with
     label = 0;
     img_name = imageNames[label]; // TO DO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
+
+    
+    ////////////////////
+    // Initialize GUI //
+    ////////////////////
+    gui = new ofxUISuperCanvas("harlequin");
+    gui -> addFPSSlider("fps");
+    gui -> addSpacer();
+    gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
+    gui -> addToggle("mirror image", &drawMirrored);
+    gui -> addToggle("draw depth image", &drawDepth);
+    gui -> addToggle("draw skeletons", &drawSkeletons);
+    gui -> addToggle("drawJoints2MSG", &drawJoints2MSG);
+    gui -> addToggle("draw MSG", &drawMSG);
+    gui -> addSpacer();
+    gui -> addTextArea("text", "'h' to hide");
+    gui -> autoSizeToFitWidgets();
+
 }
 
 //--------------------------------------------------------------
@@ -504,6 +522,11 @@ void testApp::keyPressed(int key){
     ofImage img;
     
     switch (key) {
+            
+        case 'h':
+            gui ->toggleVisible();
+            break;
+            
         case ' ':
             //            if(!openNIRecorder.isRecording()){
             ////                openNIRecorder.startRecording(ofToDataPath("test"+ std::to_string(ofGetSystemTimeMicros()/1000)+".oni"));
