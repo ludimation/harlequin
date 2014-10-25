@@ -236,8 +236,9 @@ void testApp::draw(){
     
     // idle until it's time to draw the next frame
     while (ofGetElapsedTimeMillis() < drawNextFrameMilliseconds) {
-        // check mirrored function (could be moved outside this idle state)
-        if (openNIPlayer.getMirror() != drawMirrored) openNIPlayer.setMirror(drawMirrored); //TODO: use a callback function for this instead
+//        // check mirrored function (could be moved outside this idle state)
+//        if (openNIPlayer.getMirror() != drawMirrored) openNIPlayer.setMirror(drawMirrored); //TODO: use a callback function for toggling mirroring using the GUI instead
+        // - Doing it this way seems to be making the build stutter
         
         // TODO: put streaming events here
         //  - should this be moved to the "update()" function?
@@ -350,6 +351,10 @@ void testApp::draw(){
                 
 //                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
                 ofEnableBlendMode(OF_BLENDMODE_ADD);
+//                // draw image at position and scale relative to center of screen and image // TODO: Fix image depth drawing
+//                img.draw(imgRefPoint.x,
+//                         imgRefPoint.y,
+//                         jointsCenterProjective.z);
                 // draw image at position and scale relative to center of screen and image
                 img.draw(imgRefPoint.x,
                          imgRefPoint.y,
