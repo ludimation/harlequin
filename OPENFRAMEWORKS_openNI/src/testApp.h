@@ -24,51 +24,60 @@ public:
     
     void setupKinects();
     int getRandomExcluding(int min, int max, int i);
+    
+    void setDisplayState(char newState);
 
     //	ofxOpenNI               openNIRecorder;
     ofxOpenNI               openNIPlayer;
     ofxOpenNIUser           nTrackedUser;
     int                     nTrackedUsers;
-    char                    displayState;
     ofFile                  file;
-//    string                  testJointData;
     string                  trainingModelJointsPosABSfileName;
     string                  trainingDataJointsPosABSfileName;
-    // TODO:
     string                  trainingModelJointsPosRelfileName;
     string                  trainingDataJointsPosRelfileName;
     string                  trainingModelJointsRotAxisAfileName;
     string                  trainingDataJointsRotAxisAfileName;
     string                  testFileName;
     string                  testFileModelName;
-    ofBuffer                testFileBuff;
-    
+
     ofTrueTypeFont verdana;
     
     void userEvent(ofxOpenNIUserEvent & event);
     void gestureEvent(ofxOpenNIGestureEvent & event);
 
 private:
+    
+    // artist specified settings
+    int                             drawFrameRate;
+    int                             drawNextFrameMilliseconds;
+    bool                            drawMirrored;
+    char                            displayState;
+    // debug drawing flags
+    bool                            drawDepth;
+    bool                            drawSkeletons;
+    bool                            drawJoints2MSG;
+    bool                            drawMSG;
+    
     ofImage                         img;
+    
     GRT::SVM                        trainingModelJointsPosABS;
     GRT::ClassificationData         trainingDataJointsPosABS;
-    // TODO:
     GRT::SVM                        trainingModelJointsPosRel;
     GRT::ClassificationData         trainingDataJointsPosRel;
     GRT::SVM                        trainingModelJointsRotAxisA;
     GRT::ClassificationData         trainingDataJointsRotAxisA;
     GRT::UINT label;
     GRT::UINT lbl;
+
     vector< vector< ofPoint > >     trackedUserJointsPosABS;
     vector< vector< double > >      trackedUserJointsPosABSDouble;
     vector< vector< ofPoint > >     trackedUserJointsPosRel;
     vector< vector< double > >      trackedUserJointsPosRelDouble;
     vector< vector< ofPoint > >     trackedUserJointsRotAxisA;
     vector< vector< double > >      trackedUserJointsRotAxisADouble;
-    vector< ofPoint >               trackedUserCentersProjective;
     
-//    vector<ofPoint>                 trackedUserJoints;
-//    vector<double>                  trackedUserJointsDouble;
+    vector< ofPoint >               trackedUserCentersProjective;
     
     string                  img_name;
     vector< string >        imageNames;

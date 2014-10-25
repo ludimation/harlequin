@@ -31,26 +31,28 @@ public:
 
 //--------------------------------------------------------------
 void testApp::setup() {
+    
+    ///////////////////////////////////
+    // Training Data and Model Setup //
+    ///////////////////////////////////
     trainingDataJointsPosABSfileName    = "JointsPosABSdata.txt";
     trainingModelJointsPosABSfileName   = "JointsPosABSmodel.txt";
     trainingDataJointsPosRelfileName    = "JointsPosReldata.txt";
     trainingModelJointsPosRelfileName   = "JointsPosRelmodel.txt";
     trainingDataJointsRotAxisAfileName  = "JointsRotAxisAdata.txt";
     trainingModelJointsRotAxisAfileName = "JointsRotAxisAmodel.txt";
-    
-    
+    //
     GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
     GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
     GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
-    
+    //
     trainingDataJointsPosABS.setDatasetName("harlequinPosABS");
     trainingDataJointsPosABS.setNumDimensions(45);
     trainingDataJointsPosRel.setDatasetName("harlequinPosRel");
     trainingDataJointsPosRel.setNumDimensions(45);
     trainingDataJointsRotAxisA.setDatasetName("harlequinRotAxisA");
     trainingDataJointsRotAxisA.setNumDimensions(45);
-    
-    
+    //
     // TODO: test these to make sure they work
     trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
     trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName)); // TODO: this doesn't seem to work
@@ -62,45 +64,65 @@ void testApp::setup() {
     trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
     trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
     
+    //////////////////
+    // Kinect Setup //
+    //////////////////
     setupKinects();
     
+    ///////////////
+    // Load font //
+    ///////////////
     verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
     
-    displayState = 'd'; //start in debug mode
+    ///////////////////////////////
+    // Artist specified settings //
+    ///////////////////////////////
+    drawFrameRate   = 30;
+    drawMirrored    = false;
+
+    /////////////////////////
+    // Initialize settings //
+    /////////////////////////
+    drawNextFrameMilliseconds = 0;
+    setDisplayState('i'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes)
     
-    // read the directory for the images
+    /////////////////
+    // Load images //
+    /////////////////
+    //
+    // declare local variables
     string directoryPath;
     string filePath;
     ofDirectory dir;
     int nFiles;
     int maxFilesToLoad;
     ofImage imgTMP;
-    
-//    directoryPath = "images/_1080";
-    directoryPath = "images/_540";
+    //
+    // initialize
+    directoryPath = "images/_540"; //    directoryPath = "images/_1080";
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
-//    maxFilesToLoad = 127;
+    maxFilesToLoad = 64; // for testing purposes only (quick load)
     imageNames.clear();
     images.resize(maxFilesToLoad);
     imgTMP.setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
-    
+    //
+    // load files
     if(nFiles) {
         for(int i=0; i < maxFilesToLoad; i++) {
             
             // add the image name to a list
             filePath = dir.getPath(i);
             imageNames.push_back(filePath);
-            //            if (imgTMP.loadImage(filePath)) images.push_back(imgTMP);
             if (imgTMP.loadImage(filePath)) images[i] = imgTMP;
 
             cout << "loading image [" << ofToString(i+1) << "/" << ofToString(maxFilesToLoad) << "] : " << filePath << endl;
         }
-        
     } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
+    //
+    // Select image to start with
     label = 0;
-    img_name = imageNames[label];
-
+    img_name = imageNames[label]; // TO DO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
 }
 
 //--------------------------------------------------------------
@@ -183,26 +205,34 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
+    
+    // idle until it's time to draw the next frame
+    while (ofGetElapsedTimeMillis() < drawNextFrameMilliseconds) {
+        // TODO: put streaming events here
+        //  - should this be moved to the "update()" function?
+        cout << "Waiting until ofGetElapsedTimeMillis() == drawNextFrameMilliseconds" << endl;
+        cout << "    ofGetElapsedTimeMillis() = " << ofGetElapsedTimeMillis() << endl;
+        cout << "    drawNextFrameMilliseconds = " << drawNextFrameMilliseconds << endl;
+    }
+    // calculate new time to wait until drawing next frame
+    if (drawFrameRate != 0) {
+        drawNextFrameMilliseconds = ofGetElapsedTimeMillis() + 1000 / drawFrameRate;
+    }
+    
     ofPoint jointsCenterProjective;
     ofPoint imgRefPoint;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
 
-    bool drawDepth;
-    bool drawSkeletons;
-    bool drawJoints2MSG;
-    bool drawMSG;
+//    bool drawDepth;
+//    bool drawSkeletons;
+//    bool drawJoints2MSG;
+//    bool drawMSG;
     
     // Build debug message string
     string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
     
     switch (displayState) {
         case 'i':
-            
-            drawMSG = true;
-            drawJoints2MSG = true;
-            drawDepth = true;
-            drawSkeletons = true;
             
             // manage style and drawing matrix
             ofSetBackgroundColor(255, 245, 235); // light tan BG
@@ -301,20 +331,11 @@ void testApp::draw(){
             ofPopMatrix();
             ofPopStyle();
             
-            drawMSG = true;
-            drawJoints2MSG = true;
-            drawDepth = true;
-            drawSkeletons = true;
-
             break;
             
-        case 'd':
+        case 'd': // debug
+        case 't': // training
         default:
-
-            drawMSG = true;
-            drawJoints2MSG = true;
-            drawDepth = true;
-            drawSkeletons = true;
 
             // manage style and drawing matrix
             ofSetBackgroundColorHex(000000); // Black BG // TODO: fix this because it doesn't seem to be working
@@ -419,6 +440,43 @@ void testApp::exit(){
 }
 
 //--------------------------------------------------------------
+void testApp::setDisplayState(char newState) {
+    bool undefinedState = false;
+    
+    switch (newState) {
+        case 't': // training
+            // fall through (intentional)
+        case 'd': // debug
+            /////////////////////////
+            // debug drawing flags //
+            /////////////////////////
+            drawDepth       = true;
+            drawSkeletons   = true;
+            drawJoints2MSG  = true;
+            drawMSG         = true;
+            
+            break;
+            
+        case 'i':
+            /////////////////////////
+            // debug drawing flags //
+            /////////////////////////
+            drawDepth       = false;
+            drawSkeletons   = false;
+            drawJoints2MSG  = false;
+            drawMSG         = false;
+
+            break;
+
+        default:
+            undefinedState = true;
+            break;
+    }
+
+    if (!undefinedState) displayState = newState;
+}
+
+//--------------------------------------------------------------
 void testApp::keyPressed(int key){
 
     // string fileName = "test_20140501_1904.oni";
@@ -439,9 +497,11 @@ void testApp::keyPressed(int key){
             //                openNIRecorder.stopRecording();
             //            }
             break;
+        
         case 'p':
             //openNIPlayer.startPlayer(fileName);
             break;
+        
         case 'b': // NOTE: updated to 'b' for BUILD DATA
             if (displayState == 'i') break; // do not train data during installation mode
 
@@ -457,6 +517,7 @@ void testApp::keyPressed(int key){
             }
             
             break;
+        
         case '<':
         case ',':
         case '[':
@@ -471,6 +532,7 @@ void testApp::keyPressed(int key){
 
             // openNIPlayer.previousFrame();
             break;
+        
         case '>':
         case '.':
         case ']':
@@ -485,6 +547,7 @@ void testApp::keyPressed(int key){
 
             // openNIPlayer.nextFrame();
             break;
+        
         case 'r': // random image
             
             saveData = true;
@@ -496,6 +559,7 @@ void testApp::keyPressed(int key){
             img_name = imageNames[label];
 
             break;
+        
         case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
             if (displayState == 'i') break; // do not train data during installation mode
             
@@ -503,6 +567,7 @@ void testApp::keyPressed(int key){
             saveModel = true;
             
             break;
+            
         case 'c': // TODO: clean  up?
             if (displayState == 'i') break; // do not train data during installation mode
 
@@ -557,33 +622,35 @@ void testApp::keyPressed(int key){
                 cout << "trainingModelJointsPosRel could not predict" << endl;
             }
             //*/
-            
             break;
-        case 'i':
-            // switch displayState to "installation"
+        
+        case 'i': // interactive mode
             saveData = true;
             saveModel = true;
-
             // fall through (intentional)
-        case 'd':
-            // switch displayState to "debug"
-            displayState = key;
+        case 't': // training
+            // fall through (intentional)
+        case 'd': // debug
+            
+            setDisplayState(key);
+
             break;
+
         case '/':
             // openNIPlayer.setPaused(!openNIPlayer.isPaused());
             break;
+        
         case 'm':
             // openNIPlayer.firstFrame();
             break;
+        
         case 'x':
             //            openNIRecorder.stop();
             openNIPlayer.stop();
             break;
+        
         case 'k':
             setupKinects(); // TODO: debug this, doesn't seem to work properly.
-            break;
-        case 't':
-            //            openNIRecorder.toggleRegister();
             break;
     }
     

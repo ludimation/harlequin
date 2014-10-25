@@ -139,7 +139,6 @@
 		6AD41BD719FBE8D200B88A4C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AD41BD619FBE8D200B88A4C /* AppDelegate.m */; };
 		6AD41BD919FBE8D200B88A4C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6AD41BD819FBE8D200B88A4C /* Images.xcassets */; };
 		6AD41BDC19FBE8D200B88A4C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AD41BDA19FBE8D200B88A4C /* MainMenu.xib */; };
-		6AD41BE819FBE8D200B88A4C /* harlequin_OSX10_7Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AD41BE719FBE8D200B88A4C /* harlequin_OSX10_7Tests.m */; };
 		7704EC2414C70657001AF021 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7704EC2114C70657001AF021 /* testApp.cpp */; };
 		7704EC2614C7066A001AF021 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7704EC2514C7066A001AF021 /* main.cpp */; };
 		770F032514B9969E003CCE99 /* libnimCodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 770F031714B9969E003CCE99 /* libnimCodecs.dylib */; };
@@ -477,9 +476,7 @@
 		6AD41BD619FBE8D200B88A4C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		6AD41BD819FBE8D200B88A4C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6AD41BDB19FBE8D200B88A4C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		6AD41BE119FBE8D200B88A4C /* harlequin_OSX10.7Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = harlequin_OSX10.7Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6AD41BE619FBE8D200B88A4C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6AD41BE719FBE8D200B88A4C /* harlequin_OSX10_7Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = harlequin_OSX10_7Tests.m; sourceTree = "<group>"; };
+		6AD41BE119FBE8D200B88A4C /* harlequin_OSX10.7Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = harlequin_OSX10.7Tests.xctest; path = /Users/ludimation/of_v0.8.4_osx_release/apps/harlequin/OPENFRAMEWORKS_openNI/bin/harlequin_OSX10.7Tests.xctest; sourceTree = "<absolute>"; };
 		7704EC2114C70657001AF021 /* testApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testApp.cpp; sourceTree = "<group>"; };
 		7704EC2214C70657001AF021 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testApp.h; sourceTree = "<group>"; };
 		7704EC2514C7066A001AF021 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -1440,23 +1437,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		6AD41BE419FBE8D200B88A4C /* harlequin_OSX10.7Tests */ = {
-			isa = PBXGroup;
-			children = (
-				6AD41BE719FBE8D200B88A4C /* harlequin_OSX10_7Tests.m */,
-				6AD41BE519FBE8D200B88A4C /* Supporting Files */,
-			);
-			path = harlequin_OSX10.7Tests;
-			sourceTree = "<group>";
-		};
-		6AD41BE519FBE8D200B88A4C /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				6AD41BE619FBE8D200B88A4C /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		770F031514B9969E003CCE99 /* lib */ = {
 			isa = PBXGroup;
 			children = (
@@ -1767,8 +1747,6 @@
 				E4B69B5B0A3A1756003C02F2 /* openNISample007Debug.app */,
 				6AD41BCF19FBE8D200B88A4C /* harlequin_OSX10.7.app */,
 				6AD41BD019FBE8D200B88A4C /* harlequin_OSX10.7 */,
-				6AD41BE119FBE8D200B88A4C /* harlequin_OSX10.7Tests.xctest */,
-				6AD41BE419FBE8D200B88A4C /* harlequin_OSX10.7Tests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1958,7 +1936,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6AD41BE819FBE8D200B88A4C /* harlequin_OSX10_7Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
