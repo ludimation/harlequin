@@ -219,6 +219,16 @@ void testApp::draw(){
         drawNextFrameMilliseconds = ofGetElapsedTimeMillis() + 1000 / drawFrameRate;
     }
     
+    if (drawDepth and drawDepthBehind){
+        ofPushStyle();
+
+        ofEnableBlendMode(OF_BLENDMODE_ADD);
+        openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+        
+        ofPopStyle();
+    }
+
+    
     ofPoint jointsCenterProjective;
     ofPoint imgRefPoint;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
@@ -385,7 +395,7 @@ void testApp::draw(){
     if (drawSkeletons or drawDepth){
         ofPushStyle();
         //  openNIRecorder.drawDebug(0, 0);
-        if (drawDepth)
+        if (drawDepth and !drawDepthBehind)
         {
             ofEnableBlendMode(OF_BLENDMODE_ADD);
             openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
@@ -455,6 +465,7 @@ void testApp::setDisplayState(char newState) {
             // debug drawing flags //
             /////////////////////////
             drawDepth       = true;
+            drawDepthBehind = false;
             drawSkeletons   = true;
             drawJoints2MSG  = true;
             drawMSG         = true;
@@ -466,6 +477,8 @@ void testApp::setDisplayState(char newState) {
             // debug drawing flags //
             /////////////////////////
             drawDepth       = false;
+//            drawDepth       = true;
+            drawDepthBehind = true;
             drawSkeletons   = false;
             drawJoints2MSG  = false;
             drawMSG         = false;

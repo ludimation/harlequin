@@ -58,6 +58,7 @@ private:
     char                            displayState;
     // debug drawing flags
     bool                            drawDepth;
+    bool                            drawDepthBehind;
     bool                            drawSkeletons;
     bool                            drawJoints2MSG;
     bool                            drawMSG;
