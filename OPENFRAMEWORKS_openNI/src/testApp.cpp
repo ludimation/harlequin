@@ -443,6 +443,10 @@ void testApp::exit(){
 void testApp::setDisplayState(char newState) {
     bool undefinedState = false;
     
+    // save data before switching modes
+    saveData();
+    saveModel();
+    
     switch (newState) {
         case 't': // training
             // fall through (intentional)
@@ -483,8 +487,6 @@ void testApp::keyPressed(int key){
     int cloudRes = -1;
     bool fileWritten;
     string testJointBuff;
-    bool saveData;
-    bool saveModel;
     
     ofImage img;
     
@@ -522,7 +524,7 @@ void testApp::keyPressed(int key){
         case ',':
         case '[':
            
-            saveData = true;
+            saveData();
             
             if (displayState == 'i') break; // do not train data during installation mode
             
@@ -537,7 +539,7 @@ void testApp::keyPressed(int key){
         case '.':
         case ']':
             
-            saveData = true;
+            saveData();
             
             if (displayState == 'i') break; // do not train data during installation mode
 
@@ -550,7 +552,7 @@ void testApp::keyPressed(int key){
         
         case 'r': // random image
             
-            saveData = true;
+            saveData();
 
             if (displayState == 'i') break; // do not train data during installation mode
             
@@ -563,16 +565,16 @@ void testApp::keyPressed(int key){
         case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
             if (displayState == 'i') break; // do not train data during installation mode
             
-            saveData = true;
-            saveModel = true;
+            saveData();
+            saveModel();
             
             break;
             
         case 'c': // TODO: clean  up?
             if (displayState == 'i') break; // do not train data during installation mode
 
-            saveData = true;
-            saveModel = true;
+            saveData();
+            saveModel();
             
             // TODO:
             //  - separate out into a function so it can be called from both here and draw()
@@ -625,8 +627,6 @@ void testApp::keyPressed(int key){
             break;
         
         case 'i': // interactive mode
-            saveData = true;
-            saveModel = true;
             // fall through (intentional)
         case 't': // training
             // fall through (intentional)
@@ -673,23 +673,25 @@ void testApp::keyPressed(int key){
             setupKinects(); // TODO: debug this, doesn't seem to work properly.
             break;
     }
+}
+
+//--------------------------------------------------------------
+void testApp::saveData(){
+    trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
+    trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
+    trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
+}
+
+//--------------------------------------------------------------
+void testApp::saveModel(){
+    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
+    trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
     
-    if (saveData) {
-        trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
-        trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
-        trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
-    }
+    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
+    trainingModelJointsPosRel.saveModelToFile(ofToDataPath(trainingModelJointsPosRelfileName));
     
-    if (saveModel) {
-        trainingModelJointsPosABS.train(trainingDataJointsPosABS);
-        trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
-        
-        trainingModelJointsPosRel.train(trainingDataJointsPosRel);
-        trainingModelJointsPosRel.saveModelToFile(ofToDataPath(trainingModelJointsPosRelfileName));
-        
-        trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
-        trainingModelJointsRotAxisA.saveModelToFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
-    }
+    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+    trainingModelJointsRotAxisA.saveModelToFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
 }
 
 //--------------------------------------------------------------

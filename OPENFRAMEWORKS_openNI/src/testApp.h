@@ -26,6 +26,9 @@ public:
     int getRandomExcluding(int min, int max, int i);
     
     void setDisplayState(char newState);
+    
+    void saveData();
+    void saveModel();
 
     //	ofxOpenNI               openNIRecorder;
     ofxOpenNI               openNIPlayer;
