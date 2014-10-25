@@ -635,6 +635,22 @@ void testApp::keyPressed(int key){
             setDisplayState(key);
 
             break;
+            
+        case '=': // increase drawFrameRate
+            // fall through (intentional)
+        case '+': // increase drawFrameRate
+            
+            if (drawFrameRate < 90) drawFrameRate = drawFrameRate + 5;
+            
+            break;
+            
+        case '_': // decrease drawFrameRate
+            // fall through (intentional)
+        case '-': // decrease drawFrameRate
+            
+            if (drawFrameRate > 5) drawFrameRate = drawFrameRate - 5;
+            
+            break;
 
         case '/':
             // openNIPlayer.setPaused(!openNIPlayer.isPaused());
@@ -642,6 +658,10 @@ void testApp::keyPressed(int key){
         
         case 'm':
             // openNIPlayer.firstFrame();
+            
+            drawMirrored = !drawMirrored;
+            openNIPlayer.setMirror(drawMirrored);
+            
             break;
         
         case 'x':
