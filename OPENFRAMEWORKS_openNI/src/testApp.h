@@ -4,6 +4,7 @@
 #include "ofxOpenNI.h"
 #include "ofMain.h"
 #include "GRT.h"
+#include "ofxUI.h"
 
 class testApp : public ofBaseApp {
 
@@ -45,6 +46,8 @@ public:
     
     void userEvent(ofxOpenNIUserEvent & event);
     void gestureEvent(ofxOpenNIGestureEvent & event);
+    
+    ofxUISuperCanvas *gui;
 
 private:
     
