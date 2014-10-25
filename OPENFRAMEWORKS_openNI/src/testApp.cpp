@@ -235,6 +235,9 @@ void testApp::draw(){
     
     // idle until it's time to draw the next frame
     while (ofGetElapsedTimeMillis() < drawNextFrameMilliseconds) {
+        // check mirrored function (could be moved outside this idle state)
+        if (openNIPlayer.getMirror() != drawMirrored) openNIPlayer.setMirror(drawMirrored);
+        
         // TODO: put streaming events here
         //  - should this be moved to the "update()" function?
         cout << "Waiting until ofGetElapsedTimeMillis() == drawNextFrameMilliseconds" << endl;
