@@ -350,7 +350,8 @@ void testApp::draw(){
                 imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
                 
 //                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
-                ofEnableBlendMode(OF_BLENDMODE_ADD);
+                ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+//                ofEnableBlendMode(OF_BLENDMODE_ADD);
 //                // draw image at position and scale relative to center of screen and image // TODO: Fix image depth drawing
 //                img.draw(imgRefPoint.x,
 //                         imgRefPoint.y,
@@ -507,8 +508,8 @@ void testApp::setDisplayState(char newState) {
             /////////////////////////
             // debug drawing flags //
             /////////////////////////
-            drawDepth       = false;
-//            drawDepth       = true;
+//            drawDepth       = false;
+            drawDepth       = true;
             drawDepthBehind = true;
             drawSkeletons   = false;
             drawJoints2MSG  = false;
@@ -797,7 +798,8 @@ void testApp::setupKinects() {
     openNIPlayer.setRegister(true);
     openNIPlayer.setMirror(drawMirrored);
     openNIPlayer.addUserGenerator();
-    openNIPlayer.setMaxNumUsers(4); // was 2 —— TODO: how high can this go?
+//    openNIPlayer.setMaxNumUsers(4); // was 2 —— TODO: how high can this go?
+    openNIPlayer.setMaxNumUsers(2); // was 2 —— TODO: how high can this go? Seems to crash with 4 users at the moment
     openNIPlayer.start();
 }
 
