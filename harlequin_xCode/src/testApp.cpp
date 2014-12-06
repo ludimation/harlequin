@@ -129,13 +129,23 @@ void testApp::setup() {
     gui -> addSpacer();
     gui -> addTextArea("text", "'i' or 't' to switch between 'interactive' and 'training' modes");
     gui -> addToggle("draw depth image", &drawDepth);
+
+//    vector<string> vnames; vnames.push_back("ROCKS"); vnames.push_back("MY"); vnames.push_back("SOCKS");
+//    gui->addLabel("VERTICAL RADIO", OFX_UI_FONT_MEDIUM);
+//    ofxUIRadio *radio = gui->addRadio("VR", vnames, OFX_UI_ORIENTATION_VERTICAL);
+//    radio->activateToggle("SOCKS");
+//    
+//    gui->addSpacer();
+
     gui -> addToggle("draw skeletons", &drawSkeletons);
     gui -> addToggle("drawJoints2MSG", &drawJoints2MSG);
     gui -> addToggle("draw MSG", &drawMSG);
     gui -> addSpacer();
     gui -> addTextArea("text", "'h' to hide this panel");
+    gui -> addSpacer();
+    gui -> addLabelButton("save settings", &loadImagesNow);
     gui -> autoSizeToFitWidgets();
-//    gui -> loadSettings("guiSettings.xml");
+    gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
     ofAddListener(gui -> newGUIEvent, this, &testApp::guiEvent);
 
 }
@@ -209,6 +219,10 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         {
             keyPressed('x');
         }
+    }
+    if (name == "save settings")
+    {
+        gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
     }
 }
 
@@ -548,7 +562,6 @@ void testApp::exit(){
     //    openNIRecorder.stop();
     openNIPlayer.stop();
 
-    gui->saveSettings("guiSettings.xml");
     delete gui;
 }
 
@@ -592,8 +605,13 @@ void testApp::setDisplayState(char newState) {
             undefinedState = true;
             break;
     }
+    
 
-    if (!undefinedState) displayState = newState;
+    if (!undefinedState)
+    {
+        displayState = newState;
+//        gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
+    }
 }
 
 //--------------------------------------------------------------
