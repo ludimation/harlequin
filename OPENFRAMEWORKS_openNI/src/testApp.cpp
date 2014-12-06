@@ -96,45 +96,26 @@ void testApp::setup() {
     /////////////////
     //
     // declare local variables
-    string directoryPath;
-    string filePath;
-    ofDirectory dir;
-    int nFiles;
-    int maxFilesToLoad;
-    ofImage imgTMP;
+    string          directoryPath;
+    ofDirectory     dir;
+    int             nFiles;
     //
-    // initialize
-    directoryPath = "images/_540"; //    directoryPath = "images/_1080";
+    // initialize file related properties
+    directoriesAll.push_back("images/_540");
+    directoriesAll.push_back("images/_1080");
+    nFilesToLoad = 64; // for testing purposes only (quick load)
+    directoryPath = directoriesAll[0];
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
-//    maxFilesToLoad = 64; // for testing purposes only (quick load)
-    imageNames.clear();
-    images.resize(maxFilesToLoad);
-    imgTMP.setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
-    //
-    // load files
-    if(nFiles) {
-        for(int i=0; i < maxFilesToLoad; i++) {
-            
-            // add the image name to a list
-            filePath = dir.getPath(i);
-            imageNames.push_back(filePath);
-            if (imgTMP.loadImage(filePath)) images[i] = imgTMP;
-
-            cout << "loading image [" << ofToString(i+1) << "/" << ofToString(maxFilesToLoad) << "] : " << filePath << endl;
-        }
-    } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
-    //
-    // Select image to start with
-    label = 0;
-    img_name = imageNames[label]; // TODO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
-
     
     ////////////////////
     // Initialize GUI //
     ////////////////////
     gui = new ofxUISuperCanvas("harlequin");
     gui -> addFPSSlider("fps");
+    gui -> addSpacer();
+    gui -> addIntSlider("number of files to load", 1, maxFilesToLoad, &nFilesToLoad);
+    gui -> addLabelToggle("load images", &loadImagesNow);
     gui -> addSpacer();
     gui -> addTextArea("text", "'+' or '-' to change frame rate");
     gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
@@ -150,7 +131,64 @@ void testApp::setup() {
     gui -> addSpacer();
     gui -> addTextArea("text", "'h' to hide this panel");
     gui -> autoSizeToFitWidgets();
+//    gui -> loadSettings("guiSettings.xml");
+    ofAddListener(gui -> newGUIEvent, this, &testApp::guiEvent);
 
+}
+
+void testApp::loadImages(bool load) {
+    imageNames.clear();
+    images.clear();
+    
+    if (load) {
+        // declare local variables
+        string          directoryPath;
+        string          filePath;
+        ofDirectory     dir;
+        int             nFiles;
+        ofImage         imgTMP;
+        //
+        // initialize
+        directoryPath = directoriesAll[0];
+        nFiles = dir.listDir(directoryPath);
+        maxFilesToLoad = dir.size();
+        images.resize(maxFilesToLoad);
+        imgTMP.setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
+        //
+        // load files
+        if(nFiles) {
+            for(int i=0; i < nFilesToLoad; i++) {
+                
+                // add the image name to a list
+                filePath = dir.getPath(i);
+                imageNames.push_back(filePath);
+                if (imgTMP.loadImage(filePath)) images[i] = imgTMP;
+                
+                cout << "loading image [" << ofToString(i+1) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
+            }
+        } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
+        //
+        // Select image to start with
+        label = 0;
+        img_name = imageNames[label]; // TODO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
+    }
+    else
+    {
+        cout << "images unloaded -- imageNames.size() = " << imageNames.size() << "; images.size() = "<< images.size() << endl;
+    }
+}
+
+void testApp::guiEvent(ofxUIEventArgs &e)
+{
+    string name = e.widget->getName();
+    int kind = e.widget->getKind();
+    
+    if(name == "load images")
+    {
+        loadImages(loadImagesNow);
+        //ofxUILabelToggle *toggle = (ofxUILabelToggle *) e.widget;
+        //loadImagesNow = toggle->getValue();
+    }
 }
 
 //--------------------------------------------------------------
@@ -303,7 +341,7 @@ void testApp::draw(){
 
                 // select label: Relative Position model
                 ///*
-                if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]))
+                if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && imageNames.size())
                 {
                     label = trainingModelJointsPosRel.getPredictedClassLabel();
                     cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
@@ -320,6 +358,7 @@ void testApp::draw(){
                 }
                 else
                 {
+                    img_name = "";
                     cout << "trainingModelJointsPosRel could not predict" << endl;
                 }
                 //*/
@@ -335,39 +374,42 @@ void testApp::draw(){
                     cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
                 }
                 
-                // set image to draw
-                img = images[label];
-                
-                // calculate reference points for drawing
-                if(jointsCenterProjective.z != 0) { // scale
-                    imgRefPoint.z = 1500.0f / float( jointsCenterProjective.z);
-                } else {
-                    imgRefPoint.z = 1.0f;
+                if (imageNames.size())
+                {
+                    // set image to draw
+                    img = images[label];
+                    
+                    // calculate reference points for drawing
+                    if(jointsCenterProjective.z != 0) { // scale
+                        imgRefPoint.z = 1500.0f / float( jointsCenterProjective.z);
+                    } else {
+                        imgRefPoint.z = 1.0f;
+                    }
+                    float xOffset = float( img.width  ) * imgRefPoint.z / 2.0f;
+                    float yOffset = float( img.height  ) * imgRefPoint.z / 2.0f;
+                    imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
+                    imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
+                    
+    //                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
+                    ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+    //                ofEnableBlendMode(OF_BLENDMODE_ADD);
+    //                // draw image at position and scale relative to center of screen and image // TODO: Fix image depth drawing
+    //                img.draw(imgRefPoint.x,
+    //                         imgRefPoint.y,
+    //                         jointsCenterProjective.z);
+                    // draw image at position and scale relative to center of screen and image
+                    img.draw(imgRefPoint.x,
+                             imgRefPoint.y,
+                             img.width * imgRefPoint.z,
+                             img.height * imgRefPoint.z);
+                    
+                    // Build debug message string
+                    msg = msg + "\n jointsCenterProjective = " + ofToString(jointsCenterProjective);
+                    msg = msg + "\n xOffset = " + ofToString(xOffset);
+                    msg = msg + "\n yOffset = " + ofToString(yOffset);
+                    msg = msg + "\n imgRef = " + ofToString(imgRefPoint);
+                    msg = msg + "\n sceenCenter = " + ofToString(screenCenter);
                 }
-                float xOffset = float( img.width  ) * imgRefPoint.z / 2.0f;
-                float yOffset = float( img.height  ) * imgRefPoint.z / 2.0f;
-                imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
-                imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
-                
-//                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
-                ofEnableBlendMode(OF_BLENDMODE_DISABLED);
-//                ofEnableBlendMode(OF_BLENDMODE_ADD);
-//                // draw image at position and scale relative to center of screen and image // TODO: Fix image depth drawing
-//                img.draw(imgRefPoint.x,
-//                         imgRefPoint.y,
-//                         jointsCenterProjective.z);
-                // draw image at position and scale relative to center of screen and image
-                img.draw(imgRefPoint.x,
-                         imgRefPoint.y,
-                         img.width * imgRefPoint.z,
-                         img.height * imgRefPoint.z);
-                
-                // Build debug message string
-                msg = msg + "\n jointsCenterProjective = " + ofToString(jointsCenterProjective);
-                msg = msg + "\n xOffset = " + ofToString(xOffset);
-                msg = msg + "\n yOffset = " + ofToString(yOffset);
-                msg = msg + "\n imgRef = " + ofToString(imgRefPoint);
-                msg = msg + "\n sceenCenter = " + ofToString(screenCenter);
             }
             
             // reset drawing matrix and style
@@ -387,35 +429,38 @@ void testApp::draw(){
 
             // draw image(s)
             // if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
-            img = images[label];
-            float imgRatioX;
-            float imgRatioY;
-            float imgRatio;
+            if (imageNames.size())
+            {
+                img = images[label];
+                float imgRatioX;
+                float imgRatioY;
+                float imgRatio;
 
-            if (img.width) {
-                imgRatioX = float(ofGetWidth()) / float(img.width);
-            } else {
-                imgRatioX = 1.0f;
-            }
+                if (img.width) {
+                    imgRatioX = float(ofGetWidth()) / float(img.width);
+                } else {
+                    imgRatioX = 1.0f;
+                }
 
-            if (img.height) {
-                imgRatioY = float(ofGetHeight()) / float(img.height);
-            } else {
-                imgRatioY = 1.0f;
+                if (img.height) {
+                    imgRatioY = float(ofGetHeight()) / float(img.height);
+                } else {
+                    imgRatioY = 1.0f;
+                }
+                
+                if (imgRatioX < imgRatioY) {
+                    imgRatio = imgRatioX;
+                } else {
+                    imgRatio = imgRatioY;
+                }
+                
+                img.draw(
+                         (ofGetWidth() - img.width * imgRatio) / 2.0f,
+                         (ofGetHeight() - img.height * imgRatio) / 2.0f,
+                         img.width * imgRatio,
+                         img.height * imgRatio
+                         );
             }
-            
-            if (imgRatioX < imgRatioY) {
-                imgRatio = imgRatioX;
-            } else {
-                imgRatio = imgRatioY;
-            }
-            
-            img.draw(
-                     (ofGetWidth() - img.width * imgRatio) / 2.0f,
-                     (ofGetHeight() - img.height * imgRatio) / 2.0f,
-                     img.width * imgRatio,
-                     img.height * imgRatio
-                     );
             
             // reset drawing matrix and style
             ofPopMatrix();
@@ -479,6 +524,9 @@ void testApp::gestureEvent(ofxOpenNIGestureEvent & event){
 void testApp::exit(){
     //    openNIRecorder.stop();
     openNIPlayer.stop();
+
+    gui->saveSettings("guiSettings.xml");
+    delete gui;
 }
 
 //--------------------------------------------------------------
