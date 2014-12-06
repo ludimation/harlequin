@@ -193,6 +193,12 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         //ofxUILabelToggle *toggle = (ofxUILabelToggle *) e.widget;
         //loadImagesNow = toggle->getValue();
     }
+    if (name == "mirror image")
+    {
+        // reverse the effects of pressing the toggle before calling the keypressed function in order to avoid a double-toggle
+        drawMirrored = !drawMirrored;
+        keyPressed('m');
+    }
     if (name == "kinected")
     {
         if (kinected)
