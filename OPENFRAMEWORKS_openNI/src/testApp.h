@@ -24,6 +24,7 @@ public:
 	void windowResized(int w, int h);
     
     void setupKinects();
+    void stopKinects();
     int getRandomExcluding(int min, int max, int i);
     
     void setDisplayState(char newState);
@@ -31,6 +32,7 @@ public:
     void saveData();
     void saveModel();
 
+    bool                    kinectsInitialized;
     //	ofxOpenNI               openNIRecorder;
     ofxOpenNI               openNIPlayer;
     ofxOpenNIUser           nTrackedUser;
@@ -45,12 +47,14 @@ public:
     string                  testFileName;
     string                  testFileModelName;
 
-    ofTrueTypeFont verdana;
+    ofTrueTypeFont          verdana;
     
-    void userEvent(ofxOpenNIUserEvent & event);
-    void gestureEvent(ofxOpenNIGestureEvent & event);
+    void                    userEvent(ofxOpenNIUserEvent & event);
+    void                    gestureEvent(ofxOpenNIGestureEvent & event);
     
-    ofxUISuperCanvas *gui;
+    ofxUISuperCanvas        *gui;
+    void                    guiEvent(ofxUIEventArgs &e);
+
 
 private:
     
@@ -65,7 +69,14 @@ private:
     bool                            drawSkeletons;
     bool                            drawJoints2MSG;
     bool                            drawMSG;
+    vector < string >               directoriesAll;
+    vector < string >               directoriesToLoad;
+    bool                            kinected;
     
+    void                            loadImages(bool load);
+    bool                            loadImagesNow;
+    int                             maxFilesToLoad;
+    int                             nFilesToLoad;
     ofImage                         img;
     
     GRT::SVM                        trainingModelJointsPosABS;

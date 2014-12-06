@@ -67,7 +67,7 @@ void testApp::setup() {
     //////////////////
     // Kinect Setup //
     //////////////////
-    setupKinects();
+    //    setupKinects();
     
     ///////////////
     // Load font //
@@ -120,6 +120,9 @@ void testApp::setup() {
     gui -> addSpacer();
     gui -> addTextArea("text", "'+' or '-' to change frame rate");
     gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
+    gui -> addSpacer();
+    gui -> addTextArea("text", "'k' to connect to kinect");
+    gui -> addToggle("kinected", &kinected);
     gui -> addSpacer();
     gui -> addTextArea("text", "'m' to mirror kinect input");
     gui -> addToggle("mirror image", &drawMirrored);
@@ -189,6 +192,17 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         loadImages(loadImagesNow);
         //ofxUILabelToggle *toggle = (ofxUILabelToggle *) e.widget;
         //loadImagesNow = toggle->getValue();
+    }
+    if (name == "kinected")
+    {
+        if (kinected)
+        {
+            keyPressed('k');
+        }
+        else
+        {
+            keyPressed('x');
+        }
     }
 }
 
@@ -766,12 +780,15 @@ void testApp::keyPressed(int key){
             break;
         
         case 'x':
+            stopKinects();
             //            openNIRecorder.stop();
-            openNIPlayer.stop();
+            //            openNIPlayer.stop();
+            kinected = false;
             break;
         
         case 'k':
-            setupKinects(); // TODO: debug this, doesn't seem to work properly.
+            setupKinects(); // TODO: debug this, doesn't seem to work properly after kinects have been stopped.
+            kinected = true;
             break;
     }
 }
@@ -833,6 +850,11 @@ void testApp::windowResized(int w, int h){
 void testApp::setupKinects() {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
+//    if (kinectsInitialized) {
+//        openNIPlayer.start();
+//        return;
+//    }
+    
     // TODO: clean up?
     //    openNIRecorder.setup();
     //    openNIRecorder.addDepthGenerator();
@@ -851,6 +873,23 @@ void testApp::setupKinects() {
     openNIPlayer.addUserGenerator();
     openNIPlayer.setMaxNumUsers(4); // was 2 —— TODO: how high can this go? Seems to crash with 4 users at the moment
     openNIPlayer.start();
+    
+    kinectsInitialized = true;
+}
+void testApp::stopKinects() {
+    ofSetLogLevel(OF_LOG_VERBOSE);
+    
+//    openNIRecorder.stop();
+//    openNIRecorder.removeDepthGenerator();
+//    openNIRecorder.removeImageGenerator();
+//    openNIRecorder.setRegister(false);
+//    openNIRecorder.removeUserGenerator();
+
+//    openNIPlayer.removeDepthGenerator();
+//    openNIPlayer.removeImageGenerator();
+//    openNIPlayer.setRegister(false);
+//    openNIPlayer.removeUserGenerator();
+    openNIPlayer.stop();
 }
 
 int testApp::getRandomExcluding(int min, int max, int i) {
