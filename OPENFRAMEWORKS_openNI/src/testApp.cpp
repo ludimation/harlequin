@@ -84,10 +84,11 @@ void testApp::setup() {
     // Initialize settings //
     /////////////////////////
     ofBackground(0); // black BG
-//    ofSetBackgroundColor(0); // black BG
-//    ofSetBackgroundColor(0, 0, 0); // black BG
-//    ofSetBackgroundColor(255, 245, 235); // light tan BG
-//    ofSetBackgroundColorHex(0x000000); // Black BG // TODO: fix this because it doesn't seem to be working
+    //    ofSetBackgroundColor(0); // black BG
+    //    ofSetBackgroundColor(0, 0, 0); // black BG
+    //    ofSetBackgroundColor(255, 245, 235); // light tan BG
+    //    ofSetBackgroundColorHex(0x000000); // Black BG
+    // TODO: fix this because it doesn't seem to be working
     drawNextFrameMilliseconds = 0;
     setDisplayState('i'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes)
     
@@ -278,11 +279,13 @@ void testApp::draw(){
 //        if (openNIPlayer.getMirror() != drawMirrored) openNIPlayer.setMirror(drawMirrored); //TODO: use a callback function for toggling mirroring using the GUI instead
         // - Doing it this way seems to be making the build stutter
         
+        /*
         // TODO: put streaming events here
         //  - should this be moved to the "update()" function?
         cout << "Waiting until ofGetElapsedTimeMillis() == drawNextFrameMilliseconds" << endl;
         cout << "    ofGetElapsedTimeMillis() = " << ofGetElapsedTimeMillis() << endl;
         cout << "    drawNextFrameMilliseconds = " << drawNextFrameMilliseconds << endl;
+         //*/
     }
     // calculate new time to wait until drawing next frame
     if (drawFrameRate != 0) {
@@ -344,7 +347,7 @@ void testApp::draw(){
                 if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && imageNames.size())
                 {
                     label = trainingModelJointsPosRel.getPredictedClassLabel();
-                    cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
+//                    cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
                     
                     if (label > imageNames.size())
                     {
@@ -353,7 +356,7 @@ void testApp::draw(){
                     }
                     
                     img_name = imageNames[label];
-                    cout << "img_name = " << img_name << endl;
+//                    cout << "img_name = " << img_name << endl;
                     //                    img_name = ofToString(label) + ".jpg";
                 }
                 else
@@ -368,10 +371,10 @@ void testApp::draw(){
 
                 if (openNIPlayer.getNumTrackedUsers() >= j) {
                     jointsCenterProjective = trackedUserCentersProjective[j];
-                    cout << "jointsCenterProjective = trackedUserCentersProjective[j];" << endl;
+//                    cout << "jointsCenterProjective = trackedUserCentersProjective[j];" << endl;
                 } else {
                     jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);
-                    cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
+//                    cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
                 }
                 
                 if (imageNames.size())
@@ -504,7 +507,7 @@ void testApp::draw(){
     if (drawMSG) {
         // draw debug message
         verdana.drawString(msg, 20, 20);
-        cout << msg << endl;
+//        cout << msg << endl;
     }
     
     ofPopStyle();
@@ -705,7 +708,7 @@ void testApp::keyPressed(int key){
             if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[0]))
             {
                 label = trainingModelJointsPosRel.getPredictedClassLabel();
-                cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
+//                cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
                 
                 if (label > imageNames.size())
                 {
@@ -714,7 +717,7 @@ void testApp::keyPressed(int key){
                 }
                 
                 img_name = imageNames[label];
-                cout << "img_name = " << img_name << endl;
+//                cout << "img_name = " << img_name << endl;
                 //                    img_name = ofToString(label) + ".jpg";
             }
             else
@@ -846,8 +849,7 @@ void testApp::setupKinects() {
     openNIPlayer.setRegister(true);
     openNIPlayer.setMirror(drawMirrored);
     openNIPlayer.addUserGenerator();
-//    openNIPlayer.setMaxNumUsers(4); // was 2 —— TODO: how high can this go?
-    openNIPlayer.setMaxNumUsers(2); // was 2 —— TODO: how high can this go? Seems to crash with 4 users at the moment
+    openNIPlayer.setMaxNumUsers(4); // was 2 —— TODO: how high can this go? Seems to crash with 4 users at the moment
     openNIPlayer.start();
 }
 
