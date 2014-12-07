@@ -416,7 +416,6 @@ void testApp::draw(){
 
             // set colors
             ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
-            ofBackground(bgRed, bgGreen, bgBlue, bgAlpha);
             ofEnableBlendMode(OF_BLENDMODE_DISABLED); //TODO: implement imgBlendMode
             
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
@@ -502,7 +501,6 @@ void testApp::draw(){
             
             // set colors
             ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
-            ofBackground(bgRed, bgGreen, bgBlue, bgAlpha);
             ofEnableBlendMode(OF_BLENDMODE_DISABLED); // TODO: implement imgBlendMode
 
             // draw image(s)
