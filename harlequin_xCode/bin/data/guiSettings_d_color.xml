@@ -2,13 +2,13 @@
     <Kind>40</Kind>
     <Name>OFX_UI_WIDGET_CANVAS</Name>
     <IsMinified>0</IsMinified>
-    <XPosition>980.000000000</XPosition>
+    <XPosition>1030.000000000</XPosition>
     <YPosition>0.000000000</YPosition>
 </Canvas>
 <Widget>
     <Kind>2</Kind>
     <Name>0</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -33,27 +33,27 @@
 <Widget>
     <Kind>2</Kind>
     <Name>scrn</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>red</Name>
-    <Value>255.000000000</Value>
+    <Name>image red</Name>
+    <Value>204.753692627</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>green</Name>
-    <Value>0.000000000</Value>
+    <Name>image green</Name>
+    <Value>59.039409637</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>blue</Name>
-    <Value>0.000000000</Value>
+    <Name>image blue</Name>
+    <Value>57.783252716</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>alpha</Name>
-    <Value>0.000000000</Value>
+    <Name>image alpha</Name>
+    <Value>60.295566559</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -73,7 +73,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>CYCLIC_RAINBOW</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -83,7 +83,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>BLUES_INV</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -127,23 +127,23 @@
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>red</Name>
-    <Value>0.000000000</Value>
+    <Name>depth red</Name>
+    <Value>203.497528076</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>green</Name>
-    <Value>0.000000000</Value>
+    <Name>depth green</Name>
+    <Value>64.064041138</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>blue</Name>
-    <Value>0.000000000</Value>
+    <Name>depth blue</Name>
+    <Value>67.832511902</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>alpha</Name>
-    <Value>0.000000000</Value>
+    <Name>depth alpha</Name>
+    <Value>65.320198059</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -177,21 +177,21 @@
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>red</Name>
-    <Value>0.000000000</Value>
+    <Name>skel red</Name>
+    <Value>187.167480469</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>green</Name>
-    <Value>0.000000000</Value>
+    <Name>skel green</Name>
+    <Value>59.039409637</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>blue</Name>
-    <Value>0.000000000</Value>
+    <Name>skel blue</Name>
+    <Value>60.295566559</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>alpha</Name>
-    <Value>0.000000000</Value>
+    <Name>skel alpha</Name>
+    <Value>60.295566559</Value>
 </Widget>

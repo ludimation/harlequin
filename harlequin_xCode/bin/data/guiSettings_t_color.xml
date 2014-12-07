@@ -8,7 +8,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>0</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -23,7 +23,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>-</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -37,22 +37,22 @@
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>red</Name>
-    <Value>0.000000000</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>green</Name>
+    <Name>image red</Name>
     <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>blue</Name>
+    <Name>image green</Name>
     <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>alpha</Name>
+    <Name>image blue</Name>
+    <Value>255.000000000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>image alpha</Name>
     <Value>255.000000000</Value>
 </Widget>
 <Widget>
@@ -127,23 +127,23 @@
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>red</Name>
-    <Value>0.000000000</Value>
+    <Name>depth red</Name>
+    <Value>121.847297668</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>green</Name>
-    <Value>0.000000000</Value>
+    <Name>depth green</Name>
+    <Value>120.591133118</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>blue</Name>
-    <Value>0.000000000</Value>
+    <Name>depth blue</Name>
+    <Value>120.591133118</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>alpha</Name>
-    <Value>0.000000000</Value>
+    <Name>depth alpha</Name>
+    <Value>125.615768433</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -177,21 +177,21 @@
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>red</Name>
-    <Value>0.000000000</Value>
+    <Name>skel red</Name>
+    <Value>125.615768433</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>green</Name>
-    <Value>0.000000000</Value>
+    <Name>skel green</Name>
+    <Value>126.871925354</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>blue</Name>
-    <Value>0.000000000</Value>
+    <Name>skel blue</Name>
+    <Value>128.128082275</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
-    <Name>alpha</Name>
-    <Value>0.000000000</Value>
+    <Name>skel alpha</Name>
+    <Value>133.152709961</Value>
 </Widget>

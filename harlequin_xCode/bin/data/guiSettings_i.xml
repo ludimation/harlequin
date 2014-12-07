@@ -28,16 +28,21 @@
 <Widget>
     <Kind>2</Kind>
     <Name>kinected</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>mirror image</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>draw depth image</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>draw depth behind</Name>
     <Value>1</Value>
 </Widget>
 <Widget>
@@ -58,10 +63,10 @@
 <Widget>
     <Kind>42</Kind>
     <Name>number of files to load</Name>
-    <Value>64</Value>
+    <Value>504</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>
     <Name>load images</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>

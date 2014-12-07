@@ -163,45 +163,49 @@ void testApp::setup() {
     guiColor -> addSpacer();
     //
     guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
-    vector<string> vnamesBlend; vnamesBlend.push_back("0"); vnamesBlend.push_back("a"); vnamesBlend.push_back("+"); vnamesBlend.push_back("-"); vnamesBlend.push_back("*"); vnamesBlend.push_back("scrn");
-    ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
+    vector< string > vnamesBlendIMG; vnamesBlendIMG.push_back("0"); vnamesBlendIMG.push_back("a"); vnamesBlendIMG.push_back("+"); vnamesBlendIMG.push_back("-"); vnamesBlendIMG.push_back("*"); vnamesBlendIMG.push_back("scrn");
+    ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlendIMG, OFX_UI_ORIENTATION_HORIZONTAL);
     radioBlendIMG -> activateToggle("0");
-    guiColor -> addSlider("red",   0.0, 255.0, &imgRed   );
-    guiColor -> addSlider("green", 0.0, 255.0, &imgGreen );
-    guiColor -> addSlider("blue",  0.0, 255.0, &imgBlue  );
-    guiColor -> addSlider("alpha",   0.0, 255.0, &imgAlpha );
+    guiColor -> addSlider("image red",   0.0, 255.0, &imgRed   );
+    guiColor -> addSlider("image green", 0.0, 255.0, &imgGreen );
+    guiColor -> addSlider("image blue",  0.0, 255.0, &imgBlue  );
+    guiColor -> addSlider("image alpha", 0.0, 255.0, &imgAlpha );
     guiColor -> addSpacer();
     //
     guiColor -> addLabel("depth image settings", OFX_UI_FONT_MEDIUM);
-    vector<string> vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
+    vector< string > vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
     ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
     radioMode -> activateToggle("BLUES_INV");
-    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
+    vector< string > vnamesBlendDEPTH; vnamesBlendDEPTH.push_back("0"); vnamesBlendDEPTH.push_back("a"); vnamesBlendDEPTH.push_back("+"); vnamesBlendDEPTH.push_back("-"); vnamesBlendDEPTH.push_back("*"); vnamesBlendDEPTH.push_back("scrn");
+    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("image blend mode", vnamesBlendDEPTH, OFX_UI_ORIENTATION_HORIZONTAL);
     radioBlendDepth -> activateToggle("0");
-    guiColor -> addSlider("red",   0.0, 255.0, &depthRed   );
-    guiColor -> addSlider("green", 0.0, 255.0, &depthGreen );
-    guiColor -> addSlider("blue",  0.0, 255.0, &depthBlue  );
-    guiColor -> addSlider("alpha",   0.0, 255.0, &depthAlpha );
+    guiColor -> addSlider("depth red",   0.0, 255.0, &depthRed   );
+    guiColor -> addSlider("depth green", 0.0, 255.0, &depthGreen );
+    guiColor -> addSlider("depth blue",  0.0, 255.0, &depthBlue  );
+    guiColor -> addSlider("depth alpha", 0.0, 255.0, &depthAlpha );
     guiColor -> addSpacer();
     //
     guiColor -> addLabel("skeleton drawing settings", OFX_UI_FONT_MEDIUM);
-    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skel blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
+    vector< string > vnamesBlendSKEL; vnamesBlendSKEL.push_back("0"); vnamesBlendSKEL.push_back("a"); vnamesBlendSKEL.push_back("+"); vnamesBlendSKEL.push_back("-"); vnamesBlendSKEL.push_back("*"); vnamesBlendSKEL.push_back("scrn");
+    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("image blend mode", vnamesBlendSKEL, OFX_UI_ORIENTATION_HORIZONTAL);
     radioBlendSkel -> activateToggle("0");
-    guiColor -> addSlider("red",   0.0, 255.0, &skelRed   );
-    guiColor -> addSlider("green", 0.0, 255.0, &skelGreen );
-    guiColor -> addSlider("blue",  0.0, 255.0, &skelBlue  );
-    guiColor -> addSlider("alpha",   0.0, 255.0, &skelAlpha );
+    guiColor -> addSlider("skel red",   0.0, 255.0, &skelRed   );
+    guiColor -> addSlider("skel green", 0.0, 255.0, &skelGreen );
+    guiColor -> addSlider("skel blue",  0.0, 255.0, &skelBlue  );
+    guiColor -> addSlider("skel alpha", 0.0, 255.0, &skelAlpha );
     guiColor -> addSpacer();
     //
     // Save Settings
     guiColor -> addLabelButton("save color settings", false);
     guiColor -> autoSizeToFitWidgets();
     guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-    guiColor -> setPosition(ofGetWidth() - 300, 0);
+    guiColor -> setPosition(ofGetWidth() - 240, 0);
     ofAddListener(guiColor -> newGUIEvent, this, &testApp::guiEvent);
 }
 
 void testApp::loadImages(bool load) {
+    
+    //TODO: Make this more elegant so that it only unloads images that need to be unloaded, and only loads ones that aren't already loaded
     imageNames.clear();
     images.clear();
     
@@ -280,6 +284,7 @@ void testApp::guiEvent(ofxUIEventArgs &e)
     {
         ofxUIRadio *radio = (ofxUIRadio *) e.widget;
         depthColorMode = radio -> getValue();
+        openNIPlayer.setDepthColoring((DepthColoring)depthColorMode);
     }
     if (name == "depth blend mode")
     {
@@ -418,6 +423,7 @@ void testApp::draw(){
     if (drawDepth and drawDepthBehind){
         ofPushStyle();
 
+        //        ofEnableBlendMode((ofBlendMode)depthBlendMode);
         ofEnableBlendMode(OF_BLENDMODE_ADD); // TODO: implement depthBlendMode
         ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
         openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
@@ -443,7 +449,8 @@ void testApp::draw(){
 
             // set colors
             ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
-            ofEnableBlendMode(OF_BLENDMODE_DISABLED); //TODO: implement imgBlendMode
+            ofEnableBlendMode((ofBlendMode)imgBlendMode);
+            //            ofEnableBlendMode(OF_BLENDMODE_DISABLED); //TODO: implement imgBlendMode
             
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
 
@@ -528,6 +535,7 @@ void testApp::draw(){
             
             // set colors
             ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
+            ofEnableBlendMode((ofBlendMode)imgBlendMode);
             ofEnableBlendMode(OF_BLENDMODE_DISABLED); // TODO: implement imgBlendMode
 
             // draw image(s)
@@ -577,6 +585,7 @@ void testApp::draw(){
         //  openNIRecorder.drawDebug(0, 0);
         if (drawDepth and !drawDepthBehind)
         {
+            //            ofEnableBlendMode((ofBlendMode)depthBlendMode);
             ofEnableBlendMode(OF_BLENDMODE_ADD); //TODO: implement depthBlendMode
             ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
             openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
@@ -584,6 +593,7 @@ void testApp::draw(){
         if (drawSkeletons)
         {
             ofSetColor(skelRed, skelGreen, skelBlue, skelAlpha);
+            ofEnableBlendMode((ofBlendMode)skelBlendMode);
             ofEnableBlendMode(OF_BLENDMODE_SUBTRACT); //TODO: implement skelBlendMode
             openNIPlayer.drawSkeletons(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
         }
@@ -664,7 +674,7 @@ void testApp::setDisplayState(char newState) {
         // Load GUI settings // TODO: load setting xml files into memory to speed switching states
         gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
         guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-        guiColor -> setPosition(ofGetWidth() - 300, 0);
+        guiColor -> setPosition(ofGetWidth() - 240, 0);
     }
 }
 
