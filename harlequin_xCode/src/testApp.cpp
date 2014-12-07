@@ -11,22 +11,16 @@ public:
 ///////////
 // TODO:
 ////////////
-//  - optimize image loading/display (image buffer currently seems to crash after 64 images are loaded)
 //  - do not display the same image more than once every 3 frames
 //  - slow down frame rate to 30, or even as low as 12 or so?
 //  - make data image name-labeled so we can just read all of the images in a directory and include them in the data set
 //  - display data associated with current image
-//  - translation, scale, and rotation controls for current image
-//  - joint rotations (axis-angles?)
-//  - L1 norm
-//  - L2 norm
-//  - filters for file tags (drawing, photo, male, female, dancer, pedestrian, public figure, etc.)
-//  - save image positioning data
+//  - save image positioning data —- translation, scale, and rotation controls for current image
 //      > rotation
-//      > scale (might need to just store corners so that image can be scaled independent of file size changes
-//  - clean out old oni recording functionality? Doesn't seem useful at this point. Could write a separate app for recording and include bone data for testing input.
+//      > scale (might need to just store corners or dimensions so that image can be scaled independent of file size changes
+//  - joint rotations (axis-angles?)
+//  - filters for file tags (drawing, photo, male, female, dancer, pedestrian, public figure, etc.)
 //  - query for short list of potential images (instead of returning just one as we do now)
-//  - loop through list performing bone-by-bone comparison?
 
 
 //--------------------------------------------------------------
@@ -53,7 +47,7 @@ void testApp::setup() {
     trainingDataJointsRotAxisA.setDatasetName("harlequinRotAxisA");
     trainingDataJointsRotAxisA.setNumDimensions(45);
     //
-    // TODO: test these to make sure they work
+    //
     trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
     trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName)); // TODO: this doesn't seem to work
     trainingModelJointsPosABS.train(trainingDataJointsPosABS); // TODO: put this somewhere that works (doesn't seem to work here in startup())
@@ -364,23 +358,15 @@ void testApp::draw(){
     
     // idle until it's time to draw the next frame
     while (ofGetElapsedTimeMillis() < drawNextFrameMilliseconds) {
-//        // check mirrored function (could be moved outside this idle state)
-//        if (openNIPlayer.getMirror() != drawMirrored) openNIPlayer.setMirror(drawMirrored); //TODO: use a callback function for toggling mirroring using the GUI instead
-        // - Doing it this way seems to be making the build stutter
-        
-        /*
         // TODO: put streaming events here
         //  - should this be moved to the "update()" function?
-        cout << "Waiting until ofGetElapsedTimeMillis() == drawNextFrameMilliseconds" << endl;
-        cout << "    ofGetElapsedTimeMillis() = " << ofGetElapsedTimeMillis() << endl;
-        cout << "    drawNextFrameMilliseconds = " << drawNextFrameMilliseconds << endl;
-         //*/
     }
     // calculate new time to wait until drawing next frame
     if (drawFrameRate != 0) {
         drawNextFrameMilliseconds = ofGetElapsedTimeMillis() + 1000 / drawFrameRate;
     }
     
+    // draw depth
     if (drawDepth and drawDepthBehind){
         ofPushStyle();
 
@@ -408,35 +394,12 @@ void testApp::draw(){
             ofSetColor(127); // grey drawing color
             
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
-                
-                // select label: Absolute Position model
-                /*
-                if (trainingModelJointsPosABS.predict(trackedUserJointsPosABSDouble[j]))
-                {
-                    label = trainingModelJointsPosABS.getPredictedClassLabel();
-                    cout << "predicted label:" << trainingModelJointsPosABS.getPredictedClassLabel() << endl;
-                    
-                    if (label > imageNames.size())
-                    {
-                        label = ofRandom(0, imageNames.size() - 1);
-                        cout << "predicted label is too high for imageNames.size() = " << ofToString(imageNames.size()) << endl;
-                    }
-                    
-                    img_name = imageNames[label];
-                    cout << "img_name = " << img_name << endl;
-                }
-                else
-                {
-                    cout << "trainingModelJointsPosABS could not predict" << endl;
-                }
-                //*/
 
                 // select label: Relative Position model
-                ///*
                 if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && imageNames.size())
                 {
                     label = trainingModelJointsPosRel.getPredictedClassLabel();
-//                    cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
+                    //                    cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
                     
                     if (label > imageNames.size())
                     {
@@ -445,7 +408,7 @@ void testApp::draw(){
                     }
                     
                     img_name = imageNames[label];
-//                    cout << "img_name = " << img_name << endl;
+                    //                    cout << "img_name = " << img_name << endl;
                     //                    img_name = ofToString(label) + ".jpg";
                 }
                 else
@@ -453,17 +416,16 @@ void testApp::draw(){
                     img_name = "";
                     cout << "trainingModelJointsPosRel could not predict" << endl;
                 }
-                //*/
                 
                 // TODO: find another image if image could not be loaded?
                 //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
 
                 if (openNIPlayer.getNumTrackedUsers() >= j) {
                     jointsCenterProjective = trackedUserCentersProjective[j];
-//                    cout << "jointsCenterProjective = trackedUserCentersProjective[j];" << endl;
+                    //                    cout << "jointsCenterProjective = trackedUserCentersProjective[j];" << endl;
                 } else {
                     jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);
-//                    cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
+                    //                    cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
                 }
                 
                 if (imageNames.size())
@@ -482,13 +444,7 @@ void testApp::draw(){
                     imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
                     imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
                     
-    //                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
-                    ofEnableBlendMode(OF_BLENDMODE_DISABLED);
-    //                ofEnableBlendMode(OF_BLENDMODE_ADD);
-    //                // draw image at position and scale relative to center of screen and image // TODO: Fix image depth drawing
-    //                img.draw(imgRefPoint.x,
-    //                         imgRefPoint.y,
-    //                         jointsCenterProjective.z);
+                    // TODO: image drawing should be z-sorted so further images draw behind closer ones
                     // draw image at position and scale relative to center of screen and image
                     img.draw(imgRefPoint.x,
                              imgRefPoint.y,
@@ -596,7 +552,7 @@ void testApp::draw(){
     if (drawMSG) {
         // draw debug message
         verdana.drawString(msg, 20, 20);
-//        cout << msg << endl;
+        //        cout << msg << endl;
     }
     
     ofPopStyle();
@@ -668,19 +624,6 @@ void testApp::keyPressed(int key){
             gui ->toggleVisible();
             break;
             
-        case ' ':
-            //            if(!openNIRecorder.isRecording()){
-            ////                openNIRecorder.startRecording(ofToDataPath("test"+ std::to_string(ofGetSystemTimeMicros()/1000)+".oni"));
-            //                openNIRecorder.startRecording(ofToDataPath(fileName));
-            //            }else{
-            //                openNIRecorder.stopRecording();
-            //            }
-            break;
-        
-        case 'p':
-            //openNIPlayer.startPlayer(fileName);
-            break;
-        
         case 'b': // NOTE: updated to 'b' for BUILD DATA
             if (displayState == 'i') break; // do not train data during installation mode
 
@@ -709,7 +652,6 @@ void testApp::keyPressed(int key){
             if (label > 0) label--;
             img_name = imageNames[label];
 
-            // openNIPlayer.previousFrame();
             break;
         
         case '>':
@@ -724,7 +666,6 @@ void testApp::keyPressed(int key){
             if (label < imageNames.size()) label++;
             img_name = imageNames[label];
 
-            // openNIPlayer.nextFrame();
             break;
         
         case 'r': // random image
@@ -747,44 +688,20 @@ void testApp::keyPressed(int key){
             
             break;
             
-        case 'c': // TODO: clean  up?
+        case 'c':
             if (displayState == 'i') break; // do not train data during installation mode
 
             saveData();
             saveModel();
             
             // TODO:
-            //  - separate out into a function so it can be called from both here and draw()
+            //  - separate out into a class so it can be called from both here and draw()
             //  - include prediction mode as one of the arguments
-
-            // select label: Absolute Position model
-            /*
-             if (trainingModelJointsPosABS.predict(trackedUserJointsPosABSDouble[0]))
-             {
-             label = trainingModelJointsPosABS.getPredictedClassLabel();
-             cout << "predicted label:" << trainingModelJointsPosABS.getPredictedClassLabel() << endl;
-             
-             if (label > imageNames.size())
-             {
-             label = ofRandom(0, imageNames.size() - 1);
-             cout << "predicted label is too high for imageNames.size() = " << ofToString(imageNames.size()) << endl;
-             }
-             
-             img_name = imageNames[label];
-             cout << "img_name = " << img_name << endl;
-             }
-             else
-             {
-             cout << "trainingModelJointsPosABS could not predict" << endl;
-             }
-             //*/
             
             // select label: Relative Position model
-            ///*
             if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[0]))
             {
                 label = trainingModelJointsPosRel.getPredictedClassLabel();
-//                cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
                 
                 if (label > imageNames.size())
                 {
@@ -793,14 +710,11 @@ void testApp::keyPressed(int key){
                 }
                 
                 img_name = imageNames[label];
-//                cout << "img_name = " << img_name << endl;
-                //                    img_name = ofToString(label) + ".jpg";
             }
             else
             {
                 cout << "trainingModelJointsPosRel could not predict" << endl;
             }
-            //*/
             break;
         
         case 'i': // interactive mode
@@ -829,12 +743,7 @@ void testApp::keyPressed(int key){
             
             break;
 
-        case '/':
-            // openNIPlayer.setPaused(!openNIPlayer.isPaused());
-            break;
-        
         case 'm':
-            // openNIPlayer.firstFrame();
             
             drawMirrored = !drawMirrored;
             openNIPlayer.setMirror(drawMirrored);
@@ -842,9 +751,8 @@ void testApp::keyPressed(int key){
             break;
         
         case 'x':
+
             stopKinects();
-            //            openNIRecorder.stop();
-            //            openNIPlayer.stop();
             kinected = false;
             break;
         
@@ -912,20 +820,10 @@ void testApp::windowResized(int w, int h){
 void testApp::setupKinects() {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-//    if (kinectsInitialized) {
-//        openNIPlayer.start();
-//        return;
-//    }
-    
-    // TODO: clean up?
-    //    openNIRecorder.setup();
-    //    openNIRecorder.addDepthGenerator();
-    //    openNIRecorder.addImageGenerator();
-    //    openNIRecorder.setRegister(true);
-    //    openNIRecorder.setMirror(true);
-    //    openNIRecorder.addUserGenerator();
-    //    openNIRecorder.setMaxNumUsers(2);
-    //    openNIRecorder.start();
+    //    if (kinectsInitialized) {
+    //        openNIPlayer.start();
+    //        return;
+    //    }
     
     openNIPlayer.setup();
     openNIPlayer.addDepthGenerator();
@@ -933,7 +831,7 @@ void testApp::setupKinects() {
     openNIPlayer.setRegister(true);
     openNIPlayer.setMirror(drawMirrored);
     openNIPlayer.addUserGenerator();
-    openNIPlayer.setMaxNumUsers(4); // was 2 —— TODO: how high can this go? Seems to crash with 4 users at the moment
+    openNIPlayer.setMaxNumUsers(4); // was 2
     openNIPlayer.start();
     
     kinectsInitialized = true;
@@ -941,12 +839,6 @@ void testApp::setupKinects() {
 void testApp::stopKinects() {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-//    openNIRecorder.stop();
-//    openNIRecorder.removeDepthGenerator();
-//    openNIRecorder.removeImageGenerator();
-//    openNIRecorder.setRegister(false);
-//    openNIRecorder.removeUserGenerator();
-
 //    openNIPlayer.removeDepthGenerator();
 //    openNIPlayer.removeImageGenerator();
 //    openNIPlayer.setRegister(false);
