@@ -326,7 +326,7 @@ void testApp::update(){
             // store center positions in both world space and projective space
             ofPoint userJCenter = openNIPlayer.getTrackedUser(j).getCenter();
             ofPoint userJcenterProjective = openNIPlayer.worldToProjective(userJCenter);
-//            ofPoint userJcenterProjective = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition();
+            //            ofPoint userJcenterProjective = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition();
             trackedUserCentersProjective.push_back(
                                                    userJcenterProjective *
                                                    ofPoint(
@@ -341,7 +341,7 @@ void testApp::update(){
                 singleUserJointsPosABS.push_back(jointIworldPos);
                 singleUserJointsPosRel.push_back(jointIworldPos - userJCenter);
                 singleUserJointsRotAxisA.push_back(jointIworldPos);
-                // todo: singleUserJointsAxisA.push_back(findAxisAngle(userJCenter, jointIworldPos));
+                // TODO: singleUserJointsAxisA.push_back(findAxisAngle(userJCenter, jointIworldPos));
             }
             trackedUserJointsPosABS.push_back(singleUserJointsPosABS);
             trackedUserJointsPosRel.push_back(singleUserJointsPosRel);
@@ -626,6 +626,7 @@ void testApp::setDisplayState(char newState) {
             break;
 
         default:
+            // TODO: error messsage for undefined state change?
             undefinedState = true;
             break;
     }
@@ -634,6 +635,8 @@ void testApp::setDisplayState(char newState) {
     if (!undefinedState && gui)
     {
         displayState = newState;
+        
+        // Load GUI settings // TODO: load setting xml files into memory to speed switching states
         gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
         guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
         guiColor -> setPosition(ofGetWidth() - 350, 0);
@@ -643,7 +646,6 @@ void testApp::setDisplayState(char newState) {
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 
-    // string fileName = "test_20140501_1904.oni";
     int cloudRes = -1;
     bool fileWritten;
     string testJointBuff;
