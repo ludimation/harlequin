@@ -109,10 +109,15 @@ void testApp::setup() {
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
     
-    ////////////////////
-    // Initialize GUI //
-    ////////////////////
+    /////////////////////
+    // Initialize GUIS //
+    /////////////////////
+    //
+    // Main GUI
+    /////////////
     gui = new ofxUISuperCanvas("harlequin");
+    //
+    // FPS
     gui -> addFPSSlider("fps");
     gui -> addSpacer();
     gui -> addIntSlider("number of files to load", 1, maxFilesToLoad, &nFilesToLoad);
@@ -121,33 +126,79 @@ void testApp::setup() {
     gui -> addTextArea("text", "'+' or '-' to change frame rate");
     gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
     gui -> addSpacer();
+    //
+    // Kinect
     gui -> addTextArea("text", "'k' to connect to kinect");
     gui -> addToggle("kinected", &kinected);
     gui -> addSpacer();
     gui -> addTextArea("text", "'m' to mirror kinect input");
     gui -> addToggle("mirror image", &drawMirrored);
     gui -> addSpacer();
-    gui -> addTextArea("text", "'i' or 't' to switch between 'interactive' and 'training' modes");
+    gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes");
+    gui -> addSpacer();
     gui -> addToggle("draw depth image", &drawDepth);
-
-//    vector<string> vnames; vnames.push_back("ROCKS"); vnames.push_back("MY"); vnames.push_back("SOCKS");
-//    gui->addLabel("VERTICAL RADIO", OFX_UI_FONT_MEDIUM);
-//    ofxUIRadio *radio = gui->addRadio("VR", vnames, OFX_UI_ORIENTATION_VERTICAL);
-//    radio->activateToggle("SOCKS");
-//    
-//    gui->addSpacer();
-
     gui -> addToggle("draw skeletons", &drawSkeletons);
     gui -> addToggle("drawJoints2MSG", &drawJoints2MSG);
+    gui -> addSpacer();
+    //
+    // Debug Messages
     gui -> addToggle("draw MSG", &drawMSG);
     gui -> addSpacer();
     gui -> addTextArea("text", "'h' to hide this panel");
     gui -> addSpacer();
-    gui -> addLabelButton("save settings", &loadImagesNow);
+    //
+    // Save Settings
+    gui -> addLabelButton("save main settings", false);
     gui -> autoSizeToFitWidgets();
     gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
     ofAddListener(gui -> newGUIEvent, this, &testApp::guiEvent);
-
+    //
+    //
+    // Color GUI
+    /////////////
+    guiColor = new ofxUISuperCanvas("harlequin_colors");
+    //
+    guiColor -> addLabel("image blend mode", OFX_UI_FONT_MEDIUM);
+    vector<string> vnamesBlend; vnamesBlend.push_back("0"); vnamesBlend.push_back("a"); vnamesBlend.push_back("+"); vnamesBlend.push_back("-"); vnamesBlend.push_back("*"); vnamesBlend.push_back("scrn");
+    ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
+    radioBlendIMG -> activateToggle("0");
+    guiColor -> addTextArea("text", "image tint color");
+    guiColor -> addSlider("depth red",   0.0, 255.0, &imgRed   );
+    guiColor -> addSlider("depth green", 0.0, 255.0, &imgGreen );
+    guiColor -> addSlider("depth blue",  0.0, 255.0, &imgBlue  );
+    guiColor -> addSlider("depth alpha",   0.0, 255.0, &imgAlpha );
+    guiColor -> addSpacer();
+    //
+    guiColor -> addLabel("depth color mode", OFX_UI_FONT_MEDIUM);
+    vector<string> vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
+    ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
+    radioMode -> activateToggle("BLUES_INV");
+    guiColor -> addLabel("depth blend mode", OFX_UI_FONT_MEDIUM);
+    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
+    radioBlendDepth -> activateToggle("0");
+        guiColor -> addTextArea("text", "tint");
+        guiColor -> addSlider("depth red",   0.0, 255.0, &depthRed   );
+        guiColor -> addSlider("depth green", 0.0, 255.0, &depthGreen );
+        guiColor -> addSlider("depth blue",  0.0, 255.0, &depthBlue  );
+        guiColor -> addSlider("depth alpha",   0.0, 255.0, &depthAlpha );
+    guiColor -> addSpacer();
+    //
+    guiColor -> addLabel("skeleton blend mode", OFX_UI_FONT_MEDIUM);
+    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skel blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
+    radioBlendSkel -> activateToggle("0");
+        guiColor -> addTextArea("text", "tint");
+        guiColor -> addSlider("skel red",   0.0, 255.0, &skelRed   );
+        guiColor -> addSlider("skel green", 0.0, 255.0, &skelGreen );
+        guiColor -> addSlider("skel blue",  0.0, 255.0, &skelBlue  );
+        guiColor -> addSlider("skel alpha",   0.0, 255.0, &skelAlpha );
+    guiColor -> addSpacer();
+    //
+    // Save Settings
+    guiColor -> addLabelButton("save color settings", false);
+    guiColor -> autoSizeToFitWidgets();
+    guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+    guiColor -> setPosition(ofGetWidth() - 350, 0);
+    ofAddListener(guiColor -> newGUIEvent, this, &testApp::guiEvent);
 }
 
 void testApp::loadImages(bool load) {
@@ -220,9 +271,13 @@ void testApp::guiEvent(ofxUIEventArgs &e)
             keyPressed('x');
         }
     }
-    if (name == "save settings")
+    if (name == "save main settings")
     {
         gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
+    }
+    if (name == "save color settings")
+    {
+        gui -> saveSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
     }
 }
 
@@ -569,36 +624,17 @@ void testApp::exit(){
 void testApp::setDisplayState(char newState) {
     bool undefinedState = false;
     
-    // save data before switching modes
-    saveData();
-    saveModel();
-    
     switch (newState) {
         case 't': // training
             // fall through (intentional)
         case 'd': // debug
-            /////////////////////////
-            // debug drawing flags //
-            /////////////////////////
-            drawDepth       = true;
-            drawDepthBehind = false;
-            drawSkeletons   = true;
-            drawJoints2MSG  = true;
-            drawMSG         = true;
-            
-            break;
-            
+            // fall through (intentional)
         case 'i':
-            /////////////////////////
-            // debug drawing flags //
-            /////////////////////////
-//            drawDepth       = false;
-            drawDepth       = true;
-            drawDepthBehind = true;
-            drawSkeletons   = false;
-            drawJoints2MSG  = false;
-            drawMSG         = false;
 
+            // save & train model before switching modes
+            saveData();
+            saveModel();
+            
             break;
 
         default:
@@ -607,10 +643,12 @@ void testApp::setDisplayState(char newState) {
     }
     
 
-    if (!undefinedState)
+    if (!undefinedState && gui)
     {
         displayState = newState;
-//        gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
+        gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
+        guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+        guiColor -> setPosition(ofGetWidth() - 350, 0);
     }
 }
 

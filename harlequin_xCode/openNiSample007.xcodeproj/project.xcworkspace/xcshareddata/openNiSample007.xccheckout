@@ -18,15 +18,15 @@
 		<string>https://github.com/ludimation/ofxOpenNI.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>xCode/openNiSample007.xcodeproj</string>
+	<string>harlequin_xCode/openNiSample007.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>7E804D925461714118DB355C65BC964B41D94376</key>
-		<string>../../../../../addons/ofxUI</string>
+		<string>../../../../addons/ofxUI</string>
 		<key>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</key>
 		<string>../../..</string>
 		<key>D8811CE32924E36E8903BAF4011407E4BAF64556</key>
-		<string>../../../../../addons/ofxOpenNI</string>
+		<string>../../../../addons/ofxOpenNI</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/ludimation/harlequin.git</string>

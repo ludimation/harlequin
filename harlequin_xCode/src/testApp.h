@@ -53,6 +53,7 @@ public:
     void                    gestureEvent(ofxOpenNIGestureEvent & event);
     
     ofxUISuperCanvas        *gui;
+    ofxUISuperCanvas        *guiColor;
     void                    guiEvent(ofxUIEventArgs &e);
 
 
@@ -63,10 +64,13 @@ private:
     int                             drawNextFrameMilliseconds;
     bool                            drawMirrored;
     char                            displayState;
+    float                           imgRed, imgGreen, imgBlue, imgAlpha;
     // debug drawing flags
     bool                            drawDepth;
     bool                            drawDepthBehind;
+    float                           depthRed, depthGreen, depthBlue, depthAlpha;
     bool                            drawSkeletons;
+    float                           skelRed, skelGreen, skelBlue, skelAlpha;
     bool                            drawJoints2MSG;
     bool                            drawMSG;
     vector < string >               directoriesAll;
