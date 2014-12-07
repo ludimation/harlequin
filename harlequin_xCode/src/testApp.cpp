@@ -109,6 +109,13 @@ void testApp::setup() {
     //    gui -> addLabel("text", "'h' to hide this panel");
     gui -> addSpacer();
     //
+    // Switch display modes
+    gui -> addLabel("application mode");
+    vector<string> appModes; appModes.push_back("interactive"); appModes.push_back("debug"); appModes.push_back("training");
+    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_VERTICAL);
+    radioAppMode -> activateToggle("interactive");
+    gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
+    gui -> addSpacer();
     //
     // FPS
     gui -> addFPSSlider("fps");
