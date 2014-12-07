@@ -111,9 +111,9 @@ void testApp::setup() {
     //
     // Switch display modes
     gui -> addLabel("application mode");
-    vector<string> appModes; appModes.push_back("interactive"); appModes.push_back("debug"); appModes.push_back("training");
-    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_VERTICAL);
-    radioAppMode -> activateToggle("interactive");
+    //    vector<string> appModes; appModes.push_back("interactive"); appModes.push_back("debug"); appModes.push_back("training");
+    //    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_VERTICAL);
+    //    radioAppMode -> activateToggle("interactive");
     gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
     gui -> addSpacer();
     //
@@ -196,7 +196,7 @@ void testApp::setup() {
     guiColor -> addLabelButton("save color settings", false);
     guiColor -> autoSizeToFitWidgets();
     guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-    guiColor -> setPosition(ofGetWidth() - 350, 0);
+    guiColor -> setPosition(ofGetWidth() - 300, 0);
     ofAddListener(guiColor -> newGUIEvent, this, &testApp::guiEvent);
 }
 
@@ -293,6 +293,26 @@ void testApp::guiEvent(ofxUIEventArgs &e)
     if (name == "save main settings")
     {
         gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
+    }
+    if (name == "application mode")
+    {
+        ofxUIRadio *radioAppMode = (ofxUIRadio *) e.widget;
+        switch (radioAppMode -> getValue()) {
+            case 0: // interactive
+                setDisplayState('i');
+                break;
+                
+            case 1: // debug
+                setDisplayState('d');
+                break;
+                
+            case 2: // training
+                setDisplayState('t');
+                break;
+                
+            default:
+                break;
+        }
     }
     if (name == "save color settings")
     {
@@ -636,14 +656,14 @@ void testApp::setDisplayState(char newState) {
     }
     
 
-    if (!undefinedState && gui)
+    if (!undefinedState && gui && guiColor)
     {
         displayState = newState;
         
         // Load GUI settings // TODO: load setting xml files into memory to speed switching states
         gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
         guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-        guiColor -> setPosition(ofGetWidth() - 350, 0);
+        guiColor -> setPosition(ofGetWidth() - 300, 0);
     }
 }
 
@@ -653,6 +673,8 @@ void testApp::keyPressed(int key){
     int cloudRes = -1;
     bool fileWritten;
     string testJointBuff;
+    bool displayStateChanged;
+    string displayStateString;
     
     ofImage img;
     
@@ -757,15 +779,23 @@ void testApp::keyPressed(int key){
             break;
         
         case 'i': // interactive mode
-            // fall through (intentional)
-        case 't': // training
-            // fall through (intentional)
-        case 'd': // debug
             
-            setDisplayState(key);
-
+            displayStateString = "interactive";
+            displayStateChanged = true;
             break;
             
+        case 't': // training
+
+            displayStateString = "training";
+            displayStateChanged = true;
+            break;
+        
+        case 'd': // debug
+            
+            displayStateString = "debug";
+            displayStateChanged = true;
+            break;
+    
         case '=': // increase drawFrameRate
             // fall through (intentional)
         case '+': // increase drawFrameRate
@@ -799,6 +829,13 @@ void testApp::keyPressed(int key){
             setupKinects(); // TODO: debug this, doesn't seem to work properly after kinects have been stopped.
             kinected = true;
             break;
+    }
+    
+    if (displayStateChanged && gui)
+    {
+        setDisplayState(key);
+        //        ofxUIRadio *radioAppMode = (ofxUIRadio *) (gui -> getWidget("application mode"));
+        //        radioAppMode -> activateToggle(displayStateString);
     }
 }
 

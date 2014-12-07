@@ -7,18 +7,23 @@
 </Canvas>
 <Widget>
     <Kind>42</Kind>
-    <Name>number of files to load</Name>
-    <Value>64</Value>
-</Widget>
-<Widget>
-    <Kind>17</Kind>
-    <Name>load images</Name>
-    <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>42</Kind>
     <Name>set fps</Name>
     <Value>30</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>red</Name>
+    <Value>10.049261093</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>green</Name>
+    <Value>31.403942108</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>blue</Name>
+    <Value>28.891626358</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -49,4 +54,14 @@
     <Kind>2</Kind>
     <Name>draw MSG</Name>
     <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>number of files to load</Name>
+    <Value>64</Value>
+</Widget>
+<Widget>
+    <Kind>17</Kind>
+    <Name>load images</Name>
+    <Value>0</Value>
 </Widget>
