@@ -138,6 +138,7 @@ void testApp::setup() {
     gui -> addTextArea("text", "'m' to mirror kinect input");
     gui -> addToggle("mirror image", &drawMirrored);
     gui -> addToggle("draw depth image", &drawDepth);
+    gui -> addToggle("draw depth behind", &drawDepthBehind);
     gui -> addToggle("draw skeletons", &drawSkeletons);
     gui -> addToggle("drawJoints2MSG", &drawJoints2MSG);
     //
@@ -290,10 +291,6 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         ofxUIRadio *radio = (ofxUIRadio *) e.widget;
         skelBlendMode = radio -> getValue();
     }
-    if (name == "save main settings")
-    {
-        gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
-    }
     if (name == "application mode")
     {
         ofxUIRadio *radioAppMode = (ofxUIRadio *) e.widget;
@@ -314,9 +311,13 @@ void testApp::guiEvent(ofxUIEventArgs &e)
                 break;
         }
     }
+    if (name == "save main settings")
+    {
+        gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
+    }
     if (name == "save color settings")
     {
-        gui -> saveSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+        guiColor -> saveSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
     }
 }
 
