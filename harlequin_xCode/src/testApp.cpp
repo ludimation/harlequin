@@ -104,12 +104,14 @@ void testApp::setup() {
     // Main GUI
     /////////////
     gui = new ofxUISuperCanvas("harlequin");
+    gui -> addSpacer();
+    gui -> addTextArea("text", "'h' to hide this panel", OFX_UI_FONT_SMALL);
+    //    gui -> addLabel("text", "'h' to hide this panel");
+    gui -> addSpacer();
+    //
     //
     // FPS
     gui -> addFPSSlider("fps");
-    gui -> addSpacer();
-    gui -> addIntSlider("number of files to load", 1, maxFilesToLoad, &nFilesToLoad);
-    gui -> addLabelToggle("load images", &loadImagesNow);
     gui -> addSpacer();
     gui -> addTextArea("text", "'+' or '-' to change frame rate");
     gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
@@ -120,6 +122,7 @@ void testApp::setup() {
     gui -> addSlider("red",   0.0, 255.0,    &bgRed   );
     gui -> addSlider("green", 0.0, 255.0,    &bgGreen );
     gui -> addSlider("blue",  0.0, 255.0,    &bgBlue  );
+    gui -> addSpacer();
     //
     // Kinect
     gui -> addTextArea("text", "'k' to connect to kinect");
@@ -127,18 +130,17 @@ void testApp::setup() {
     gui -> addSpacer();
     gui -> addTextArea("text", "'m' to mirror kinect input");
     gui -> addToggle("mirror image", &drawMirrored);
-    gui -> addSpacer();
-    gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes");
-    gui -> addSpacer();
     gui -> addToggle("draw depth image", &drawDepth);
     gui -> addToggle("draw skeletons", &drawSkeletons);
     gui -> addToggle("drawJoints2MSG", &drawJoints2MSG);
-    gui -> addSpacer();
     //
     // Debug Messages
     gui -> addToggle("draw MSG", &drawMSG);
     gui -> addSpacer();
-    gui -> addTextArea("text", "'h' to hide this panel");
+    //
+    // Load files
+    gui -> addIntSlider("number of files to load", 1, maxFilesToLoad, &nFilesToLoad);
+    gui -> addLabelToggle("load images", &loadImagesNow);
     gui -> addSpacer();
     //
     // Save Settings
@@ -149,41 +151,38 @@ void testApp::setup() {
     //
     // Color GUI
     /////////////
-    guiColor = new ofxUISuperCanvas("harlequin_colors");
-    //
-    guiColor -> addLabel("image blend mode", OFX_UI_FONT_MEDIUM);
-        vector<string> vnamesBlend; vnamesBlend.push_back("0"); vnamesBlend.push_back("a"); vnamesBlend.push_back("+"); vnamesBlend.push_back("-"); vnamesBlend.push_back("*"); vnamesBlend.push_back("scrn");
-        ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
-        radioBlendIMG -> activateToggle("0");
-    guiColor -> addTextArea("text", "image tint color");
-        guiColor -> addSlider("red",   0.0, 255.0, &imgRed   );
-        guiColor -> addSlider("green", 0.0, 255.0, &imgGreen );
-        guiColor -> addSlider("blue",  0.0, 255.0, &imgBlue  );
-        guiColor -> addSlider("alpha",   0.0, 255.0, &imgAlpha );
+    guiColor = new ofxUISuperCanvas("harlequin colors");
     guiColor -> addSpacer();
     //
-    guiColor -> addLabel("depth color mode", OFX_UI_FONT_MEDIUM);
-        vector<string> vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
-        ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
-        radioMode -> activateToggle("BLUES_INV");
-    guiColor -> addLabel("depth blend mode", OFX_UI_FONT_MEDIUM);
-        ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
-        radioBlendDepth -> activateToggle("0");
-    guiColor -> addTextArea("text", "depth tint color");
-        guiColor -> addSlider("red",   0.0, 255.0, &depthRed   );
-        guiColor -> addSlider("green", 0.0, 255.0, &depthGreen );
-        guiColor -> addSlider("blue",  0.0, 255.0, &depthBlue  );
-        guiColor -> addSlider("alpha",   0.0, 255.0, &depthAlpha );
+    guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
+    vector<string> vnamesBlend; vnamesBlend.push_back("0"); vnamesBlend.push_back("a"); vnamesBlend.push_back("+"); vnamesBlend.push_back("-"); vnamesBlend.push_back("*"); vnamesBlend.push_back("scrn");
+    ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
+    radioBlendIMG -> activateToggle("0");
+    guiColor -> addSlider("red",   0.0, 255.0, &imgRed   );
+    guiColor -> addSlider("green", 0.0, 255.0, &imgGreen );
+    guiColor -> addSlider("blue",  0.0, 255.0, &imgBlue  );
+    guiColor -> addSlider("alpha",   0.0, 255.0, &imgAlpha );
     guiColor -> addSpacer();
     //
-    guiColor -> addLabel("skeleton blend mode", OFX_UI_FONT_MEDIUM);
-        ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skel blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
-        radioBlendSkel -> activateToggle("0");
-    guiColor -> addTextArea("text", "skeleton tint color");
-        guiColor -> addSlider("red",   0.0, 255.0, &skelRed   );
-        guiColor -> addSlider("green", 0.0, 255.0, &skelGreen );
-        guiColor -> addSlider("blue",  0.0, 255.0, &skelBlue  );
-        guiColor -> addSlider("alpha",   0.0, 255.0, &skelAlpha );
+    guiColor -> addLabel("depth image settings", OFX_UI_FONT_MEDIUM);
+    vector<string> vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
+    ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
+    radioMode -> activateToggle("BLUES_INV");
+    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
+    radioBlendDepth -> activateToggle("0");
+    guiColor -> addSlider("red",   0.0, 255.0, &depthRed   );
+    guiColor -> addSlider("green", 0.0, 255.0, &depthGreen );
+    guiColor -> addSlider("blue",  0.0, 255.0, &depthBlue  );
+    guiColor -> addSlider("alpha",   0.0, 255.0, &depthAlpha );
+    guiColor -> addSpacer();
+    //
+    guiColor -> addLabel("skeleton drawing settings", OFX_UI_FONT_MEDIUM);
+    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skel blend mode", vnamesBlend, OFX_UI_ORIENTATION_HORIZONTAL);
+    radioBlendSkel -> activateToggle("0");
+    guiColor -> addSlider("red",   0.0, 255.0, &skelRed   );
+    guiColor -> addSlider("green", 0.0, 255.0, &skelGreen );
+    guiColor -> addSlider("blue",  0.0, 255.0, &skelBlue  );
+    guiColor -> addSlider("alpha",   0.0, 255.0, &skelAlpha );
     guiColor -> addSpacer();
     //
     // Save Settings
