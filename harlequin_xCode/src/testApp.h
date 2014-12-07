@@ -64,12 +64,17 @@ private:
     int                             drawNextFrameMilliseconds;
     bool                            drawMirrored;
     char                            displayState;
+    float                           bgRed, bgGreen, bgBlue;
+    int                             imgBlendMode;
     float                           imgRed, imgGreen, imgBlue, imgAlpha;
     // debug drawing flags
     bool                            drawDepth;
     bool                            drawDepthBehind;
+    int                             depthColorMode;
+    int                             depthBlendMode;
     float                           depthRed, depthGreen, depthBlue, depthAlpha;
     bool                            drawSkeletons;
+    int                             skelBlendMode;
     float                           skelRed, skelGreen, skelBlue, skelAlpha;
     bool                            drawJoints2MSG;
     bool                            drawMSG;
