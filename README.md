@@ -5,19 +5,13 @@ HARLEQUIN is an interactive art technology through which participants navigate d
 
 APPEARANCES
 =========
-<ul>
-<li> <i>Most Creative Hack</i>, <a href="http://ow.ly/CBWcx ">MIT Hacking Arts 2014</a>
-<li> Interactive Installation, <a href="https://www.facebook.com/events/686303684810313/">Illuminus D 2014<a>
-<li> Featured in <i>Sculpted Guardians Illumined,</i> a multi-media performance which deconstructs iconic sculptures, <a href="http://illuminusboston.org/">Illuminus Boston 2014<a>
-</ul>
+* <i>Most Creative Hack</i>, <a href="http://ow.ly/CBWcx ">MIT Hacking Arts 2014</a>
+* Interactive Installation, <a href="https://www.facebook.com/events/686303684810313/">Illuminus D 2014<a>
+* Featured in <i>Sculpted Guardians Illumined,</i> a multi-media performance which deconstructs iconic sculptures, <a href="http://illuminusboston.org/">Illuminus Boston 2014<a>
 
 DEPENDENCIES
 =========
-<ul>
-<li> <a href="http://openframeworks.cc/download/ ">openFrameworks v0.8.4</a>
-<li> addons:
-  <ul>
-  <li> <a href="https://github.com/ludimation/ofxOpenNI">ludimation/ofxOpenNI<a>—clone into ```<pathTo>of_v0.8.4_osx_release\addons\```
-  <li> <i> (TBU—other addons) </i>
-  </ul>
-</ul>
+* [openFrameworks v0.8.4] (http://openframeworks.cc/download/) » clone HARLEQUIN repository into 'of_v0.8.4_osx_release\apps\'
+* addons » clone into 'of_v0.8.4_osx_release\addons\'
+   * [ludimation/ofxOpenNI] (https://github.com/ludimation/ofxOpenNI)
+   * [ofxUI] (https://github.com/rezaali/ofxUI)
