@@ -12,6 +12,6 @@ APPEARANCES
 DEPENDENCIES
 =========
 * [openFrameworks v0.8.4] (http://openframeworks.cc/download/) » clone HARLEQUIN repository into 'of_v0.8.4_osx_release\apps\'
-* addons » clone into 'of_v0.8.4_osx_release\addons\'
+* addons » clone the following repostories into 'of_v0.8.4_osx_release\addons\'
    * [ludimation/ofxOpenNI] (https://github.com/ludimation/ofxOpenNI)
    * [ofxUI] (https://github.com/rezaali/ofxUI)
