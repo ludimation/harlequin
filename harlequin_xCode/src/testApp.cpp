@@ -27,15 +27,21 @@ public:
 //--------------------------------------------------------------
 void testApp::setup() {
     
+    // initialize file related properties
+    trainedImagesDirectory = "images/hand_drawings/LT/"; // TODO: Make this dynamic (1. include text input in GUI, 2. separate out data loading into a function that can be called when target data set is changed)
+    directoriesAll.push_back(trainedImagesDirectory + "_540"); // i = 0
+    directoriesAll.push_back(trainedImagesDirectory + "_1080"); // i = 1
+
+    
     ///////////////////////////////////
     // Training Data and Model Setup //
     ///////////////////////////////////
-    trainingDataJointsPosABSfileName    = "JointsPosABSdata.txt";
-    trainingModelJointsPosABSfileName   = "JointsPosABSmodel.txt";
-    trainingDataJointsPosRelfileName    = "JointsPosReldata.txt";
-    trainingModelJointsPosRelfileName   = "JointsPosRelmodel.txt";
-    trainingDataJointsRotAxisAfileName  = "JointsRotAxisAdata.txt";
-    trainingModelJointsRotAxisAfileName = "JointsRotAxisAmodel.txt";
+    trainingDataJointsPosABSfileName    = trainedImagesDirectory + "JointsPosABSdata.txt"; // TODO: make these relative to selected directories
+    trainingModelJointsPosABSfileName   = trainedImagesDirectory + "JointsPosABSmodel.txt";
+    trainingDataJointsPosRelfileName    = trainedImagesDirectory + "JointsPosReldata.txt";
+    trainingModelJointsPosRelfileName   = trainedImagesDirectory + "JointsPosRelmodel.txt";
+    trainingDataJointsRotAxisAfileName  = trainedImagesDirectory + "JointsRotAxisAdata.txt";
+    trainingModelJointsRotAxisAfileName = trainedImagesDirectory + "JointsRotAxisAmodel.txt";
     //
     GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
     GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
@@ -97,11 +103,8 @@ void testApp::setup() {
     ofDirectory     dir;
     int             nFiles;
     //
-    // initialize file related properties
-    directoriesAll.push_back("images/_540");
-    directoriesAll.push_back("images/_1080");
     nFilesToLoad = 64; // for testing purposes only (quick load)
-    directoryPath = directoriesAll[0];
+    directoryPath = directoriesAll[0]; // loading _540 images
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
     

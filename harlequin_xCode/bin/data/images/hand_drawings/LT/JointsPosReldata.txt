@@ -1,0 +1,9 @@
+GRT_LABELLED_CLASSIFICATION_DATA_FILE_V1.0
+DatasetName: harlequinPosRel
+InfoText: 
+NumDimensions: 45
+TotalNumExamples: 0
+NumberOfClasses: 0
+ClassIDsAndCounters: 
+UseExternalRanges: 0
+Data:

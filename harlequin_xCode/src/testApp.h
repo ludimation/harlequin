@@ -41,6 +41,7 @@ public:
     ofxOpenNIUser           nTrackedUser;
     int                     nTrackedUsers;
     ofFile                  file;
+    string                  trainedImagesDirectory;
     string                  trainingModelJointsPosABSfileName;
     string                  trainingDataJointsPosABSfileName;
     string                  trainingModelJointsPosRelfileName;
