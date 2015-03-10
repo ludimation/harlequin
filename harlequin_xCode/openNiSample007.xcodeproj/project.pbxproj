@@ -1821,6 +1821,17 @@
 			path = Util;
 			sourceTree = "<group>";
 		};
+		6AB01D8C1AAF7D1A00586C4C /* ofxOpenNI */ = {
+			isa = PBXGroup;
+			children = (
+				77781EA614BA9AE300CD45EF /* src */,
+				770F031514B9969E003CCE99 /* lib */,
+				770F033314B996AE003CCE99 /* include */,
+			);
+			name = ofxOpenNI;
+			path = ../../../addons/ofxOpenNI/src;
+			sourceTree = "<group>";
+		};
 		6AD41BD019FBE8D200B88A4C /* harlequin_OSX10.7 */ = {
 			isa = PBXGroup;
 			children = (
@@ -1862,7 +1873,7 @@
 				770F032414B9969E003CCE99 /* libXnVNite_1_5_2.dylib */,
 			);
 			name = lib;
-			path = bin/data/openni/lib;
+			path = ../../../apps/harlequin/harlequin_xCode/bin/data/openni/lib;
 			sourceTree = "<group>";
 		};
 		770F033314B996AE003CCE99 /* include */ = {
@@ -1873,7 +1884,7 @@
 				770F037414B996AE003CCE99 /* openni */,
 			);
 			name = include;
-			path = ../../../addons/ofxOpenNI/include;
+			path = ../include;
 			sourceTree = "<group>";
 		};
 		770F033414B996AE003CCE99 /* libusb */ = {
@@ -2083,18 +2094,15 @@
 				77EBF17A14BEF08600D2C8EC /* ofxOpenNITypes.h */,
 			);
 			name = src;
-			path = ../../../addons/ofxOpenNI/src;
 			sourceTree = "<group>";
 		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				6AB01D8C1AAF7D1A00586C4C /* ofxOpenNI */,
 				ECC960411AAD1A7100718DD1 /* ofxOsc */,
-				5C8F75FE19FC164E00A8AC13 /* ofxXmlSettings */,
 				5C8F75FD19FC164900A8AC13 /* ofxUI */,
-				77781EA614BA9AE300CD45EF /* src */,
-				770F031514B9969E003CCE99 /* lib */,
-				770F033314B996AE003CCE99 /* include */,
+				5C8F75FE19FC164E00A8AC13 /* ofxXmlSettings */,
 			);
 			name = addons;
 			sourceTree = "<group>";
