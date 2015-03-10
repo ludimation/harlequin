@@ -84,7 +84,13 @@ private:
     float                           skelRed, skelGreen, skelBlue, skelAlpha;
     bool                            drawJoints2MSG;
     bool                            drawMSG;
+    
     bool                            sendOSC;
+    bool                            setupOSC;
+    string                          myHost;
+    string                          myPort;
+    
+    
     vector < string >               directoriesAll;
     vector < string >               directoriesToLoad;
     bool                            kinected;

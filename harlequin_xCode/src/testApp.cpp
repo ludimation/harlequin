@@ -85,6 +85,8 @@ void testApp::setup() {
     // OSC INIT //
     //////////////
     sender.setup(HOST, PORT);
+    myHost =  HOST;
+    myPort = ofToString(PORT);
     
     /////////////////
     // Load images //
@@ -152,9 +154,13 @@ void testApp::setup() {
     gui -> addToggle("draw MSG", &drawMSG);
     gui -> addSpacer();
     //
-    // OSC Toggle
+    // OSC Toggles
+    gui -> addToggle("setup OSC", &setupOSC);
+    gui -> addTextInput("host", "address")->setAutoClear(false);
+    gui -> addTextInput("port", "port")->setAutoClear(false);
     gui -> addToggle("send OSC", &sendOSC);
     gui -> addSpacer();
+    
     //
     // Load files
     gui -> addIntSlider("number of files to load", 1, maxFilesToLoad, &nFilesToLoad);
@@ -305,6 +311,37 @@ void testApp::guiEvent(ofxUIEventArgs &e)
     {
         ofxUIRadio *radio = (ofxUIRadio *) e.widget;
         skelBlendMode = radio -> getValue();
+    }
+    if (name == "host"){
+        ofxUITextInput *ti = (ofxUITextInput *) e.widget;
+        if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_ENTER)
+        {
+            cout << "ON ENTER "<< name<<": ";
+            myHost = ti->getTextString();
+            cout << myPort << endl;
+        }
+        else if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_UNFOCUS)
+        {
+            cout << "ON BLUR: ";
+            myHost = ti->getTextString();
+            cout << myPort << endl;
+        }
+    }
+    if(name == "port")
+    {
+        ofxUITextInput *ti = (ofxUITextInput *) e.widget;
+        if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_ENTER)
+        {
+            cout << "ON ENTER" << name << ": " ;
+            myPort = ti->getTextString();
+            cout << myPort << endl;
+        }
+        else if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_UNFOCUS)
+        {
+            cout << "ON BLUR: ";
+            myPort = ti->getTextString();
+        }
+       
     }
     if (name == "application mode")
     {
@@ -631,9 +668,15 @@ void testApp::draw(){
         verdana.drawString(msg, 20, 20);
         //        cout << msg << endl;
     }
+    if(setupOSC){
+        sender.setup(myHost, ofToInt(myPort));
+        ofxOscMessage m;
+        m.setAddress("/test" );
+        sender.sendMessage(m);
+        setupOSC = false;
+    }
     
     if (sendOSC){
-        msg = "";
         if (trackedUserCentersProjective.size() > 0) {
             for (int i=0; i < trackedUserCentersProjective.size(); ++i) {
                 ofxOscMessage m;
