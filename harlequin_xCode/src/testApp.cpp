@@ -1,5 +1,6 @@
 #include "testApp.h"
 
+
 // what is this? Why is it re-defining ofxOpenNIUser?
 class myUser : public ofxOpenNIUser {
 public:
@@ -80,6 +81,11 @@ void testApp::setup() {
     drawNextFrameMilliseconds = 0;
     setDisplayState('i'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes)
     
+    //////////////
+    // OSC INIT //
+    //////////////
+    sender.setup(HOST, PORT);
+    
     /////////////////
     // Load images //
     /////////////////
@@ -144,6 +150,10 @@ void testApp::setup() {
     //
     // Debug Messages
     gui -> addToggle("draw MSG", &drawMSG);
+    gui -> addSpacer();
+    //
+    // OSC Toggle
+    gui -> addToggle("send OSC", &sendOSC);
     gui -> addSpacer();
     //
     // Load files
@@ -621,6 +631,23 @@ void testApp::draw(){
         verdana.drawString(msg, 20, 20);
         //        cout << msg << endl;
     }
+    
+    if (sendOSC){
+        msg = "";
+        if (trackedUserCentersProjective.size() > 0) {
+            for (int i=0; i < trackedUserCentersProjective.size(); ++i) {
+                ofxOscMessage m;
+                m.setAddress("/POS" + ofToString(i) );
+                m.addFloatArg( trackedUserCentersProjective[i].x );
+                m.addFloatArg( trackedUserCentersProjective[i].y );
+                m.addFloatArg( trackedUserCentersProjective[i].z );
+                sender.sendMessage(m);
+            }
+        }
+        
+        
+    }
+    
     
     ofPopStyle();
 }

@@ -5,6 +5,9 @@
 #include "ofMain.h"
 #include "GRT.h"
 #include "ofxUI.h"
+#include "ofxOsc.h"
+#define HOST "localhost"
+#define PORT 9000
 
 class testApp : public ofBaseApp {
 
@@ -55,6 +58,9 @@ public:
     ofxUISuperCanvas        *gui;
     ofxUISuperCanvas        *guiColor;
     void                    guiEvent(ofxUIEventArgs &e);
+    
+    //OSC
+    ofxOscSender sender;
 
 
 private:
@@ -78,6 +84,7 @@ private:
     float                           skelRed, skelGreen, skelBlue, skelAlpha;
     bool                            drawJoints2MSG;
     bool                            drawMSG;
+    bool                            sendOSC;
     vector < string >               directoriesAll;
     vector < string >               directoriesToLoad;
     bool                            kinected;
@@ -109,6 +116,8 @@ private:
     string                  img_name;
     vector< string >        imageNames;
     vector <ofImage>        images;
+    
+    
     
 };
 
