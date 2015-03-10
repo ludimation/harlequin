@@ -9,9 +9,9 @@
 *.pch
 
 # Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+#*.so
+#*.dylib
+#*.dll
 
 # Fortran module files
 *.mod
@@ -35,3 +35,4 @@ OPENFRAMEWORKS_openNI/bin/data/images/_originals/*
 OPENFRAMEWORKS_openNI/bin/data/test*
 TECH_TEST*
 OPENFRAMEWORKS_openNI/src_BKUP/GRT/*
+UserInterfaceState.xcuserstate
