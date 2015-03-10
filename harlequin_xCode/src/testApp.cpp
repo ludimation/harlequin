@@ -168,7 +168,7 @@ void testApp::setup() {
     
     //
     // Load files
-    gui -> addIntSlider("number of files to load", 1, maxFilesToLoad, &nFilesToLoad);
+    gui -> addIntSlider("number of files to load", 0, maxFilesToLoad, &nFilesToLoad);
     gui -> addLabelToggle("load images", &loadImagesNow);
     gui -> addSpacer();
     //
@@ -251,8 +251,11 @@ void testApp::loadImages(bool load) {
                 
                 // add the image name to a list
                 filePath = dir.getPath(i);
-                imageNames.push_back(filePath);
-                if (imgTMP.loadImage(filePath)) images[i] = imgTMP;
+                if (imgTMP.loadImage(filePath))
+                {
+                    imageNames.push_back(filePath);
+                    images[imageNames.size()-1] = imgTMP; //TODO: is this leading to some empty image entries in the images vector? Should probably deal with this a little more efficiently.
+                }
                 
                 cout << "loading image [" << ofToString(i+1) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
             }
@@ -260,7 +263,7 @@ void testApp::loadImages(bool load) {
         //
         // Select image to start with
         label = 0;
-        img_name = imageNames[label]; // TODO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
+        if (img_name.size()) img_name = imageNames[label]; // TODO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
         // TODO: also could clear out the imageNames array code since
         // I'm pretty sure we'll be using a hashtable instead
     }
