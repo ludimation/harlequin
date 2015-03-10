@@ -14,14 +14,16 @@ public:
 ////////////
 //  - do not display the same image more than once every 3 frames
 //  - slow down frame rate to 30, or even as low as 12 or so?
-//  - make data image name-labeled so we can just read all of the images in a directory and include them in the data set
+//  - redesign image / training system to be more malleable
 //  - display data associated with current image
 //  - save image positioning data —- translation, scale, and rotation controls for current image
 //      > rotation
 //      > scale (might need to just store corners or dimensions so that image can be scaled independent of file size changes
 //  - joint rotations (axis-angles?)
 //  - filters for file tags (drawing, photo, male, female, dancer, pedestrian, public figure, etc.)
+//      > simply use separate directory structures?
 //  - query for short list of potential images (instead of returning just one as we do now)
+//      > could be done in pre-processing and save a list of images closest to the each image
 
 
 //--------------------------------------------------------------
@@ -259,6 +261,8 @@ void testApp::loadImages(bool load) {
         // Select image to start with
         label = 0;
         img_name = imageNames[label]; // TODO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
+        // TODO: also could clear out the imageNames array code since
+        // I'm pretty sure we'll be using a hashtable instead
     }
     else
     {
