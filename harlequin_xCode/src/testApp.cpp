@@ -807,7 +807,6 @@ void testApp::keyPressed(int key){
             break;
         
         case '>':
-        case '.':
         case ']':
             
             saveData();
