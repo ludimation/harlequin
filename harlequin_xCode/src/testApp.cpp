@@ -561,6 +561,8 @@ void testApp::draw(){
                     imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
                     imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
                     
+                    img.mirror(0, drawMirrored);
+                    
                     // TODO: image drawing should be z-sorted so further images draw behind closer ones
                     // draw image at position and scale relative to center of screen and image
                     img.draw(imgRefPoint.x,
@@ -623,6 +625,8 @@ void testApp::draw(){
                     imgRatio = imgRatioY;
                 }
                 
+                img.mirror(0, drawMirrored);
+                
                 img.draw(
                          (ofGetWidth() - img.width * imgRatio) / 2.0f,
                          (ofGetHeight() - img.height * imgRatio) / 2.0f,
@@ -679,6 +683,7 @@ void testApp::draw(){
         verdana.drawString(msg, 20, 20);
         //        cout << msg << endl;
     }
+    
     if(setupOSC){
         sender.setup(myHost, ofToInt(myPort));
         ofxOscMessage m;
