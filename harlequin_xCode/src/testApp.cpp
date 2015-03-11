@@ -82,15 +82,18 @@ void testApp::setup() {
     trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
     trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
     
+    
     //////////////////
     // Kinect Setup //
     //////////////////
     //    setupKinects();
     
+    
     ///////////////
     // Load font //
     ///////////////
     verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
+    
     
     ///////////////////////////////
     // Artist specified settings //
@@ -104,6 +107,7 @@ void testApp::setup() {
     drawNextFrameMilliseconds = 0;
     setDisplayState('i'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes)
     
+
     //////////////
     // OSC INIT //
     //////////////
