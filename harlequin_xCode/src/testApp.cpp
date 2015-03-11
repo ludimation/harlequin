@@ -116,8 +116,9 @@ void testApp::setup() {
     // Initialize GUIS //
     /////////////////////
     //
-    // Main GUI
-    /////////////
+    //------------
+    // Main GUI --
+    //////////////
     gui = new ofxUISuperCanvas("harlequin");
     gui -> addSpacer();
     gui -> addTextArea("text", "'h' to hide this panel", OFX_UI_FONT_SMALL);
@@ -167,7 +168,6 @@ void testApp::setup() {
     gui -> addTextInput("port", "port")->setAutoClear(false);
     gui -> addToggle("send OSC", &sendOSC);
     gui -> addSpacer();
-    
     //
     // Load files
     gui -> addIntSlider("number of files to load", 0, maxFilesToLoad, &nFilesToLoad);
@@ -180,8 +180,9 @@ void testApp::setup() {
     gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
     ofAddListener(gui -> newGUIEvent, this, &testApp::guiEvent);
     //
-    // Color GUI
-    /////////////
+    //-------------
+    // Color GUI --
+    ///////////////
     guiColor = new ofxUISuperCanvas("harlequin colors");
     guiColor -> addSpacer();
     //
