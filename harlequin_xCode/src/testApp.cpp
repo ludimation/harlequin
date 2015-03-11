@@ -29,13 +29,25 @@ public:
 //--------------------------------------------------------------
 void testApp::setup() {
     
-    // initialize file related properties
+    
+    ///////////////////////////
+    // Image Data Properties //
+    ///////////////////////////
     trainedImagesDirectory = "images/hand_drawings/LT/";
 //    trainedImagesDirectory = "images/hand_drawings/V/";
     // TODO: Make this dynamic (1. include text input in GUI, 2. separate out data loading into a function that can be called when target data set is changed)
     directoriesAll.push_back(trainedImagesDirectory + "_540"); // i = 0
     directoriesAll.push_back(trainedImagesDirectory + "_1080"); // i = 1
-
+    //
+    // declare local variables
+    string          directoryPath;
+    ofDirectory     dir;
+    int             nFiles;
+    //
+    nFilesToLoad = 64; // for testing purposes only (quick load)
+    directoryPath = directoriesAll[0]; // loading _540 images
+    nFiles = dir.listDir(directoryPath);
+    maxFilesToLoad = dir.size();
     
     ///////////////////////////////////
     // Training Data and Model Setup //
@@ -95,22 +107,9 @@ void testApp::setup() {
     // OSC INIT //
     //////////////
     sender.setup(HOST, PORT);
-    myHost =  HOST;
+    myHost = HOST;
     myPort = ofToString(PORT);
     
-    /////////////////
-    // Load images //
-    /////////////////
-    //
-    // declare local variables
-    string          directoryPath;
-    ofDirectory     dir;
-    int             nFiles;
-    //
-    nFilesToLoad = 64; // for testing purposes only (quick load)
-    directoryPath = directoriesAll[0]; // loading _540 images
-    nFiles = dir.listDir(directoryPath);
-    maxFilesToLoad = dir.size();
     
     /////////////////////
     // Initialize GUIS //
@@ -784,7 +783,7 @@ void testApp::keyPressed(int key){
             // Store data to associate with currently displayed image
             //  - joint positions (0–15) — 0 = center, 1–15 = joints
             
-            if (displayState == 'd' || displayState =='t'){
+            if (displayState == 'd'){
                 trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
                 trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
                 trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
