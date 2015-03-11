@@ -46,6 +46,7 @@ void testApp::setup() {
     //
     nFilesToLoad = 64; // for testing purposes only (quick load)
     directoryPath = directoriesAll[0]; // loading _540 images
+    imageScale = 2.0f; // TODO: Make this automatic based on image short edge? / 1080
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
     
@@ -567,8 +568,8 @@ void testApp::draw(){
                     // draw image at position and scale relative to center of screen and image
                     img.draw(imgRefPoint.x,
                              imgRefPoint.y,
-                             img.width * imgRefPoint.z,
-                             img.height * imgRefPoint.z);
+                             img.width * imgRefPoint.z * imageScale,
+                             img.height * imgRefPoint.z * imageScale);
                     
                     // Build debug message string
                     msg = msg + "\n jointsCenterProjective = " + ofToString(jointsCenterProjective);

@@ -42,6 +42,7 @@ public:
     int                     nTrackedUsers;
     ofFile                  file;
     string                  trainedImagesDirectory;
+    float                   imageScale;
     string                  trainingModelJointsPosABSfileName;
     string                  trainingDataJointsPosABSfileName;
     string                  trainingModelJointsPosRelfileName;
