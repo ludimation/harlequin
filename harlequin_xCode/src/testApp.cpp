@@ -788,7 +788,7 @@ void testApp::keyPressed(int key){
             // Store data to associate with currently displayed image
             //  - joint positions (0–15) — 0 = center, 1–15 = joints
             
-            if (displayState == 'd'){
+            if ((displayState == 'd' || displayState == 't') && trackedUserJointsPosABS.size()){
                 trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
                 trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
                 trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
