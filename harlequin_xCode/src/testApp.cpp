@@ -30,7 +30,9 @@ public:
 void testApp::setup() {
     
     // initialize file related properties
-    trainedImagesDirectory = "images/hand_drawings/LT/"; // TODO: Make this dynamic (1. include text input in GUI, 2. separate out data loading into a function that can be called when target data set is changed)
+    trainedImagesDirectory = "images/hand_drawings/LT/";
+//    trainedImagesDirectory = "images/hand_drawings/V/";
+    // TODO: Make this dynamic (1. include text input in GUI, 2. separate out data loading into a function that can be called when target data set is changed)
     directoriesAll.push_back(trainedImagesDirectory + "_540"); // i = 0
     directoriesAll.push_back(trainedImagesDirectory + "_1080"); // i = 1
 
