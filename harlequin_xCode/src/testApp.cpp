@@ -558,8 +558,8 @@ void testApp::draw(){
                     } else {
                         imgRefPoint.z = 1.0f;
                     }
-                    float xOffset = float( img.width  ) * imgRefPoint.z / 2.0f;
-                    float yOffset = float( img.height  ) * imgRefPoint.z / 2.0f;
+                    float xOffset = float( img.width  ) * imgRefPoint.z * imageScale / 2.0f;
+                    float yOffset = float( img.height  ) * imgRefPoint.z * imageScale / 2.0f;
                     imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
                     imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
                     
@@ -762,7 +762,9 @@ void testApp::setDisplayState(char newState) {
         // Load GUI settings // TODO: load setting xml files into memory to speed switching states
         gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
         guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+        // ofxUIRadio  guiColor -> getWidget("") // TODO: make sure blend modes and other loaded settings get set when changing XML file » imgBlendMode = radio -> getValue();
         guiColor -> setPosition(ofGetWidth() - 240, 0);
+        
     }
 }
 
