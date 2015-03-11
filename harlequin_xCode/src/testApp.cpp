@@ -795,6 +795,7 @@ void testApp::keyPressed(int key){
         case '<':
         case ',':
         case '[':
+        case 'p': // previous
            
             saveData();
             
@@ -808,13 +809,14 @@ void testApp::keyPressed(int key){
         
         case '>':
         case ']':
+        case 'n': // next
             
             saveData();
             
             if (displayState == 'i') break; // do not train data during installation mode
 
             // display next image in database
-            if (label < imageNames.size()) label++;
+            if (label < imageNames.size()-1) label++;
             img_name = imageNames[label];
 
             break;
