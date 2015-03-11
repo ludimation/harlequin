@@ -501,7 +501,8 @@ void testApp::draw(){
     // draw images
     switch (displayState) {
         case 'i':
-            
+        case 'd': // debug
+           
             // manage style and drawing matrix
             ofPushStyle();
             ofPushMatrix();
@@ -563,6 +564,7 @@ void testApp::draw(){
                     imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
                     
                     img.mirror(0, drawMirrored);
+                    //TODO: invert image and use additive mode -- img.getPixelsRef() might be useful?
                     
                     // TODO: image drawing should be z-sorted so further images draw behind closer ones
                     // draw image at position and scale relative to center of screen and image
@@ -586,7 +588,6 @@ void testApp::draw(){
             
             break;
             
-        case 'd': // debug
         case 't': // training
         default:
 
