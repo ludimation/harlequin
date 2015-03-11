@@ -13,12 +13,12 @@
 <Widget>
     <Kind>2</Kind>
     <Name>iA</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>i+</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -38,22 +38,22 @@
 <Widget>
     <Kind>4</Kind>
     <Name>image red</Name>
-    <Value>204.753692627</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>image green</Name>
     <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
+    <Name>image green</Name>
+    <Value>167.068969727</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
     <Name>image blue</Name>
-    <Value>57.783252716</Value>
+    <Value>125.615768433</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>image alpha</Name>
-    <Value>60.295566559</Value>
+    <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -133,12 +133,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>depth green</Name>
-    <Value>35.172412872</Value>
+    <Value>38.940887451</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth blue</Name>
-    <Value>31.403942108</Value>
+    <Value>37.684730530</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -178,20 +178,20 @@
 <Widget>
     <Kind>4</Kind>
     <Name>skel red</Name>
-    <Value>187.167480469</Value>
+    <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>skel green</Name>
-    <Value>246.206893921</Value>
+    <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>skel blue</Name>
-    <Value>222.339904785</Value>
+    <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>skel alpha</Name>
-    <Value>238.669952393</Value>
+    <Value>255.000000000</Value>
 </Widget>
