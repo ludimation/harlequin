@@ -100,12 +100,6 @@ void testApp::setup() {
     ///////////////////////////////
     drawFrameRate   = 30;
     drawMirrored    = false;
-
-    /////////////////////////
-    // Initialize settings //
-    /////////////////////////
-    drawNextFrameMilliseconds = 0;
-    setDisplayState('i'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes)
     
 
     //////////////
@@ -124,13 +118,14 @@ void testApp::setup() {
     // Main GUI --
     //////////////
     gui = new ofxUISuperCanvas("harlequin");
+    ofAddListener(gui -> newGUIEvent, this, &testApp::guiEvent);
     gui -> addSpacer();
     gui -> addTextArea("text", "'h' to hide this panel", OFX_UI_FONT_SMALL);
     //    gui -> addLabel("text", "'h' to hide this panel");
     gui -> addSpacer();
     //
     // Switch display modes
-    gui -> addLabel("application mode");
+    gui -> addLabel("application mode: ", &displayState);
     //    vector<string> appModes; appModes.push_back("interactive"); appModes.push_back("debug"); appModes.push_back("training");
     //    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_VERTICAL);
     //    radioAppMode -> activateToggle("interactive");
@@ -181,13 +176,12 @@ void testApp::setup() {
     // Save Settings
     gui -> addLabelButton("save main settings", false);
     gui -> autoSizeToFitWidgets();
-    gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
-    ofAddListener(gui -> newGUIEvent, this, &testApp::guiEvent);
     //
     //-------------
     // Color GUI --
     ///////////////
     guiColor = new ofxUISuperCanvas("harlequin colors");
+    ofAddListener(guiColor -> newGUIEvent, this, &testApp::guiEvent);
     guiColor -> addSpacer();
     //
     guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
@@ -205,7 +199,7 @@ void testApp::setup() {
     ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
     radioMode -> activateToggle("BLUES_INV");
     vector< string > vnamesBlendDEPTH; vnamesBlendDEPTH.push_back("d0"); vnamesBlendDEPTH.push_back("dA"); vnamesBlendDEPTH.push_back("d+"); vnamesBlendDEPTH.push_back("d-"); vnamesBlendDEPTH.push_back("d*"); vnamesBlendDEPTH.push_back("dS");
-    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("image blend mode", vnamesBlendDEPTH, OFX_UI_ORIENTATION_HORIZONTAL);
+    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlendDEPTH, OFX_UI_ORIENTATION_HORIZONTAL);
     radioBlendDepth -> activateToggle("d0");
     guiColor -> addSlider("depth red",   0.0, 255.0, &depthRed   );
     guiColor -> addSlider("depth green", 0.0, 255.0, &depthGreen );
@@ -215,7 +209,7 @@ void testApp::setup() {
     //
     guiColor -> addLabel("skeleton drawing settings", OFX_UI_FONT_MEDIUM);
     vector< string > vnamesBlendSKEL; vnamesBlendSKEL.push_back("s0"); vnamesBlendSKEL.push_back("sA"); vnamesBlendSKEL.push_back("s+"); vnamesBlendSKEL.push_back("s-"); vnamesBlendSKEL.push_back("s*"); vnamesBlendSKEL.push_back("sS");
-    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("image blend mode", vnamesBlendSKEL, OFX_UI_ORIENTATION_HORIZONTAL);
+    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skeleton blend mode", vnamesBlendSKEL, OFX_UI_ORIENTATION_HORIZONTAL);
     radioBlendSkel -> activateToggle("s0");
     guiColor -> addSlider("skel red",   0.0, 255.0, &skelRed   );
     guiColor -> addSlider("skel green", 0.0, 255.0, &skelGreen );
@@ -226,9 +220,13 @@ void testApp::setup() {
     // Save Settings
     guiColor -> addLabelButton("save color settings", false);
     guiColor -> autoSizeToFitWidgets();
-    guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-    guiColor -> setPosition(ofGetWidth() - 240, 0);
-    ofAddListener(guiColor -> newGUIEvent, this, &testApp::guiEvent);
+    
+
+    /////////////////////////
+    // Initialize settings //
+    /////////////////////////
+    drawNextFrameMilliseconds = 0;
+    setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
 }
 
 void testApp::loadImages(bool load) {
@@ -487,8 +485,8 @@ void testApp::draw(){
     if (drawDepth and drawDepthBehind){
         ofPushStyle();
 
-        //        ofEnableBlendMode((ofBlendMode)depthBlendMode);
-        ofEnableBlendMode(OF_BLENDMODE_ADD); // TODO: implement depthBlendMode
+        ofEnableBlendMode((ofBlendMode)depthBlendMode);
+//        ofEnableBlendMode(OF_BLENDMODE_ADD); // TODO: implement depthBlendMode
         ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
         openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
         
@@ -603,7 +601,7 @@ void testApp::draw(){
             // set colors
             ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
             ofEnableBlendMode((ofBlendMode)imgBlendMode);
-            ofEnableBlendMode(OF_BLENDMODE_DISABLED); // TODO: implement imgBlendMode
+//            ofEnableBlendMode(OF_BLENDMODE_DISABLED); // TODO: implement imgBlendMode
 
             // draw image(s)
             // if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
@@ -654,8 +652,7 @@ void testApp::draw(){
         //  openNIRecorder.drawDebug(0, 0);
         if (drawDepth and !drawDepthBehind)
         {
-            //            ofEnableBlendMode((ofBlendMode)depthBlendMode);
-            ofEnableBlendMode(OF_BLENDMODE_ADD); //TODO: implement depthBlendMode
+            ofEnableBlendMode((ofBlendMode)depthBlendMode);
             ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
             openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
         }
@@ -767,8 +764,18 @@ void testApp::setDisplayState(char newState) {
         // Load GUI settings // TODO: load setting xml files into memory to speed switching states
         gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
         guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-        // ofxUIRadio  guiColor -> getWidget("") // TODO: make sure blend modes and other loaded settings get set when changing XML file » imgBlendMode = radio -> getValue();
-        guiColor -> setPosition(ofGetWidth() - 240, 0);
+        // update radio properties to match loaded settings
+        guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+        ofxUIRadio *imgBlendRadio = (ofxUIRadio *) guiColor -> getWidget("image blend mode");
+        imgBlendMode = imgBlendRadio -> getValue();
+        ofxUIRadio *depthClrModeRadio = (ofxUIRadio *) guiColor -> getWidget("depth color mode");
+        depthColorMode = depthClrModeRadio -> getValue();
+        ofxUIRadio *depthBlendRadio = (ofxUIRadio *) guiColor -> getWidget("depth blend mode");
+        depthBlendMode = depthBlendRadio -> getValue();
+        ofxUIRadio *skelBlendRadio = (ofxUIRadio *) guiColor -> getWidget("skeleton blend mode");
+        skelBlendMode = skelBlendRadio -> getValue();
+        // update guiColor position
+        guiColor -> setPosition(ofGetWidth() - 220, 0);
         
     }
 }
