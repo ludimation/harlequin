@@ -6,6 +6,7 @@
 #include "GRT.h"
 #include "ofxUI.h"
 #include "ofxOsc.h"
+
 #define HOST "localhost"
 #define PORT 9000
 
@@ -28,7 +29,7 @@ public:
     
     void setupKinects();
     void stopKinects();
-    int getRandomExcluding(int min, int max, int i);
+    int  getRandomExcluding(int min, int max, int i);
     
     void setDisplayState(char newState);
     
