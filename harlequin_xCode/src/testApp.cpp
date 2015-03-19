@@ -426,7 +426,7 @@ void testApp::update(){
             // store center positions in both world space and projective space
             ofPoint userJCenter = openNIPlayer.getTrackedUser(j).getCenter();
             ofPoint userJcenterProjective = openNIPlayer.worldToProjective(userJCenter);
-            //            ofPoint userJcenterProjective = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition();
+            //            ofPoint userJcenterProjective = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition(); // TODO: use the root position of the hips instead?
             trackedUserCentersProjective.push_back(
                                                    userJcenterProjective *
                                                    ofPoint(
@@ -459,7 +459,7 @@ void testApp::update(){
             for (int i = 0; i < trackedUserJointsPosABS[j].size(); ++i) {
                 for (int axis = 0; axis < 3; ++axis)
                 {
-                    // axis = {0,1,2} which correlates to ofPoint {x, y, z}
+                    // axis = should be {0,1,2} which correlates to ofPoint {x, y, z}
                     singleUserJointsPosABSDoubles.push_back(trackedUserJointsPosABS[j][i][axis]);
                     singleUserJointsPosRelDoubles.push_back(trackedUserJointsPosRel[j][i][axis]);
                     singleUserJointsRotAxisADoubles.push_back(trackedUserJointsRotAxisA[j][i][axis]);
