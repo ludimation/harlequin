@@ -120,6 +120,9 @@ private:
     vector< vector< ofPoint > >     trackedUserJointsRotAxisA;
     vector< vector< double > >      trackedUserJointsRotAxisADouble;
     
+    vector< vector< ofPoint > >     testUserJoints;
+    void                            setupTestUserJoints();
+    
     vector< ofPoint >               trackedUserCentersProjective;
     
     string                  img_name;
