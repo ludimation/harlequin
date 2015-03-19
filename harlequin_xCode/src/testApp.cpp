@@ -554,9 +554,9 @@ void testApp::draw(){
                 if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && imageNames.size())
                 {
                     label = trainingModelJointsPosRel.getPredictedClassLabel();
-                    //                    cout << "predicted label:" << trainingModelJointsPosRel.getPredictedClassLabel() << endl;
+                    //                    cout << "predicted label:" << label << endl;
                     
-                    if (label > imageNames.size())
+                    if (label > imageNames.size()) // if predicted label image hasn't been loaded, display a random image
                     {
                         label = ofRandom(0, imageNames.size() - 1);
                         cout << "predicted label is too high for imageNames.size() = " << ofToString(imageNames.size()) << endl;
@@ -564,7 +564,6 @@ void testApp::draw(){
                     
                     img_name = imageNames[label];
                     //                    cout << "img_name = " << img_name << endl;
-                    //                    img_name = ofToString(label) + ".jpg";
                 }
                 else
                 {
@@ -572,8 +571,8 @@ void testApp::draw(){
                     cout << "trainingModelJointsPosRel could not predict" << endl;
                 }
                 
-                // TODO: find another image if image could not be loaded?
-                //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
+                // TODO: load images directly from HD if SSD is set
+                //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
 
                 if (openNIPlayer.getNumTrackedUsers() >= j) {
                     jointsCenterProjective = trackedUserCentersProjective[j];
