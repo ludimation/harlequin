@@ -83,10 +83,10 @@
 <Widget>
     <Kind>42</Kind>
     <Name>number of files to load</Name>
-    <Value>61</Value>
+    <Value>32</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>
     <Name>load images</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
