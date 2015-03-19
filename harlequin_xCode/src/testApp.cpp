@@ -49,39 +49,7 @@ void testApp::setup() {
     imageScale = 2.0f; // TODO: Make this automatic based on image short edge? / 1080
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
-    
-    ///////////////////////////////////
-    // Training Data and Model Setup //
-    ///////////////////////////////////
-    trainingDataJointsPosABSfileName    = trainedImagesDirectory + "JointsPosABSdata.txt"; // TODO: make these relative to selected directories
-    trainingModelJointsPosABSfileName   = trainedImagesDirectory + "JointsPosABSmodel.txt";
-    trainingDataJointsPosRelfileName    = trainedImagesDirectory + "JointsPosReldata.txt";
-    trainingModelJointsPosRelfileName   = trainedImagesDirectory + "JointsPosRelmodel.txt";
-    trainingDataJointsRotAxisAfileName  = trainedImagesDirectory + "JointsRotAxisAdata.txt";
-    trainingModelJointsRotAxisAfileName = trainedImagesDirectory + "JointsRotAxisAmodel.txt";
-    //
-    GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
-    GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
-    GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
-    //
-    trainingDataJointsPosABS.setDatasetName("harlequinPosABS");
-    trainingDataJointsPosABS.setNumDimensions(45);
-    trainingDataJointsPosRel.setDatasetName("harlequinPosRel");
-    trainingDataJointsPosRel.setNumDimensions(45);
-    trainingDataJointsRotAxisA.setDatasetName("harlequinRotAxisA");
-    trainingDataJointsRotAxisA.setNumDimensions(45);
-    //
-    //
-    trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
-    trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName)); // TODO: this doesn't seem to work
-    trainingModelJointsPosABS.train(trainingDataJointsPosABS); // TODO: put this somewhere that works (doesn't seem to work here in startup())
-    trainingDataJointsPosRel.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosRelfileName));
-    trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
-    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
-    trainingDataJointsRotAxisA.loadDatasetFromFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
-    trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
-    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
-    
+
     
     //////////////////
     // Kinect Setup //
@@ -242,6 +210,10 @@ void testApp::loadImages(bool load) {
     images.clear();
     
     if (load) {
+        
+        /////////////////
+        // load images //
+        /////////////////
         // declare local variables
         string          directoryPath;
         string          filePath;
@@ -277,6 +249,40 @@ void testApp::loadImages(bool load) {
         if (img_name.size()) img_name = imageNames[label]; // TODO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
         // TODO: also could clear out the imageNames array code since
         // I'm pretty sure we'll be using a hashtable instead
+        
+        
+        /////////////////////////////////////////
+        // load training data and setup models //
+        /////////////////////////////////////////
+        trainingDataJointsPosABSfileName    = trainedImagesDirectory + "JointsPosABSdata.txt"; // TODO: make these relative to selected directories
+        trainingModelJointsPosABSfileName   = trainedImagesDirectory + "JointsPosABSmodel.txt";
+        trainingDataJointsPosRelfileName    = trainedImagesDirectory + "JointsPosReldata.txt";
+        trainingModelJointsPosRelfileName   = trainedImagesDirectory + "JointsPosRelmodel.txt";
+        trainingDataJointsRotAxisAfileName  = trainedImagesDirectory + "JointsRotAxisAdata.txt";
+        trainingModelJointsRotAxisAfileName = trainedImagesDirectory + "JointsRotAxisAmodel.txt";
+        //
+        GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
+        GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
+        GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
+        //
+        trainingDataJointsPosABS.setDatasetName("harlequinPosABS");
+        trainingDataJointsPosABS.setNumDimensions(45);
+        trainingDataJointsPosRel.setDatasetName("harlequinPosRel");
+        trainingDataJointsPosRel.setNumDimensions(45);
+        trainingDataJointsRotAxisA.setDatasetName("harlequinRotAxisA");
+        trainingDataJointsRotAxisA.setNumDimensions(45);
+        //
+        //
+        trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
+        trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName)); // TODO: this doesn't seem to work
+        trainingModelJointsPosABS.train(trainingDataJointsPosABS); // TODO: put this somewhere that works (doesn't seem to work here in startup())
+        trainingDataJointsPosRel.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosRelfileName));
+        trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
+        trainingModelJointsPosRel.train(trainingDataJointsPosRel);
+        trainingDataJointsRotAxisA.loadDatasetFromFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
+        trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
+        trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+
     }
     else
     {
