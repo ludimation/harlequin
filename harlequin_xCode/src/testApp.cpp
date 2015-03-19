@@ -93,10 +93,10 @@ void testApp::setup() {
     gui -> addSpacer();
     //
     // Switch display modes
-    gui -> addLabel("application mode: ", &displayState);
-    //    vector<string> appModes; appModes.push_back("interactive"); appModes.push_back("debug"); appModes.push_back("training");
-    //    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_VERTICAL);
-    //    radioAppMode -> activateToggle("interactive");
+    gui -> addLabel("application mode: ");
+    vector<string> appModes; appModes.push_back("i"); appModes.push_back("d"); appModes.push_back("t");
+    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_HORIZONTAL);
+    radioAppMode -> activateToggle("debug");
     gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
     gui -> addSpacer();
     //
