@@ -205,10 +205,6 @@ void testApp::setup() {
 
 void testApp::loadImages(bool load) {
     
-    //TODO: Make this more elegant so that it only unloads images that need to be unloaded, and only loads ones that aren't already loaded
-    imageNames.clear();
-    images.clear();
-    
     if (load) {
         
         /////////////////
@@ -237,11 +233,11 @@ void testApp::loadImages(bool load) {
                 if (imgTMP.loadImage(filePath))
                 {
                     imageNames.push_back(filePath);
-                    images[imageNames.size()-1] = imgTMP; //TODO: is this leading to some empty image entries in the images vector? Should probably deal with this a little more efficiently.
+                    images[imageNames.size()-1] = imgTMP;
                 }
-                
                 cout << "loading image [" << ofToString(i+1) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
             }
+            images.resize(img_name.size()); // remove empty image entries at end of image vector —— represent files which could not load
         } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
         //
         // Select image to start with
@@ -286,6 +282,9 @@ void testApp::loadImages(bool load) {
     }
     else
     {
+        // clear image arrays to unload all images
+        imageNames.clear();
+        images.clear();
         cout << "images unloaded -- imageNames.size() = " << imageNames.size() << "; images.size() = "<< images.size() << endl;
     }
 }
