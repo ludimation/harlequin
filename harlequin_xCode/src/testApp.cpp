@@ -461,7 +461,7 @@ void testApp::update(){
         } else {
             for (int j = 0; j < numUsers; j++)
                 trackedUserCentersProjective.push_back(ofPoint(
-                                                               float( ofGetWidth() ) / (numUsers+1.0f) * (j+1.0f),
+                                                               float( ofGetWidth() ) * (j+1.0f) / (numUsers+1.0f),
                                                                float( ofGetHeight()  ) / 2.0f,
                                                                2500.0f
                                                                )
@@ -574,7 +574,7 @@ void testApp::draw(){
                 // TODO: load images directly from HD if SSD is set
                 //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
 
-                if (openNIPlayer.getNumTrackedUsers() >= j) {
+                if (trackedUserCentersProjective.size() >= j+1) {
                     jointsCenterProjective = trackedUserCentersProjective[j];
                     //                    cout << "jointsCenterProjective = trackedUserCentersProjective[j];" << endl;
                 } else {
