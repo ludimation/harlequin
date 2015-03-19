@@ -416,13 +416,24 @@ void testApp::update(){
     vector< ofPoint >   singleUserJointsRotAxisA;
     vector< double >    singleUserJointsRotAxisADoubles;
     
+    // local variables for looping
+    int numUsers;
+    int numJoints;
+    if (kinected) {
+        numUsers = openNIPlayer.getNumTrackedUsers();
+        if (numUsers) numJoints = openNIPlayer.getTrackedUser(0).joints.size();
+    } else {
+        numUsers = 3;
+        numJoints = 15;
+    }
+    
     // build joint position vectors
-    if (openNIPlayer.getNumTrackedUsers()) {
-        for (int j = 0; j < openNIPlayer.getNumTrackedUsers(); ++j) {
-            singleUserJointsPosABS.clear();
-            singleUserJointsPosRel.clear();
-            singleUserJointsRotAxisA.clear();
+    for (int j = 0; j < numUsers; j++) {
+        singleUserJointsPosABS.clear();
+        singleUserJointsPosRel.clear();
+        singleUserJointsRotAxisA.clear();
 
+        if (kinected) {
             // store center positions in both world space and projective space
             ofPoint userJCenter = openNIPlayer.getTrackedUser(j).getCenter();
             ofPoint userJcenterProjective = openNIPlayer.worldToProjective(userJCenter);
@@ -435,18 +446,29 @@ void testApp::update(){
                                                            1
                                                            )
                                                    );
-
-            for (int i = 0; i < openNIPlayer.getTrackedUser(j).joints.size(); ++i) {
+            for (int i = 0; i < numJoints; ++i) {
                 ofPoint jointIworldPos = openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition();
                 singleUserJointsPosABS.push_back(jointIworldPos);
                 singleUserJointsPosRel.push_back(jointIworldPos - userJCenter);
                 singleUserJointsRotAxisA.push_back(jointIworldPos);
                 // TODO: singleUserJointsAxisA.push_back(findAxisAngle(userJCenter, jointIworldPos));
             }
-            trackedUserJointsPosABS.push_back(singleUserJointsPosABS);
-            trackedUserJointsPosRel.push_back(singleUserJointsPosRel);
-            trackedUserJointsRotAxisA.push_back(singleUserJointsRotAxisA);
+        } else {
+            for (int j = 0; j < numUsers; j++)
+                trackedUserCentersProjective.push_back(ofPoint(
+                                                               float( ofGetWidth() ) / (numUsers+1.0f) * (j+1.0f),
+                                                               float( ofGetHeight()  ) / 2.0f,
+                                                               2500.0f
+                                                               )
+                                                       );
+            
+            singleUserJointsPosABS = testUserJoints[j];
+            singleUserJointsPosRel = testUserJoints[j];
+            singleUserJointsRotAxisA = testUserJoints[j];
         }
+        trackedUserJointsPosABS.push_back(singleUserJointsPosABS);
+        trackedUserJointsPosRel.push_back(singleUserJointsPosRel);
+        trackedUserJointsRotAxisA.push_back(singleUserJointsRotAxisA);
     }
     
     // build training vectors based on joint positions
@@ -457,7 +479,7 @@ void testApp::update(){
             singleUserJointsPosRelDoubles.clear();
             singleUserJointsRotAxisADoubles.clear();
             for (int i = 0; i < trackedUserJointsPosABS[j].size(); ++i) {
-                for (int axis = 0; axis < 3; ++axis)
+                for (int axis = 0; axis < trackedUserJointsPosABS[j][i].length(); ++axis)
                 {
                     // axis = should be {0,1,2} which correlates to ofPoint {x, y, z}
                     singleUserJointsPosABSDoubles.push_back(trackedUserJointsPosABS[j][i][axis]);
