@@ -6,6 +6,21 @@
     <YPosition>0.000000000</YPosition>
 </Canvas>
 <Widget>
+    <Kind>2</Kind>
+    <Name>i</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>d</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>t</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
     <Kind>42</Kind>
     <Name>set fps</Name>
     <Value>30</Value>
@@ -28,7 +43,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>kinected</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
