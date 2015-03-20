@@ -224,7 +224,7 @@ void testApp::loadImages(bool load) {
         nFilesInDir = dir.listDir(directoryPath);
         maxFilesToLoad = dir.size();//TODO: update maximum for GUI slider named "number of files to load"
         images.resize(nFilesToLoad);
-        imageNames.resize(nFilesToLoad);
+//        imageNames.resize(nFilesToLoad);
         imgTMP.setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
         //
         // load files
@@ -236,7 +236,7 @@ void testApp::loadImages(bool load) {
                 filePath = dir.getPath(i);
                 if (imgTMP.loadImage(filePath))
                 {
-                    imageNames[nFilesLoaded] = filePath;
+//                    imageNames[nFilesLoaded] = filePath;
                     images[nFilesLoaded] = imgTMP;
                     nFilesLoaded++;
                     cout << "loaded image [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
@@ -290,10 +290,10 @@ void testApp::loadImages(bool load) {
     else
     {
         // clear image arrays to unload all images
-        imageNames.clear();
+//        imageNames.clear();
         images.clear();
         // TODO: clean up prediction data & models as well
-        cout << "images unloaded -- imageNames.size() = " << imageNames.size() << "; images.size() = "<< images.size() << endl;
+        cout << "images unloaded -- images.size() = "<< images.size() << endl;
     }
 }
 
@@ -569,12 +569,12 @@ void testApp::draw(){
                         cout << "predicted label is too high for images.size() = " << ofToString(images.size()) << endl;
                     }
                     
-                    img_name = imageNames[label];
+//                    img_name = imageNames[label];
                     //                    cout << "img_name = " << img_name << endl;
                 }
                 else
                 {
-                    img_name = "";
+//                    img_name = "";
                     cout << "trainingModelJointsPosRel could not predict" << endl;
                 }
                 
@@ -863,7 +863,7 @@ void testApp::keyPressed(int key){
             
             // display previous image in database
             if (label > 0) label--;
-            img_name = imageNames[label];
+//            img_name = imageNames[label];
 
             break;
         
@@ -876,8 +876,8 @@ void testApp::keyPressed(int key){
             if (displayState == 'i') break; // do not train data during installation mode
 
             // display next image in database
-            img_name = imageNames[label];
             if (label < images.size()-1) label++;
+//            img_name = imageNames[label];
 
             break;
         
@@ -888,8 +888,8 @@ void testApp::keyPressed(int key){
             if (displayState == 'i') break; // do not train data during installation mode
             
             // display random image from database
-            img_name = imageNames[label];
             label = getRandomExcluding(0, images.size() - 1, label);
+//            img_name = imageNames[label];
 
             break;
         
@@ -922,7 +922,7 @@ void testApp::keyPressed(int key){
                     cout << "predicted label is too high for images.size() = " << ofToString(images.size()) << endl;
                 }
                 
-                img_name = imageNames[label];
+//                img_name = imageNames[label];
             }
             else
             {
