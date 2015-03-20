@@ -97,7 +97,7 @@ void testApp::setup() {
     gui -> addLabel("application mode: ");
     vector<string> appModes; appModes.push_back("i"); appModes.push_back("d"); appModes.push_back("t");
     ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_HORIZONTAL);
-    radioAppMode -> activateToggle("debug");
+//    radioAppMode -> activateToggle("d");
     gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
     gui -> addSpacer();
     //
@@ -156,7 +156,7 @@ void testApp::setup() {
     guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
     vector< string > vnamesBlendIMG; vnamesBlendIMG.push_back("i0"); vnamesBlendIMG.push_back("iA"); vnamesBlendIMG.push_back("i+"); vnamesBlendIMG.push_back("i-"); vnamesBlendIMG.push_back("i*"); vnamesBlendIMG.push_back("iS");
     ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlendIMG, OFX_UI_ORIENTATION_HORIZONTAL);
-    radioBlendIMG -> activateToggle("i0");
+//    radioBlendIMG -> activateToggle("i0");
     guiColor -> addSlider("image red",   0.0, 255.0, &imgRed   );
     guiColor -> addSlider("image green", 0.0, 255.0, &imgGreen );
     guiColor -> addSlider("image blue",  0.0, 255.0, &imgBlue  );
@@ -166,10 +166,10 @@ void testApp::setup() {
     guiColor -> addLabel("depth image settings", OFX_UI_FONT_MEDIUM);
     vector< string > vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
     ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
-    radioMode -> activateToggle("BLUES_INV");
+//    radioMode -> activateToggle("BLUES_INV");
     vector< string > vnamesBlendDEPTH; vnamesBlendDEPTH.push_back("d0"); vnamesBlendDEPTH.push_back("dA"); vnamesBlendDEPTH.push_back("d+"); vnamesBlendDEPTH.push_back("d-"); vnamesBlendDEPTH.push_back("d*"); vnamesBlendDEPTH.push_back("dS");
     ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlendDEPTH, OFX_UI_ORIENTATION_HORIZONTAL);
-    radioBlendDepth -> activateToggle("d0");
+//    radioBlendDepth -> activateToggle("d0");
     guiColor -> addSlider("depth red",   0.0, 255.0, &depthRed   );
     guiColor -> addSlider("depth green", 0.0, 255.0, &depthGreen );
     guiColor -> addSlider("depth blue",  0.0, 255.0, &depthBlue  );
@@ -179,7 +179,7 @@ void testApp::setup() {
     guiColor -> addLabel("skeleton drawing settings", OFX_UI_FONT_MEDIUM);
     vector< string > vnamesBlendSKEL; vnamesBlendSKEL.push_back("s0"); vnamesBlendSKEL.push_back("sA"); vnamesBlendSKEL.push_back("s+"); vnamesBlendSKEL.push_back("s-"); vnamesBlendSKEL.push_back("s*"); vnamesBlendSKEL.push_back("sS");
     ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skeleton blend mode", vnamesBlendSKEL, OFX_UI_ORIENTATION_HORIZONTAL);
-    radioBlendSkel -> activateToggle("s0");
+//    radioBlendSkel -> activateToggle("s0");
     guiColor -> addSlider("skel red",   0.0, 255.0, &skelRed   );
     guiColor -> addSlider("skel green", 0.0, 255.0, &skelGreen );
     guiColor -> addSlider("skel blue",  0.0, 255.0, &skelBlue  );
@@ -1000,11 +1000,14 @@ void testApp::keyPressed(int key){
             break;
     }
     
-    if (displayStateChanged && gui)
+    if (displayStateChanged)
     {
         setDisplayState(key);
-        //        ofxUIRadio *radioAppMode = (ofxUIRadio *) (gui -> getWidget("application mode"));
-        //        radioAppMode -> activateToggle(displayStateString);
+        
+        if (gui) {
+            ofxUIRadio *radioAppMode = (ofxUIRadio *) (gui -> getWidget("application mode"));
+            radioAppMode -> activateToggle(displayStateString);
+        }
     }
 }
 
