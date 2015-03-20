@@ -241,8 +241,6 @@ void testApp::loadImages(bool load) {
                     cout << "loaded image [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
                 }
             }
-//            images.resize(nFilesToLoad); // remove empty image entries at end of image vector —— represent files which could not load
-//            imageNames.resize(nFilesToLoad);
         } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
         //
         // Select image to start with
@@ -558,15 +556,15 @@ void testApp::draw(){
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
 
                 // select label: Relative Position model
-                if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && imageNames.size())
+                if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && images.size())
                 {
                     label = trainingModelJointsPosRel.getPredictedClassLabel();
                     //                    cout << "predicted label:" << label << endl;
                     
-                    if (label > imageNames.size()) // if predicted label image hasn't been loaded, display a random image
+                    if (label > images.size()) // if predicted label image hasn't been loaded, display a random image
                     {
-                        label = ofRandom(0, imageNames.size() - 1);
-                        cout << "predicted label is too high for imageNames.size() = " << ofToString(imageNames.size()) << endl;
+                        label = ofRandom(0, images.size() - 1);
+                        cout << "predicted label is too high for images.size() = " << ofToString(images.size()) << endl;
                     }
                     
                     img_name = imageNames[label];
@@ -589,7 +587,7 @@ void testApp::draw(){
                     //                    cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
                 }
                 
-                if (imageNames.size())
+                if (images.size())
                 {
                     // set image to draw
                     img = images[label];
@@ -644,7 +642,7 @@ void testApp::draw(){
 
             // draw image(s)
             // if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
-            if (imageNames.size())
+            if (images.size())
             {
                 img = images[label];
                 float imgRatioX;
@@ -877,8 +875,8 @@ void testApp::keyPressed(int key){
             if (displayState == 'i') break; // do not train data during installation mode
 
             // display next image in database
-            if (label < imageNames.size()-1) label++;
             img_name = imageNames[label];
+            if (label < images.size()-1) label++;
 
             break;
         
@@ -889,8 +887,8 @@ void testApp::keyPressed(int key){
             if (displayState == 'i') break; // do not train data during installation mode
             
             // display random image from database
-            label = getRandomExcluding(0, imageNames.size() - 1, label);
             img_name = imageNames[label];
+            label = getRandomExcluding(0, images.size() - 1, label);
 
             break;
         
@@ -917,10 +915,10 @@ void testApp::keyPressed(int key){
             {
                 label = trainingModelJointsPosRel.getPredictedClassLabel();
                 
-                if (label > imageNames.size())
+                if (label > images.size())
                 {
-                    label = ofRandom(0, imageNames.size() - 1);
-                    cout << "predicted label is too high for imageNames.size() = " << ofToString(imageNames.size()) << endl;
+                    label = ofRandom(0, images.size() - 1);
+                    cout << "predicted label is too high for images.size() = " << ofToString(images.size()) << endl;
                 }
                 
                 img_name = imageNames[label];
