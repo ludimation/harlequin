@@ -1066,6 +1066,8 @@ void testApp::setupKinects() {
     openNIPlayer.start();
     
     kinectsInitialized = true;
+    
+    ofSetLogLevel(OF_LOG_WARNING);
 }
 void testApp::stopKinects() {
     ofSetLogLevel(OF_LOG_VERBOSE);
@@ -1075,6 +1077,7 @@ void testApp::stopKinects() {
 //    openNIPlayer.setRegister(false);
 //    openNIPlayer.removeUserGenerator();
     openNIPlayer.stop();
+    ofSetLogLevel(OF_LOG_WARNING);
 }
 
 void testApp::setupTestUserJoints() { //TODO: make this more data-driven, loading an external XML file or atual positions from a GRT joint data file
