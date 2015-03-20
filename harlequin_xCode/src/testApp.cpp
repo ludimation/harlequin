@@ -204,9 +204,7 @@ void testApp::setup() {
 }
 
 void testApp::loadImages(bool load) {
-    
-    //TODO: Make this more elegant so that it only unloads images that need to be unloaded, and only loads ones that aren't already loaded
-    
+
     if (load) {
         
         /////////////////
