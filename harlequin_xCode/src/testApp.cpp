@@ -713,7 +713,6 @@ void testApp::draw(){
         {
             ofSetColor(skelRed, skelGreen, skelBlue, skelAlpha);
             ofEnableBlendMode((ofBlendMode)skelBlendMode);
-            ofEnableBlendMode(OF_BLENDMODE_SUBTRACT); //TODO: implement skelBlendMode
             openNIPlayer.drawSkeletons(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
         }
         
