@@ -10,11 +10,12 @@ public:
 };
 
 ///////////
-// TODO:
-////////////
+// TODO: //
+///////////
+//  - experiment with "nearest" method of label prediction for more movement
+//  - redesign image / training system to be more malleable
 //  - do not display the same image more than once every 3 frames
 //  - slow down frame rate to 30, or even as low as 12 or so?
-//  - redesign image / training system to be more malleable
 //  - display data associated with current image
 //  - save image positioning data —- translation, scale, and rotation controls for current image
 //      > rotation
@@ -35,7 +36,7 @@ void testApp::setup() {
     ///////////////////////////
     trainedImagesDirectory = "images/hand_drawings/LT/";
 //    trainedImagesDirectory = "images/hand_drawings/V/";
-    // TODO: Make this dynamic (1. include text input in GUI, 2. separate out data loading into a function that can be called when target data set is changed)
+    // TODO: make image directory selection dynamic (1. include text input in GUI, 2. separate out data loading into a function that can be called when target data set is changed)
     directoriesAll.push_back(trainedImagesDirectory + "_540"); // i = 0
     directoriesAll.push_back(trainedImagesDirectory + "_1080"); // i = 1
     //
@@ -46,7 +47,7 @@ void testApp::setup() {
     //
     nFilesToLoad = 64; // for testing purposes only (quick load)
     directoryPath = directoriesAll[0]; // loading _540 images
-    imageScale = 2.0f; // TODO: Make this automatic based on image short edge? / 1080
+    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
 
@@ -245,9 +246,9 @@ void testApp::loadImages(bool load) {
         //
         // Select image to start with
         label = 0;
-        if (img_name.size()) img_name = imageNames[label]; // TODO: use this variable to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
-        // TODO: also could clear out the imageNames array code since
-        // I'm pretty sure we'll be using a hashtable instead
+        if (imageNames.size()) img_name = imageNames[label];
+        // TODO: use "img_name" to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
+        // TODO: clear out the imageNames array code after the data handling re-structuring takes place
         
         
         /////////////////////////////////////////
@@ -273,8 +274,10 @@ void testApp::loadImages(bool load) {
         //
         //
         trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
-        trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName)); // TODO: this doesn't seem to work
-        trainingModelJointsPosABS.train(trainingDataJointsPosABS); // TODO: put this somewhere that works (doesn't seem to work here in startup())
+        // TODO: loading Model data doesn't seem to work——could it be fixed by implementing the suggested pipeline setup?
+        trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName));
+        // TODO: training model data doesn't seem to work when called from startup()——could this also be fixed by implementing the suggested pipeline setup?
+        trainingModelJointsPosABS.train(trainingDataJointsPosABS);
         trainingDataJointsPosRel.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosRelfileName));
         trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
         trainingModelJointsPosRel.train(trainingDataJointsPosRel);
@@ -447,7 +450,7 @@ void testApp::update(){
             // store center positions in both world space and projective space
             ofPoint userJCenter = openNIPlayer.getTrackedUser(j).getCenter();
             ofPoint userJcenterProjective = openNIPlayer.worldToProjective(userJCenter);
-            //            ofPoint userJcenterProjective = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition(); // TODO: use the root position of the hips instead?
+            //            ofPoint userJcenterProjective = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition(); // TODO: use the root position of the hips for relative joint data instead?
             trackedUserCentersProjective.push_back(
                                                    userJcenterProjective *
                                                    ofPoint(
@@ -461,7 +464,7 @@ void testApp::update(){
                 singleUserJointsPosABS.push_back(jointIworldPos);
                 singleUserJointsPosRel.push_back(jointIworldPos - userJCenter);
                 singleUserJointsRotAxisA.push_back(jointIworldPos);
-                // TODO: singleUserJointsAxisA.push_back(findAxisAngle(userJCenter, jointIworldPos));
+                // TODO: calculate axis angles properly and store with something like singleUserJointsAxisA.push_back(findAxisAngle(userJCenter, jointIworldPos));
             }
         } else {
             for (int j = 0; j < numUsers; j++)
@@ -524,7 +527,6 @@ void testApp::draw(){
         ofPushStyle();
 
         ofEnableBlendMode((ofBlendMode)depthBlendMode);
-//        ofEnableBlendMode(OF_BLENDMODE_ADD); // TODO: implement depthBlendMode
         ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
         openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
         
@@ -551,7 +553,7 @@ void testApp::draw(){
             // set colors
             ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
             ofEnableBlendMode((ofBlendMode)imgBlendMode);
-            //            ofEnableBlendMode(OF_BLENDMODE_DISABLED); //TODO: implement imgBlendMode
+            // TODO: change data type for GUI variables like imBlendMode et al, and cast data as proper format when changed by the GUI
             
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
 
@@ -576,7 +578,7 @@ void testApp::draw(){
                     cout << "trainingModelJointsPosRel could not predict" << endl;
                 }
                 
-                // TODO: load images directly from HD if SSD is set
+                // TODO: implement SSD option selection GUI & implemnet loading images directly from HD
                 //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
 
                 if (trackedUserCentersProjective.size() >= j+1) {
@@ -604,7 +606,7 @@ void testApp::draw(){
                     imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
                     
                     img.mirror(0, drawMirrored);
-                    //TODO: invert image and use additive mode -- img.getPixelsRef() might be useful?
+                    //TODO: add invert image option to GUI & implement inversion here -- img.getPixelsRef() might be useful?
                     
                     // TODO: image drawing should be z-sorted so further images draw behind closer ones
                     // draw image at position and scale relative to center of screen and image
@@ -638,7 +640,6 @@ void testApp::draw(){
             // set colors
             ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
             ofEnableBlendMode((ofBlendMode)imgBlendMode);
-//            ofEnableBlendMode(OF_BLENDMODE_DISABLED); // TODO: implement imgBlendMode
 
             // draw image(s)
             // if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
@@ -788,7 +789,7 @@ void testApp::setDisplayState(char newState) {
             break;
 
         default:
-            // TODO: error messsage for undefined state change?
+            // TODO: log or cout an error messsage for undefined state change?
             undefinedState = true;
             break;
     }
@@ -798,7 +799,7 @@ void testApp::setDisplayState(char newState) {
     {
         displayState = newState;
         
-        // Load GUI settings // TODO: load setting xml files into memory to speed switching states
+        // Load GUI settings // TODO: load setting xml files into memory to speed up switching states?
         gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
         guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
         // update radio properties to match loaded settings
@@ -846,7 +847,7 @@ void testApp::keyPressed(int key){
                 trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
                 trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
             } else {
-                // TODO: display some kind of error message that says data can only be saved in debug mode?
+                // TODO: display some kind of error message that says data can only be saved in training mode?
             }
             
             break;
@@ -977,7 +978,8 @@ void testApp::keyPressed(int key){
             break;
         
         case 'k':
-            setupKinects(); // TODO: debug this, doesn't seem to work properly after kinects have been stopped.
+            setupKinects();
+            // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
             kinected = true;
             break;
     }
@@ -1021,7 +1023,8 @@ void testApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-    // TODO: drag image around. Filters:
+    // TODO: implement image metadata editing
+    //      drag image around Filters:
     //          - no modifiers = position dragging
     //          - sift = rotation
     //          - ctrl = scale
@@ -1031,12 +1034,10 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-    // TODO: start dragging
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-    // TODO: stop dragging
 }
 
 //--------------------------------------------------------------
@@ -1077,7 +1078,7 @@ void testApp::stopKinects() {
     ofSetLogLevel(OF_LOG_WARNING);
 }
 
-void testApp::setupTestUserJoints() { //TODO: make this more data-driven, loading an external XML file or atual positions from a GRT joint data file
+void testApp::setupTestUserJoints() { //TODO: make setting test user joints data more data-driven––load an external XML file or atual positions from a GRT joint data file
     vector< ofPoint > tempSingleUserJoints;
     
     // first user pose //
