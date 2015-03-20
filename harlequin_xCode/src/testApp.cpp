@@ -581,8 +581,8 @@ void testApp::draw(){
                     if (label > images.size()) // if predicted label image hasn't been loaded, display a random image
                     {
                         label = ofRandom(0, images.size() - 1);
-                        cout << "predicted label is too high —- images.size() = " << ofToString(images.size()) << "; label = " << label << endl;
-                        cout << " - displaying a random image instead." << endl;
+//                        cout << "predicted label is too high —- images.size() = " << ofToString(images.size()) << "; label = " << label << endl;
+//                        cout << " - displaying a random image instead." << endl;
                     }
                     
 //                    img_name = imageNames[label];
@@ -934,7 +934,8 @@ void testApp::keyPressed(int key){
                 if (label > images.size())
                 {
                     label = ofRandom(0, images.size() - 1);
-                    cout << "predicted label is too high for images.size() = " << ofToString(images.size()) << endl;
+                    //                        cout << "predicted label is too high —- images.size() = " << ofToString(images.size()) << "; label = " << label << endl;
+                    //                        cout << " - displaying a random image instead." << endl;
                 }
                 
 //                img_name = imageNames[label];
