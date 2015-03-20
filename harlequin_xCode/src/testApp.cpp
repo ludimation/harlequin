@@ -285,6 +285,7 @@ void testApp::loadImages(bool load) {
         trainingDataJointsRotAxisA.loadDatasetFromFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
         trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
         trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+        cout << "loaded training data and trained models" << endl;
 
     }
     else
