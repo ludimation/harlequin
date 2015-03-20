@@ -112,6 +112,9 @@ private:
     GRT::ClassificationData         trainingDataJointsRotAxisA;
     GRT::UINT label;
     GRT::UINT lbl;
+    bool                            trainModelsNow;
+    void                            trainModels();
+    
 
     vector< vector< ofPoint > >     trackedUserJointsPosABS;
     vector< vector< double > >      trackedUserJointsPosABSDouble;

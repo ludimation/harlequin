@@ -261,10 +261,6 @@ void testApp::loadImages(bool load) {
         trainingDataJointsRotAxisAfileName  = trainedImagesDirectory + "JointsRotAxisAdata.txt";
         trainingModelJointsRotAxisAfileName = trainedImagesDirectory + "JointsRotAxisAmodel.txt";
         //
-        GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
-        GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
-        GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
-        //
         trainingDataJointsPosABS.setDatasetName("harlequinPosABS");
         trainingDataJointsPosABS.setNumDimensions(45);
         trainingDataJointsPosRel.setDatasetName("harlequinPosRel");
@@ -274,18 +270,17 @@ void testApp::loadImages(bool load) {
         //
         //
         trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
-        // TODO: loading Model data doesn't seem to work——could it be fixed by implementing the suggested pipeline setup?
-        trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName));
-        // TODO: training model data doesn't seem to work when called from startup()——could this also be fixed by implementing the suggested pipeline setup?
-        trainingModelJointsPosABS.train(trainingDataJointsPosABS);
         trainingDataJointsPosRel.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosRelfileName));
-        trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
-        trainingModelJointsPosRel.train(trainingDataJointsPosRel);
         trainingDataJointsRotAxisA.loadDatasetFromFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
-        trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
-        trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
-        cout << "loaded training data and trained models" << endl;
+        cout << "loaded training data" << endl;
+        
+        trainModelsNow = true;
 
+        // TODO: implement the suggested pipeline setup
+        GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
+        GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
+        GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
+    
     }
     else
     {
@@ -295,6 +290,24 @@ void testApp::loadImages(bool load) {
         // TODO: clean up prediction data & models as well
         cout << "images unloaded -- images.size() = "<< images.size() << endl;
     }
+}
+
+void testApp::trainModels()
+{
+    
+    // TODO: loading models only works when called outside startup()——could be fixed by implementing the suggested pipeline setup?
+    trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName));
+    trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
+    trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
+
+    // TODO: training model data only works when called outside startup()——could this also be fixed by implementing the suggested pipeline setup?
+//    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
+//    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
+//    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+    
+    cout << "trained models" << endl;
+
+    trainModelsNow = false;
 }
 
 void testApp::guiEvent(ofxUIEventArgs &e)
@@ -411,6 +424,7 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 void testApp::update(){
     //    openNIRecorder.update();
     openNIPlayer.update();
+    if (trainModelsNow) trainModels();
 
     // clear joint data for next iteration
     trackedUserJointsPosABS.clear();
@@ -492,7 +506,7 @@ void testApp::update(){
             singleUserJointsPosRelDoubles.clear();
             singleUserJointsRotAxisADoubles.clear();
             for (int i = 0; i < trackedUserJointsPosABS[j].size(); ++i) {
-                for (int axis = 0; axis < trackedUserJointsPosABS[j][i].length(); ++axis)
+                for (int axis = 0; axis < 3; ++axis)
                 {
                     // axis = should be {0,1,2} which correlates to ofPoint {x, y, z}
                     singleUserJointsPosABSDoubles.push_back(trackedUserJointsPosABS[j][i][axis]);
@@ -503,6 +517,7 @@ void testApp::update(){
             trackedUserJointsPosABSDouble.push_back(singleUserJointsPosABSDoubles);
             trackedUserJointsPosRelDouble.push_back(singleUserJointsPosRelDoubles);
             trackedUserJointsRotAxisADouble.push_back(singleUserJointsRotAxisADoubles);
+
         }
     }
 }
