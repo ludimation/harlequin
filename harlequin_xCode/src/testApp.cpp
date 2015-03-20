@@ -206,8 +206,6 @@ void testApp::setup() {
 void testApp::loadImages(bool load) {
     
     //TODO: Make this more elegant so that it only unloads images that need to be unloaded, and only loads ones that aren't already loaded
-    imageNames.clear();
-    images.clear();
     
     if (load) {
         
@@ -218,30 +216,35 @@ void testApp::loadImages(bool load) {
         string          directoryPath;
         string          filePath;
         ofDirectory     dir;
-        int             nFiles;
+        int             nFilesInDir;
+        int             nFilesLoaded = images.size();
         ofImage         imgTMP;
         //
         // initialize
         directoryPath = directoriesAll[0];
-        nFiles = dir.listDir(directoryPath);
-        maxFilesToLoad = dir.size();
-        images.resize(maxFilesToLoad);
+        nFilesInDir = dir.listDir(directoryPath);
+        maxFilesToLoad = dir.size();//TODO: update maximum for GUI slider named "number of files to load"
+        images.resize(nFilesToLoad);
+        imageNames.resize(nFilesToLoad);
         imgTMP.setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
         //
         // load files
-        if(nFiles) {
-            for(int i=0; i < nFilesToLoad; i++) {
-                
+        if(nFilesInDir) {
+            for(int i = nFilesLoaded; i < maxFilesToLoad; ++i) {
+                if (nFilesLoaded >= nFilesToLoad) break;
+
                 // add the image name to a list
                 filePath = dir.getPath(i);
                 if (imgTMP.loadImage(filePath))
                 {
-                    imageNames.push_back(filePath);
-                    images[imageNames.size()-1] = imgTMP; //TODO: is this leading to some empty image entries in the images vector? Should probably deal with this a little more efficiently.
+                    imageNames[nFilesLoaded] = filePath;
+                    images[nFilesLoaded] = imgTMP;
+                    nFilesLoaded++;
+                    cout << "loaded image [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
                 }
-                
-                cout << "loading image [" << ofToString(i+1) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
             }
+//            images.resize(nFilesToLoad); // remove empty image entries at end of image vector —— represent files which could not load
+//            imageNames.resize(nFilesToLoad);
         } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
         //
         // Select image to start with
@@ -286,6 +289,10 @@ void testApp::loadImages(bool load) {
     }
     else
     {
+        // clear image arrays to unload all images
+        imageNames.clear();
+        images.clear();
+        // TODO: clean up prediction data & models as well
         cout << "images unloaded -- imageNames.size() = " << imageNames.size() << "; images.size() = "<< images.size() << endl;
     }
 }
