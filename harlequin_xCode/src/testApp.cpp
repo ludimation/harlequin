@@ -999,6 +999,9 @@ void testApp::keyPressed(int key){
             // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
             kinected = true;
             break;
+        case 'f':
+            ofToggleFullscreen();
+            windowResized(ofGetWidth(), ofGetHeight());
     }
     
     if (displayStateChanged)
@@ -1063,8 +1066,13 @@ void testApp::mouseReleased(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
 
+    if (guiColor){
+        // reset guiColor location relative to right of window
+        guiColor -> setPosition(w - 220, 0);
+    }
 }
 
+//--------------------------------------------------------------
 void testApp::setupKinects() {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
@@ -1087,6 +1095,7 @@ void testApp::setupKinects() {
     
     ofSetLogLevel(OF_LOG_WARNING);
 }
+
 void testApp::stopKinects() {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
