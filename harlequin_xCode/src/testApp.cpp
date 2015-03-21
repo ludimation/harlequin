@@ -12,6 +12,7 @@ public:
 ///////////
 // TODO: //
 ///////////
+//  - fix GUI implementation of blendmodes (radio buttons)
 //  - experiment with "nearest" method of label prediction for more movement
 //  - redesign image / training system to be more malleable
 //  - do not display the same image more than once every 3 frames
