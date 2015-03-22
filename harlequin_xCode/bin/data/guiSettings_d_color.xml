@@ -36,6 +36,11 @@
     <Value>0</Value>
 </Widget>
 <Widget>
+    <Kind>2</Kind>
+    <Name>invert image</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
     <Kind>4</Kind>
     <Name>image red</Name>
     <Value>255.000000000</Value>
@@ -43,12 +48,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>image green</Name>
-    <Value>167.068969727</Value>
+    <Value>204.753692627</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>image blue</Name>
-    <Value>125.615768433</Value>
+    <Value>157.019699097</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>

@@ -156,6 +156,7 @@ void testApp::setup() {
     guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
     vector< string > vnamesBlendIMG; vnamesBlendIMG.push_back("i0"); vnamesBlendIMG.push_back("iA"); vnamesBlendIMG.push_back("i+"); vnamesBlendIMG.push_back("i-"); vnamesBlendIMG.push_back("i*"); vnamesBlendIMG.push_back("iS");
     ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlendIMG, OFX_UI_ORIENTATION_HORIZONTAL);
+    guiColor -> addToggle("invert image", &imgInvertColors);
     guiColor -> addSlider("image red",   0.0, 255.0, &imgRed   );
     guiColor -> addSlider("image green", 0.0, 255.0, &imgGreen );
     guiColor -> addSlider("image blue",  0.0, 255.0, &imgBlue  );
@@ -651,7 +652,9 @@ void testApp::draw(){
                     imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
                     
                     img.mirror(0, drawMirrored);
-                    //TODO: add invert image option to GUI & implement inversion here -- img.getPixelsRef() might be useful?
+                    if (imgInvertColors) {
+                        invertImage(img);
+                    }
                     
                     // TODO: image drawing should be z-sorted so further images draw behind closer ones
                     // draw image at position and scale relative to center of screen and image
@@ -714,6 +717,10 @@ void testApp::draw(){
                 }
                 
                 img.mirror(0, drawMirrored);
+                if (imgInvertColors) {
+                    invertImage(img);
+                }
+
                 
                 img.draw(
                          (ofGetWidth() - img.width * imgRatio) / 2.0f,
@@ -796,6 +803,19 @@ void testApp::draw(){
     
     ofPopStyle();
 }
+
+void testApp::invertImage(ofImage &imgREF) {
+    // TODO: optimize image inversions. seems to slow down FPS to ~ 22 from ~45 on my ancient MacBook Pro
+    int iPX = 0;
+    ofPixels imgPX = imgREF.getPixelsRef();
+    ofTexture imgTEX = imgREF.getTextureReference();
+    while ( iPX < imgPX.size() ) {
+        imgPX[iPX] = 512.0f - imgPX[iPX];
+        iPX++;
+    }
+    imgTEX.loadData(imgPX);
+}
+
 
 //--------------------------------------------------------------
 void testApp::userEvent(ofxOpenNIUserEvent & event){

@@ -76,6 +76,7 @@ private:
     string                          displayStateString;
     float                           bgRed, bgGreen, bgBlue;
     int                             imgBlendMode;
+    bool                            imgInvertColors;
     float                           imgRed, imgGreen, imgBlue, imgAlpha;
     // debug drawing flags
     bool                            drawDepth;
@@ -104,6 +105,7 @@ private:
     int                             maxFilesToLoad;
     int                             nFilesToLoad;
     ofImage                         img;
+    void                            invertImage(ofImage &imgREF);
     
     GRT::SVM                        trainingModelJointsPosABS;
     GRT::ClassificationData         trainingDataJointsPosABS;
