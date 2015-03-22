@@ -425,23 +425,23 @@ void testApp::guiEvent(ofxUIEventArgs &e) {
         depthBlendMode = radio -> getValue();
     } else if (nameStr == "d0"||nameStr == "dA"||nameStr == "d+"||nameStr == "d-"||nameStr == "d*"||nameStr == "dS") {
         ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-        /**/ if (nameStr == "d0" && toggle -> getValue()) imgBlendMode = 0;
-        else if (nameStr == "dA" && toggle -> getValue()) imgBlendMode = 1;
-        else if (nameStr == "d+" && toggle -> getValue()) imgBlendMode = 2;
-        else if (nameStr == "d-" && toggle -> getValue()) imgBlendMode = 3;
-        else if (nameStr == "d*" && toggle -> getValue()) imgBlendMode = 4;
-        else if (nameStr == "dS" && toggle -> getValue()) imgBlendMode = 5;
+        /**/ if (nameStr == "d0" && toggle -> getValue()) depthBlendMode = 0;
+        else if (nameStr == "dA" && toggle -> getValue()) depthBlendMode = 1;
+        else if (nameStr == "d+" && toggle -> getValue()) depthBlendMode = 2;
+        else if (nameStr == "d-" && toggle -> getValue()) depthBlendMode = 3;
+        else if (nameStr == "d*" && toggle -> getValue()) depthBlendMode = 4;
+        else if (nameStr == "dS" && toggle -> getValue()) depthBlendMode = 5;
     } else if (nameStr == "skleton blend mode") {
         ofxUIRadio *radio = (ofxUIRadio *) e.widget;
         skelBlendMode = radio -> getValue();
     } else if (nameStr == "s0"||nameStr == "sA"||nameStr == "s+"||nameStr == "s-"||nameStr == "s*"||nameStr == "sS") {
         ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-        /**/ if (nameStr == "s0" && toggle -> getValue()) imgBlendMode = 0;
-        else if (nameStr == "sA" && toggle -> getValue()) imgBlendMode = 1;
-        else if (nameStr == "s+" && toggle -> getValue()) imgBlendMode = 2;
-        else if (nameStr == "s-" && toggle -> getValue()) imgBlendMode = 3;
-        else if (nameStr == "s*" && toggle -> getValue()) imgBlendMode = 4;
-        else if (nameStr == "sS" && toggle -> getValue()) imgBlendMode = 5;
+        /**/ if (nameStr == "s0" && toggle -> getValue()) skelBlendMode = 0;
+        else if (nameStr == "sA" && toggle -> getValue()) skelBlendMode = 1;
+        else if (nameStr == "s+" && toggle -> getValue()) skelBlendMode = 2;
+        else if (nameStr == "s-" && toggle -> getValue()) skelBlendMode = 3;
+        else if (nameStr == "s*" && toggle -> getValue()) skelBlendMode = 4;
+        else if (nameStr == "sS" && toggle -> getValue()) skelBlendMode = 5;
     
         
     } else { // default
