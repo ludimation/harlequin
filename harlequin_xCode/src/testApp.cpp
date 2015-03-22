@@ -98,7 +98,6 @@ void testApp::setup() {
     gui -> addLabel("application mode: ");
     vector<string> appModes; appModes.push_back("i"); appModes.push_back("d"); appModes.push_back("t");
     ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_HORIZONTAL);
-//    radioAppMode -> activateToggle("d");
     gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
     gui -> addSpacer();
     //
@@ -125,7 +124,7 @@ void testApp::setup() {
     gui -> addToggle("draw depth image", &drawDepth);
     gui -> addToggle("draw depth behind", &drawDepthBehind);
     gui -> addToggle("draw skeletons", &drawSkeletons);
-    gui -> addToggle("drawJoints2MSG", &drawJoints2MSG);
+    gui -> addToggle("add joints 2 MSG", &drawJoints2MSG);
     //
     // Debug Messages
     gui -> addToggle("draw MSG", &drawMSG);
@@ -157,7 +156,6 @@ void testApp::setup() {
     guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
     vector< string > vnamesBlendIMG; vnamesBlendIMG.push_back("i0"); vnamesBlendIMG.push_back("iA"); vnamesBlendIMG.push_back("i+"); vnamesBlendIMG.push_back("i-"); vnamesBlendIMG.push_back("i*"); vnamesBlendIMG.push_back("iS");
     ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlendIMG, OFX_UI_ORIENTATION_HORIZONTAL);
-//    radioBlendIMG -> activateToggle("i0");
     guiColor -> addSlider("image red",   0.0, 255.0, &imgRed   );
     guiColor -> addSlider("image green", 0.0, 255.0, &imgGreen );
     guiColor -> addSlider("image blue",  0.0, 255.0, &imgBlue  );
@@ -167,10 +165,8 @@ void testApp::setup() {
     guiColor -> addLabel("depth image settings", OFX_UI_FONT_MEDIUM);
     vector< string > vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
     ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
-//    radioMode -> activateToggle("BLUES_INV");
     vector< string > vnamesBlendDEPTH; vnamesBlendDEPTH.push_back("d0"); vnamesBlendDEPTH.push_back("dA"); vnamesBlendDEPTH.push_back("d+"); vnamesBlendDEPTH.push_back("d-"); vnamesBlendDEPTH.push_back("d*"); vnamesBlendDEPTH.push_back("dS");
     ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlendDEPTH, OFX_UI_ORIENTATION_HORIZONTAL);
-//    radioBlendDepth -> activateToggle("d0");
     guiColor -> addSlider("depth red",   0.0, 255.0, &depthRed   );
     guiColor -> addSlider("depth green", 0.0, 255.0, &depthGreen );
     guiColor -> addSlider("depth blue",  0.0, 255.0, &depthBlue  );
@@ -180,7 +176,6 @@ void testApp::setup() {
     guiColor -> addLabel("skeleton drawing settings", OFX_UI_FONT_MEDIUM);
     vector< string > vnamesBlendSKEL; vnamesBlendSKEL.push_back("s0"); vnamesBlendSKEL.push_back("sA"); vnamesBlendSKEL.push_back("s+"); vnamesBlendSKEL.push_back("s-"); vnamesBlendSKEL.push_back("s*"); vnamesBlendSKEL.push_back("sS");
     ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skeleton blend mode", vnamesBlendSKEL, OFX_UI_ORIENTATION_HORIZONTAL);
-//    radioBlendSkel -> activateToggle("s0");
     guiColor -> addSlider("skel red",   0.0, 255.0, &skelRed   );
     guiColor -> addSlider("skel green", 0.0, 255.0, &skelGreen );
     guiColor -> addSlider("skel blue",  0.0, 255.0, &skelBlue  );
@@ -311,25 +306,23 @@ void testApp::trainModels()
     trainModelsNow = false;
 }
 
-void testApp::guiEvent(ofxUIEventArgs &e)
-{
-    string name = e.widget->getName();
+void testApp::guiEvent(ofxUIEventArgs &e) {
+    string nameStr = e.widget->getName();
     int kind = e.widget->getKind();
     
-    if(name == "load images")
-    {
+    /*  */ if(nameStr == "load images") {
         loadImages(loadImagesNow);
         //ofxUILabelToggle *toggle = (ofxUILabelToggle *) e.widget;
         //loadImagesNow = toggle->getValue();
-    }
-    if (name == "mirror image")
-    {
+        
+        
+    } else if (nameStr == "mirror image") {
         // reverse the effects of pressing the toggle before calling the keypressed function in order to avoid a double-toggle
         drawMirrored = !drawMirrored;
         keyPressed('m');
-    }
-    if (name == "kinected")
-    {
+        
+        
+    } else if (nameStr == "kinected") {
         if (kinected)
         {
             keyPressed('k');
@@ -338,33 +331,13 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         {
             keyPressed('x');
         }
-    }
-    if (name == "image blend mode")
-    {
-        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-        imgBlendMode = radio -> getValue();
-    }
-    if (name == "depth color mode")
-    {
-        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-        depthColorMode = radio -> getValue();
-        openNIPlayer.setDepthColoring((DepthColoring)depthColorMode);
-    }
-    if (name == "depth blend mode")
-    {
-        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-        depthBlendMode = radio -> getValue();
-    }
-    if (name == "skeleton blend mode")
-    {
-        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-        skelBlendMode = radio -> getValue();
-    }
-    if (name == "host"){
+        
+        
+    } else if (nameStr == "host") {
         ofxUITextInput *ti = (ofxUITextInput *) e.widget;
         if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_ENTER)
         {
-            cout << "ON ENTER "<< name<<": ";
+            cout << "ON ENTER "<< nameStr<<": ";
             myHost = ti->getTextString();
             cout << myPort << endl;
         }
@@ -374,13 +347,12 @@ void testApp::guiEvent(ofxUIEventArgs &e)
             myHost = ti->getTextString();
             cout << myPort << endl;
         }
-    }
-    if(name == "port")
-    {
+        //
+    } else if(nameStr == "port") {
         ofxUITextInput *ti = (ofxUITextInput *) e.widget;
         if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_ENTER)
         {
-            cout << "ON ENTER" << name << ": " ;
+            cout << "ON ENTER" << nameStr << ": " ;
             myPort = ti->getTextString();
             cout << myPort << endl;
         }
@@ -390,35 +362,91 @@ void testApp::guiEvent(ofxUIEventArgs &e)
             myPort = ti->getTextString();
         }
        
-    }
-    if (name == "application mode")
-    {
+        
+    } else if (nameStr == "application mode") {
         ofxUIRadio *radioAppMode = (ofxUIRadio *) e.widget;
         switch (radioAppMode -> getValue()) {
             case 0: // interactive
-                setDisplayState('i');
+                if (displayState != 'i') setDisplayState('i');
                 break;
                 
             case 1: // debug
-                setDisplayState('d');
+                if (displayState != 'd') setDisplayState('d');
                 break;
                 
             case 2: // training
-                setDisplayState('t');
+                if (displayState != 't') setDisplayState('t');
                 break;
                 
             default:
                 break;
         }
-    }
-    if (name == "save main settings")
-    {
+//    } else if (nameStr == "i" || nameStr == "d" || nameStr == "t") {
+//        ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
+//        if (toggle -> getValue()) //do something
+//            ;
+//            
+    } else if (nameStr == "save main settings") {
         gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
-    }
-    if (name == "save color settings")
-    {
+    } else if (nameStr == "save color settings") {
         guiColor -> saveSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+        
+        
+    } else if (nameStr == "image blend mode") {
+        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+        imgBlendMode = radio -> getValue();
+    } else if (nameStr == "i0"||nameStr == "iA"||nameStr == "i+"||nameStr == "i-"||nameStr == "i*"||nameStr == "iS") {
+        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
+        /**/ if (nameStr == "i0" && toggle -> getValue()) imgBlendMode = 0;
+        else if (nameStr == "iA" && toggle -> getValue()) imgBlendMode = 1;
+        else if (nameStr == "i+" && toggle -> getValue()) imgBlendMode = 2;
+        else if (nameStr == "i-" && toggle -> getValue()) imgBlendMode = 3;
+        else if (nameStr == "i*" && toggle -> getValue()) imgBlendMode = 4;
+        else if (nameStr == "iS" && toggle -> getValue()) imgBlendMode = 5;
+    } else if (nameStr == "depth color mode"||nameStr == "PSYCHEDELIC_SHADES"||nameStr == "PSYCHEDELIC"||nameStr == "RAINBOW"||nameStr == "CYCLIC_RAINBOW"||nameStr == "BLUES"||nameStr == "BLUES_INV"||nameStr == "GREY"||nameStr == "STATUS") {
+        if (nameStr == "depth color mode") {
+            ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+            depthColorMode = radio -> getValue();
+        } else {
+            ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
+            /**/ if (nameStr == "PSYCHEDELIC_SHADES"    && toggle -> getValue()) depthColorMode = 0;
+            else if (nameStr == "PSYCHEDELIC"           && toggle -> getValue()) depthColorMode = 1;
+            else if (nameStr == "RAINBOW+"              && toggle -> getValue()) depthColorMode = 2;
+            else if (nameStr == "CYCLIC_RAINBOW-"       && toggle -> getValue()) depthColorMode = 3;
+            else if (nameStr == "BLUES*"                && toggle -> getValue()) depthColorMode = 4;
+            else if (nameStr == "BLUES_INV"             && toggle -> getValue()) depthColorMode = 5;
+            else if (nameStr == "GREY"                  && toggle -> getValue()) depthColorMode = 6;
+            else if (nameStr == "STATUS"                && toggle -> getValue()) depthColorMode = 7;
+        }
+        openNIPlayer.setDepthColoring((DepthColoring)depthColorMode);
+    } else if (nameStr == "depth blend mode") {
+        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+        depthBlendMode = radio -> getValue();
+    } else if (nameStr == "d0"||nameStr == "dA"||nameStr == "d+"||nameStr == "d-"||nameStr == "d*"||nameStr == "dS") {
+        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
+        /**/ if (nameStr == "d0" && toggle -> getValue()) imgBlendMode = 0;
+        else if (nameStr == "dA" && toggle -> getValue()) imgBlendMode = 1;
+        else if (nameStr == "d+" && toggle -> getValue()) imgBlendMode = 2;
+        else if (nameStr == "d-" && toggle -> getValue()) imgBlendMode = 3;
+        else if (nameStr == "d*" && toggle -> getValue()) imgBlendMode = 4;
+        else if (nameStr == "dS" && toggle -> getValue()) imgBlendMode = 5;
+    } else if (nameStr == "skleton blend mode") {
+        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+        skelBlendMode = radio -> getValue();
+    } else if (nameStr == "s0"||nameStr == "sA"||nameStr == "s+"||nameStr == "s-"||nameStr == "s*"||nameStr == "sS") {
+        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
+        /**/ if (nameStr == "s0" && toggle -> getValue()) imgBlendMode = 0;
+        else if (nameStr == "sA" && toggle -> getValue()) imgBlendMode = 1;
+        else if (nameStr == "s+" && toggle -> getValue()) imgBlendMode = 2;
+        else if (nameStr == "s-" && toggle -> getValue()) imgBlendMode = 3;
+        else if (nameStr == "s*" && toggle -> getValue()) imgBlendMode = 4;
+        else if (nameStr == "sS" && toggle -> getValue()) imgBlendMode = 5;
+    
+        
+    } else { // default
+        cout << "testApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
     }
+    
 }
 
 //--------------------------------------------------------------
@@ -811,26 +839,22 @@ void testApp::setDisplayState(char newState) {
     }
     
 
-    if (!undefinedState && gui && guiColor)
+    if (!undefinedState)
     {
         displayState = newState;
         
         // Load GUI settings // TODO: load setting xml files into memory to speed up switching states?
-        gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
-        guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-        // update radio properties to match loaded settings
-        guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-        ofxUIRadio *imgBlendRadio = (ofxUIRadio *) guiColor -> getWidget("image blend mode");
-        imgBlendMode = imgBlendRadio -> getValue();
-        ofxUIRadio *depthClrModeRadio = (ofxUIRadio *) guiColor -> getWidget("depth color mode");
-        depthColorMode = depthClrModeRadio -> getValue();
-        ofxUIRadio *depthBlendRadio = (ofxUIRadio *) guiColor -> getWidget("depth blend mode");
-        depthBlendMode = depthBlendRadio -> getValue();
-        ofxUIRadio *skelBlendRadio = (ofxUIRadio *) guiColor -> getWidget("skeleton blend mode");
-        skelBlendMode = skelBlendRadio -> getValue();
-        // update guiColor position
-        guiColor -> setPosition(ofGetWidth() - 220, 0);
-        
+        if (gui) {
+            gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
+        }
+        if (guiColor) {
+            guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+            
+            // run windowResized method to reset guiColor's position
+            windowResized(ofGetWidth(), ofGetHeight());
+        }
+    } else {
+        // TODO: Throw display state change error if state is not recognized
     }
 }
 
@@ -840,8 +864,7 @@ void testApp::keyPressed(int key){
     int cloudRes = -1;
     bool fileWritten;
     string testJointBuff;
-    bool displayStateChanged;
-    string displayStateString;
+    bool displayStateKeyed;
     
     ofImage img;
     
@@ -948,21 +971,10 @@ void testApp::keyPressed(int key){
             break;
         
         case 'i': // interactive mode
-            
-            displayStateString = "interactive";
-            displayStateChanged = true;
-            break;
-            
         case 't': // training
-
-            displayStateString = "training";
-            displayStateChanged = true;
-            break;
-        
         case 'd': // debug
             
-            displayStateString = "debug";
-            displayStateChanged = true;
+            displayStateKeyed = true;
             break;
     
         case '=': // increase drawFrameRate
@@ -999,19 +1011,39 @@ void testApp::keyPressed(int key){
             // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
             kinected = true;
             break;
+            
         case 'f':
             ofToggleFullscreen();
             windowResized(ofGetWidth(), ofGetHeight());
+            break;
+            
+        default:
+            cout << "Unrecognized key press = " << key << endl;
+            // TODO: plan error sound when receiving unrecognized key presses.
+            break;
     }
     
-    if (displayStateChanged)
+    if (displayStateKeyed && key != displayState)
     {
-        setDisplayState(key);
-        
-        if (gui) {
-            ofxUIRadio *radioAppMode = (ofxUIRadio *) (gui -> getWidget("application mode"));
-            radioAppMode -> activateToggle(displayStateString);
+        switch(key){
+            case 'i': // interactive mode
+                
+                // TODO: clean out displayStateString code. nothing seems to reference it.
+                displayStateString = "interactive";
+                break;
+                
+            case 't': // training
+                
+                displayStateString = "training";
+                break;
+                
+            case 'd': // debug
+                
+                displayStateString = "debug";
+                break;
         }
+
+        setDisplayState(key);
     }
 }
 

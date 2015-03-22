@@ -73,6 +73,7 @@ private:
     int                             drawNextFrameMilliseconds;
     bool                            drawMirrored;
     char                            displayState;
+    string                          displayStateString;
     float                           bgRed, bgGreen, bgBlue;
     int                             imgBlendMode;
     float                           imgRed, imgGreen, imgBlue, imgAlpha;
