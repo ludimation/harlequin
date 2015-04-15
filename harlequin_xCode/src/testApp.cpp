@@ -871,7 +871,7 @@ void testApp::setDisplayState(char newState) {
             guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
             
             // run windowResized method to reset guiColor's position
-            windowResized(ofGetWidth(), ofGetHeight());
+            windowResized();
         }
     } else {
         // TODO: Throw display state change error if state is not recognized
@@ -1034,7 +1034,7 @@ void testApp::keyPressed(int key){
             
         case 'f':
             ofToggleFullscreen();
-            windowResized(ofGetWidth(), ofGetHeight());
+            windowResized();
             break;
             
         default:
@@ -1116,6 +1116,10 @@ void testApp::mouseReleased(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
+void testApp::windowResized(){
+    windowResized(ofGetWidth(), ofGetHeight());
+}
+
 void testApp::windowResized(int w, int h){
 
     if (guiColor){
