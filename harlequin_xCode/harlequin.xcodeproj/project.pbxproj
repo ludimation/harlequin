@@ -153,6 +153,7 @@
 		6A204F9419E1AF7E00FBDDBE /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A204F3119E1AF7E00FBDDBE /* Util.cpp */; };
 		6A204F9519E1AF7E00FBDDBE /* WarningLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A204F3319E1AF7E00FBDDBE /* WarningLog.cpp */; };
 		6A2587C119E0593000C2658C /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A2587C019E0593000C2658C /* CoreVideo.framework */; };
+		6A9A569C1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */; };
 		7704EC2414C70657001AF021 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7704EC2114C70657001AF021 /* testApp.cpp */; };
 		7704EC2614C7066A001AF021 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7704EC2514C7066A001AF021 /* main.cpp */; };
 		770F032514B9969E003CCE99 /* libnimCodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 770F031714B9969E003CCE99 /* libnimCodecs.dylib */; };
@@ -563,6 +564,11 @@
 		6A204F3419E1AF7E00FBDDBE /* WarningLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WarningLog.h; sourceTree = "<group>"; };
 		6A2587C019E0593000C2658C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		6A6F221319FBEB4F00C4C803 /* openFrameworksDebug.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = openFrameworksDebug.a; path = ../../../libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a; sourceTree = "<group>"; };
+		6A9A56941ADEC34200722AF0 /* harlequinIMGEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = harlequinIMGEditor.h; sourceTree = "<group>"; };
+		6A9A56961ADEC39C00722AF0 /* harlequinIMG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = harlequinIMG.h; sourceTree = "<group>"; };
+		6A9A56971ADECBCB00722AF0 /* MSAjoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAjoint.h; sourceTree = "<group>"; };
+		6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMSAInteractiveObject.cpp; sourceTree = "<group>"; };
+		6A9A569B1ADECC2900722AF0 /* ofxMSAInteractiveObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMSAInteractiveObject.h; sourceTree = "<group>"; };
 		7704EC2114C70657001AF021 /* testApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testApp.cpp; sourceTree = "<group>"; };
 		7704EC2214C70657001AF021 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testApp.h; sourceTree = "<group>"; };
 		7704EC2514C7066A001AF021 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -1632,6 +1638,34 @@
 			path = Util;
 			sourceTree = "<group>";
 		};
+		6A9A56931ADEC2D700722AF0 /* harlequinIMGEditor */ = {
+			isa = PBXGroup;
+			children = (
+				6A9A56941ADEC34200722AF0 /* harlequinIMGEditor.h */,
+				6A9A56961ADEC39C00722AF0 /* harlequinIMG.h */,
+				6A9A56971ADECBCB00722AF0 /* MSAjoint.h */,
+			);
+			name = harlequinIMGEditor;
+			sourceTree = "<group>";
+		};
+		6A9A56981ADECC0B00722AF0 /* ofxMSAInteractiveObject */ = {
+			isa = PBXGroup;
+			children = (
+				6A9A56991ADECC2800722AF0 /* src */,
+			);
+			name = ofxMSAInteractiveObject;
+			sourceTree = "<group>";
+		};
+		6A9A56991ADECC2800722AF0 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */,
+				6A9A569B1ADECC2900722AF0 /* ofxMSAInteractiveObject.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxMSAInteractiveObject/src;
+			sourceTree = "<group>";
+		};
 		6AB01D8C1AAF7D1A00586C4C /* ofxOpenNI */ = {
 			isa = PBXGroup;
 			children = (
@@ -1889,6 +1923,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				6A9A56981ADECC0B00722AF0 /* ofxMSAInteractiveObject */,
 				6AB01D8C1AAF7D1A00586C4C /* ofxOpenNI */,
 				ECC960411AAD1A7100718DD1 /* ofxOsc */,
 				5C8F75FD19FC164900A8AC13 /* ofxUI */,
@@ -1957,6 +1992,7 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				6A9A56931ADEC2D700722AF0 /* harlequinIMGEditor */,
 				6A204E1619E1AF7E00FBDDBE /* GRT */,
 				7704EC2514C7066A001AF021 /* main.cpp */,
 				7704EC2114C70657001AF021 /* testApp.cpp */,
@@ -2208,6 +2244,7 @@
 				6A204F7619E1AF7E00FBDDBE /* DeadZone.cpp in Sources */,
 				6A204F5419E1AF7E00FBDDBE /* Tree.cpp in Sources */,
 				6A204F5F19E1AF7E00FBDDBE /* ClassificationData.cpp in Sources */,
+				6A9A569C1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp in Sources */,
 				6A204F7D19E1AF7E00FBDDBE /* MovingAverageFilter.cpp in Sources */,
 				5C8F765E19FC166700A8AC13 /* ofxUI2DGraph.cpp in Sources */,
 				5C8F76C419FC167400A8AC13 /* ofxXmlSettings.cpp in Sources */,
