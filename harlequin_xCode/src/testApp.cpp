@@ -31,6 +31,11 @@ public:
 //--------------------------------------------------------------
 void testApp::setup() {
     
+    //////////////////
+    // Image Editor //
+    //////////////////
+    imgEditor = new harlequinIMGEditor();
+    imgEditor->setup();
     
     ///////////////////////////
     // Image Data Properties //
@@ -45,6 +50,7 @@ void testApp::setup() {
     string          directoryPath;
     ofDirectory     dir;
     int             nFiles;
+    
     //
     nFilesToLoad = 64; // for testing purposes only (quick load)
     directoryPath = directoriesAll[0]; // loading _540 images
