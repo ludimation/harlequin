@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0600"
+   LastUpgradeVersion = "0620"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6AD41BCE19FBE8D200B88A4C"
-               BuildableName = "harlequin_OSX10.7.app"
-               BlueprintName = "harlequin_OSX10.7"
-               ReferencedContainer = "container:openNiSample007.xcodeproj">
+               BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
+               BuildableName = "harlequin.app"
+               BlueprintName = "harlequin"
+               ReferencedContainer = "container:harlequin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6AD41BCE19FBE8D200B88A4C"
-            BuildableName = "harlequin_OSX10.7.app"
-            BlueprintName = "harlequin_OSX10.7"
-            ReferencedContainer = "container:openNiSample007.xcodeproj">
+            BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
+            BuildableName = "harlequin.app"
+            BlueprintName = "harlequin"
+            ReferencedContainer = "container:harlequin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -48,13 +48,14 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6AD41BCE19FBE8D200B88A4C"
-            BuildableName = "harlequin_OSX10.7.app"
-            BlueprintName = "harlequin_OSX10.7"
-            ReferencedContainer = "container:openNiSample007.xcodeproj">
+            BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
+            BuildableName = "harlequin.app"
+            BlueprintName = "harlequin"
+            ReferencedContainer = "container:harlequin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -66,13 +67,14 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6AD41BCE19FBE8D200B88A4C"
-            BuildableName = "harlequin_OSX10.7.app"
-            BlueprintName = "harlequin_OSX10.7"
-            ReferencedContainer = "container:openNiSample007.xcodeproj">
+            BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
+            BuildableName = "harlequin.app"
+            BlueprintName = "harlequin"
+            ReferencedContainer = "container:harlequin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

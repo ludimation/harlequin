@@ -38,3 +38,8 @@ OPENFRAMEWORKS_openNI/src_BKUP/GRT/*
 UserInterfaceState.xcuserstate
 harlequin_xCode/bin/data/images/hackingArts/_originals
 harlequin_xCode/bin/data/images/hackingArts/_540
+
+# Example code bundles
+ofxMSAInteractiveObject_example/*
+msaTester/*
+msaTester*
