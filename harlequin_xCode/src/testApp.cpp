@@ -451,7 +451,7 @@ void testApp::guiEvent(ofxUIEventArgs &e) {
     
         
     } else { // default
-        cout << "testApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
+        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] testApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
     }
     
 }
