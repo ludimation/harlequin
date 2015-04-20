@@ -22,13 +22,13 @@ public:
     vector< vector <MSAjoint*> >    joints;
     
     void setup() {
-        /////////////////////
-        // MSAjoint.h test //
-        // TODO: clean these out once harlequinIMGEditor.h is working
-        int objs_count = 20;
+        //////////////////////
+        // MSA joints setup //
+        //////////////////////
+        int joints_count = 15;
         joints.resize(1);
-        
-        for( int i = 0; i < objs_count; i++)
+        //
+        for( int i = 0; i < joints_count; i++)
         {
             MSAjoint *obj = new MSAjoint();
             obj->set(300 + (i*15), 400, 10, 10);

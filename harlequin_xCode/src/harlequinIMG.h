@@ -11,14 +11,18 @@
 //#ifndef harlequin_harlequinIMG_h
 //#define harlequin_harlequinIMG_h
 
-class harlequinIMG { // can I extend ": public ofImage {" ?
+#include "ofMain.h"
+
+class harlequinIMG { // can I extend ": public ofImage {//" ?
     
 public:
     
     // functions
-    void                            setup(string path);
-    void                            draw();
-    ofImage                         getIMG();
+    bool                            open(string path);
+    bool                            save();
+    void                            draw(); // draw image
+    ofImage*                        getOFImagePTR();
+    
     void                            pushTrainingData(vector< ofPoint > tJoints, ofImage tImg);
     void                            eraseTrainingData(int ti);
     ofImage                         getTrainingIMG(int ti);
