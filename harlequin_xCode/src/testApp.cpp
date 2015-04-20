@@ -810,11 +810,23 @@ void testApp::draw(){
     ofPopStyle();
 }
 
+
+//--------------------------------------------------------------
+void testApp::invertImage(ofImage* imgREF) {
+    ofPixels imgPX = imgREF->getPixelsRef();
+    ofTexture imgTEX = imgREF->getTextureReference();
+    invertImage(imgPX, imgTEX);
+}
+
 void testApp::invertImage(ofImage &imgREF) {
     // TODO: optimize image inversions. seems to slow down FPS to ~ 22 from ~55 on my ancient MacBook Pro
-    int iPX = 0;
     ofPixels imgPX = imgREF.getPixelsRef();
     ofTexture imgTEX = imgREF.getTextureReference();
+    invertImage(imgPX, imgTEX);    
+}
+
+void testApp::invertImage(ofPixels &imgPX, ofTexture &imgTEX) {
+    int iPX = 0;
     while ( iPX < imgPX.size() ) {
         imgPX[iPX] = 512.0f - imgPX[iPX];
         iPX++;
