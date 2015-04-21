@@ -11,13 +11,23 @@
 
 #pragma once
 
+#include "ofxUI.h"
+
 class imgLoader {
     
 public:
     
     // functions
+    void setup();
+    void guiEvent(ofxUIEventArgs &e);
+    void loadImages(bool load);
+    
     
     // properties
+    ofxUISuperCanvas*   gui;
+    int                 maxFilesToLoad, nFilesToLoad;
+    bool                loadImagesNow;
+    vector< string >    directoriesAll;
     
 private:
     

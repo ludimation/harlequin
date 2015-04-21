@@ -11,10 +11,22 @@
 #pragma once
 
 #include "ofApp.h"
+#include "ofxUI.h"
 
-class GRTEditor {
+class GRTManager {
 
 public:
+    
+    // core fuctions
+    void setup();
+    void update();
+    void draw();
+    
+    // gui
+    void guiEvent(ofxUIEventArgs &e);
+    // properties
+    ofxUISuperCanvas* gui;
+    bool loadImagesNow;
     
     // file handling functions
     bool loadData();
@@ -22,8 +34,6 @@ public:
     bool loadModel();
     bool trainModel();
     bool saveModel();
-    
-    // properties
     
 private:
     // internal data

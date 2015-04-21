@@ -6,9 +6,41 @@
 //
 //
 
-#include "GRTEditor.h"
+#include "GRTManager.h"
 
-bool GRTEditor::loadData() {
+
+//--------------------------------------------------------------
+void GRTManager::setup() {
+    
+    gui = new ofxUISuperCanvas("GRTManager");
+    
+}
+
+//--------------------------------------------------------------
+void GRTManager::update() {
+    
+}
+
+//--------------------------------------------------------------
+void GRTManager::draw() {
+    
+}
+
+//--------------------------------------------------------------
+void GRTManager::guiEvent(ofxUIEventArgs &e) {
+    string nameStr = e.widget->getName();
+    int kind = e.widget->getKind();
+    
+    /*  */ if(nameStr == "load model"){
+        // do something
+    } else { // default
+        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
+    }
+}
+
+
+//--------------------------------------------------------------
+bool GRTManager::loadData() {
     //    /////////////////////////////////////////
     //    // load training data and setup models //
     //    /////////////////////////////////////////
@@ -43,7 +75,7 @@ bool GRTEditor::loadData() {
 }
 
 //--------------------------------------------------------------
-bool GRTEditor::saveData(){
+bool GRTManager::saveData(){
     //    trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
     //    trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
     //    trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
@@ -54,7 +86,7 @@ bool GRTEditor::saveData(){
 
 
 //--------------------------------------------------------------
-bool GRTEditor::loadModel() {
+bool GRTManager::loadModel() {
     
 //    // TODO: loading models only works when called outside startup()——could be fixed by implementing the suggested pipeline setup?
 //    trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName));
@@ -68,7 +100,7 @@ bool GRTEditor::loadModel() {
 }
 
 //--------------------------------------------------------------
-bool GRTEditor::trainModel() {
+bool GRTManager::trainModel() {
     
     // TODO: training model data only works when called outside startup()——could this also be fixed by implementing the suggested pipeline setup?
     //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
@@ -82,7 +114,7 @@ bool GRTEditor::trainModel() {
 }
 
 //--------------------------------------------------------------
-bool GRTEditor::saveModel() {
+bool GRTManager::saveModel() {
     //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
     //    trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
     //

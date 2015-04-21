@@ -17,7 +17,7 @@
 #include "imgEditor.h"
 #include "body.h"
 #include "GRT.h"
-#include "GRTEditor.h"
+#include "GRTManager.h"
 
 // OSC
 #define HOST "localhost"
@@ -71,8 +71,8 @@ public:
     ////////////////////////////////////
     //
     // properties
-    body                    bodyClass;
-    GRTEditor               GRTEdtr;
+    body*                   bodyClass;
+    GRTManager*             GRTMngr;
     string                  trainedImagesDirectory;
     float                   imageScale;
     GRT::SVM                    trainingModelJointsPosABS;
@@ -131,7 +131,7 @@ private:
     ////////////////////
     // image handling //
     ////////////////////
-    imgEditor                   *imgEdtr;
+    imgEditor*                  imgEdtr;
     vector < string >           directoriesAll;
     vector < string >           directoriesToLoad;
     void                        loadImages(bool load);
