@@ -152,9 +152,12 @@
 		6A0383F41AE6AE9C00E6C259 /* TrainingLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0383891AE6AE9C00E6C259 /* TrainingLog.cpp */; };
 		6A0383F51AE6AE9C00E6C259 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A03838C1AE6AE9C00E6C259 /* Util.cpp */; };
 		6A0383F61AE6AE9C00E6C259 /* WarningLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A03838E1AE6AE9C00E6C259 /* WarningLog.cpp */; };
+		6A0383F91AE6BA1400E6C259 /* kinectIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0383F81AE6BA1400E6C259 /* kinectIO.cpp */; };
+		6A0383FD1AE6C17100E6C259 /* GRTEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0383FB1AE6C17100E6C259 /* GRTEditor.cpp */; };
+		6A0384001AE6C2D000E6C259 /* body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0383FE1AE6C2D000E6C259 /* body.cpp */; };
 		6A2587C119E0593000C2658C /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A2587C019E0593000C2658C /* CoreVideo.framework */; };
 		6A9A569C1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */; };
-		7704EC2414C70657001AF021 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7704EC2114C70657001AF021 /* testApp.cpp */; };
+		7704EC2414C70657001AF021 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7704EC2114C70657001AF021 /* ofApp.cpp */; };
 		7704EC2614C7066A001AF021 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7704EC2514C7066A001AF021 /* main.cpp */; };
 		770F032514B9969E003CCE99 /* libnimCodecs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 770F031714B9969E003CCE99 /* libnimCodecs.dylib */; };
 		770F032614B9969E003CCE99 /* libnimMockNodes.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 770F031814B9969E003CCE99 /* libnimMockNodes.dylib */; };
@@ -565,12 +568,18 @@
 		6A0383911AE6AE9C00E6C259 /* imgData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgData.h; sourceTree = "<group>"; };
 		6A0383921AE6AE9C00E6C259 /* imgEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgEditor.h; sourceTree = "<group>"; };
 		6A0383931AE6AE9C00E6C259 /* MSAjoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAjoint.h; sourceTree = "<group>"; };
+		6A0383F71AE6AFA100E6C259 /* kinectIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kinectIO.h; sourceTree = "<group>"; };
+		6A0383F81AE6BA1400E6C259 /* kinectIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kinectIO.cpp; sourceTree = "<group>"; };
+		6A0383FB1AE6C17100E6C259 /* GRTEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GRTEditor.cpp; sourceTree = "<group>"; };
+		6A0383FC1AE6C17100E6C259 /* GRTEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRTEditor.h; sourceTree = "<group>"; };
+		6A0383FE1AE6C2D000E6C259 /* body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = body.cpp; sourceTree = "<group>"; };
+		6A0383FF1AE6C2D000E6C259 /* body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = body.h; sourceTree = "<group>"; };
 		6A2587C019E0593000C2658C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		6A6F221319FBEB4F00C4C803 /* openFrameworksDebug.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = openFrameworksDebug.a; path = ../../../libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a; sourceTree = "<group>"; };
 		6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMSAInteractiveObject.cpp; sourceTree = "<group>"; };
 		6A9A569B1ADECC2900722AF0 /* ofxMSAInteractiveObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMSAInteractiveObject.h; sourceTree = "<group>"; };
-		7704EC2114C70657001AF021 /* testApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testApp.cpp; sourceTree = "<group>"; };
-		7704EC2214C70657001AF021 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testApp.h; sourceTree = "<group>"; };
+		7704EC2114C70657001AF021 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofApp.cpp; sourceTree = "<group>"; };
+		7704EC2214C70657001AF021 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
 		7704EC2514C7066A001AF021 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		770F031614B9969E003CCE99 /* change_exec_paths.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = change_exec_paths.sh; sourceTree = "<group>"; };
 		770F031714B9969E003CCE99 /* libnimCodecs.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libnimCodecs.dylib; sourceTree = "<group>"; };
@@ -956,6 +965,8 @@
 		6A0382701AE6AE9B00E6C259 /* body */ = {
 			isa = PBXGroup;
 			children = (
+				6A0383FE1AE6C2D000E6C259 /* body.cpp */,
+				6A0383FF1AE6C2D000E6C259 /* body.h */,
 			);
 			path = body;
 			sourceTree = "<group>";
@@ -1665,8 +1676,19 @@
 		6A0383951AE6AE9C00E6C259 /* kinectIO */ = {
 			isa = PBXGroup;
 			children = (
+				6A0383F71AE6AFA100E6C259 /* kinectIO.h */,
+				6A0383F81AE6BA1400E6C259 /* kinectIO.cpp */,
 			);
 			path = kinectIO;
+			sourceTree = "<group>";
+		};
+		6A0383FA1AE6C15700E6C259 /* GRTEditor */ = {
+			isa = PBXGroup;
+			children = (
+				6A0383FB1AE6C17100E6C259 /* GRTEditor.cpp */,
+				6A0383FC1AE6C17100E6C259 /* GRTEditor.h */,
+			);
+			path = GRTEditor;
 			sourceTree = "<group>";
 		};
 		6A9A56981ADECC0B00722AF0 /* ofxMSAInteractiveObject */ = {
@@ -2014,10 +2036,11 @@
 			isa = PBXGroup;
 			children = (
 				7704EC2514C7066A001AF021 /* main.cpp */,
-				7704EC2114C70657001AF021 /* testApp.cpp */,
-				7704EC2214C70657001AF021 /* testApp.h */,
+				7704EC2114C70657001AF021 /* ofApp.cpp */,
+				7704EC2214C70657001AF021 /* ofApp.h */,
 				6A0382701AE6AE9B00E6C259 /* body */,
 				6A0382711AE6AE9B00E6C259 /* GRT */,
+				6A0383FA1AE6C15700E6C259 /* GRTEditor */,
 				6A0383901AE6AE9C00E6C259 /* imgEditor */,
 				6A0383941AE6AE9C00E6C259 /* imgLoader */,
 				6A0383951AE6AE9C00E6C259 /* kinectIO */,
@@ -2221,6 +2244,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A0383F91AE6BA1400E6C259 /* kinectIO.cpp in Sources */,
 				6A0383AA1AE6AE9C00E6C259 /* SVM.cpp in Sources */,
 				6A0383A21AE6AE9C00E6C259 /* HMM.cpp in Sources */,
 				ECC9606D1AAD1A7100718DD1 /* ofxOscMessage.cpp in Sources */,
@@ -2230,6 +2254,7 @@
 				5C8F768419FC166700A8AC13 /* ofxUILabelToggle.cpp in Sources */,
 				6A0383C11AE6AE9C00E6C259 /* ClassificationSample.cpp in Sources */,
 				5C8F768619FC166700A8AC13 /* ofxUIMinimalSlider.cpp in Sources */,
+				6A0383FD1AE6C17100E6C259 /* GRTEditor.cpp in Sources */,
 				6A0383A11AE6AE9C00E6C259 /* HiddenMarkovModel.cpp in Sources */,
 				6A0383F21AE6AE9C00E6C259 /* TimeSeriesClassificationSampleTrimmer.cpp in Sources */,
 				6A0383DC1AE6AE9C00E6C259 /* LowPassFilter.cpp in Sources */,
@@ -2287,6 +2312,7 @@
 				6A0383F41AE6AE9C00E6C259 /* TrainingLog.cpp in Sources */,
 				6A0383ED1AE6AE9C00E6C259 /* PeakDetection.cpp in Sources */,
 				6A0383B31AE6AE9C00E6C259 /* PrincipalComponentAnalysis.cpp in Sources */,
+				6A0384001AE6C2D000E6C259 /* body.cpp in Sources */,
 				5C8F768019FC166700A8AC13 /* ofxUILabel.cpp in Sources */,
 				5C8F769E19FC166700A8AC13 /* ofxUISpacer.cpp in Sources */,
 				6A0383E21AE6AE9C00E6C259 /* LinearRegression.cpp in Sources */,
@@ -2337,7 +2363,7 @@
 				5C8F768819FC166700A8AC13 /* ofxUIMovingGraph.cpp in Sources */,
 				ECC960771AAD1A7100718DD1 /* OscTypes.cpp in Sources */,
 				6A0383C81AE6AE9C00E6C259 /* FastFourierTransform.cpp in Sources */,
-				7704EC2414C70657001AF021 /* testApp.cpp in Sources */,
+				7704EC2414C70657001AF021 /* ofApp.cpp in Sources */,
 				6A0383B21AE6AE9C00E6C259 /* MovementDetector.cpp in Sources */,
 				5C8F766E19FC166700A8AC13 /* ofxUIDropDownList.cpp in Sources */,
 				6A0383DE1AE6AE9C00E6C259 /* MovingAverageFilter.cpp in Sources */,

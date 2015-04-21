@@ -1,26 +1,25 @@
-#include "testApp.h"
+//
+//  ofApp.cpp
+//  harlequin
+//
+//  Created by david allen on 4/21/15.
+//
+//
 
+#include "ofApp.h"
 
-// what is this? Why is it re-defining ofxOpenNIUser?
-class myUser : public ofxOpenNIUser {
-public:
-    void test(){
-        cout << "test" << endl;
-    }
-};
 
 ///////////
 // TODO: //
 ///////////
-//  - fix GUI implementation of blendmodes (radio buttons)
-//  - experiment with "nearest" method of label prediction for more movement
 //  - redesign image / training system to be more malleable
+//      - display data associated with current image
+//      - save image positioning data —- translation, scale, and rotation controls for current image
+//          > rotation
+//          > scale (might need to just store corners or dimensions so that image can be scaled independent of file size changes
+//  - experiment with "nearest" method of label prediction for more movement
 //  - do not display the same image more than once every 3 frames
 //  - slow down frame rate to 30, or even as low as 12 or so?
-//  - display data associated with current image
-//  - save image positioning data —- translation, scale, and rotation controls for current image
-//      > rotation
-//      > scale (might need to just store corners or dimensions so that image can be scaled independent of file size changes
 //  - joint rotations (axis-angles?)
 //  - filters for file tags (drawing, photo, male, female, dancer, pedestrian, public figure, etc.)
 //      > simply use separate directory structures?
@@ -29,7 +28,7 @@ public:
 
 
 //--------------------------------------------------------------
-void testApp::setup() {
+void ofApp::setup() {
     
     //////////////////
     // Image Editor //
@@ -61,12 +60,6 @@ void testApp::setup() {
     maxFilesToLoad = dir.size();
 
     
-    //////////////////
-    // Kinect Setup //
-    //////////////////
-    //    setupKinects();
-    
-    
     ///////////////
     // Load font //
     ///////////////
@@ -96,7 +89,7 @@ void testApp::setup() {
     // Main GUI --
     //////////////
     gui = new ofxUISuperCanvas("harlequin");
-    ofAddListener(gui -> newGUIEvent, this, &testApp::guiEvent);
+    ofAddListener(gui -> newGUIEvent, this, &ofApp::guiEvent);
     gui -> addSpacer();
     gui -> addTextArea("text", "'h' to hide this panel", OFX_UI_FONT_SMALL);
     //    gui -> addLabel("text", "'h' to hide this panel");
@@ -158,7 +151,7 @@ void testApp::setup() {
     // Color GUI --
     ///////////////
     guiColor = new ofxUISuperCanvas("harlequin colors");
-    ofAddListener(guiColor -> newGUIEvent, this, &testApp::guiEvent);
+    ofAddListener(guiColor -> newGUIEvent, this, &ofApp::guiEvent);
     guiColor -> addSpacer();
     //
     guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
@@ -209,7 +202,7 @@ void testApp::setup() {
     setupTestUserJoints();
 }
 
-void testApp::loadImages(bool load) {
+void ofApp::loadImages(bool load) {
 
     if (load) {
         
@@ -235,12 +228,6 @@ void testApp::loadImages(bool load) {
         //
         // load files
         if(nFilesInDir) {
-            // Test image
-            bikersPTR = new ofImage();
-            bikersPTR->loadImage("images/bikers.jpg");
-            bikersPTR->update();
-            bikersPTR->setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
-            
             for(int i = nFilesLoaded; i < maxFilesToLoad; ++i) {
                 if (nFilesLoaded >= nFilesToLoad) break;
 
@@ -269,8 +256,8 @@ void testApp::loadImages(bool load) {
 //                    }
 //                    imgTMPptr->update();
 //                    imagesPTRs[nFilesLoaded] = imgTMPptr;
-                    imagesPTRs[nFilesLoaded] = bikersPTR;
-                    imagesMap[filePath] = bikersPTR;
+//                    imagesPTRs[nFilesLoaded] = bikersPTR;
+//                    imagesMap[filePath] = bikersPTR;
 //                    if (imagesMap.find(filePath) != imagesMap.end()) imagesMap[filePath] = imgTMPptr;
 //                    if (imagesMap.find(filePath) != imagesMap.end()) imagesMap[filePath] = imgTMPptr;
                     nFilesLoaded++;
@@ -290,36 +277,7 @@ void testApp::loadImages(bool load) {
         // TODO: clear out the imageNames array code after the data handling re-structuring takes place
         
         
-        /////////////////////////////////////////
-        // load training data and setup models //
-        /////////////////////////////////////////
-        trainingDataJointsPosABSfileName    = trainedImagesDirectory + "JointsPosABSdata.txt"; // TODO: make these relative to selected directories
-        trainingModelJointsPosABSfileName   = trainedImagesDirectory + "JointsPosABSmodel.txt";
-        trainingDataJointsPosRelfileName    = trainedImagesDirectory + "JointsPosReldata.txt";
-        trainingModelJointsPosRelfileName   = trainedImagesDirectory + "JointsPosRelmodel.txt";
-        trainingDataJointsRotAxisAfileName  = trainedImagesDirectory + "JointsRotAxisAdata.txt";
-        trainingModelJointsRotAxisAfileName = trainedImagesDirectory + "JointsRotAxisAmodel.txt";
-        //
-        trainingDataJointsPosABS.setDatasetName("harlequinPosABS");
-        trainingDataJointsPosABS.setNumDimensions(45);
-        trainingDataJointsPosRel.setDatasetName("harlequinPosRel");
-        trainingDataJointsPosRel.setNumDimensions(45);
-        trainingDataJointsRotAxisA.setDatasetName("harlequinRotAxisA");
-        trainingDataJointsRotAxisA.setNumDimensions(45);
-        //
-        //
-        trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
-        trainingDataJointsPosRel.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosRelfileName));
-        trainingDataJointsRotAxisA.loadDatasetFromFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
-        cout << "loaded training data" << endl;
-        
-        trainModelsNow = true;
-
-        // TODO: implement the suggested pipeline setup
-        GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
-        GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
-        GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
-    
+        GRTEdtr.loadData();
     }
     else
     {
@@ -334,25 +292,8 @@ void testApp::loadImages(bool load) {
     }
 }
 
-void testApp::trainModels()
-{
-    
-    // TODO: loading models only works when called outside startup()——could be fixed by implementing the suggested pipeline setup?
-    trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName));
-    trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
-    trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
 
-    // TODO: training model data only works when called outside startup()——could this also be fixed by implementing the suggested pipeline setup?
-//    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
-//    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
-//    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
-    
-    cout << "trained models" << endl;
-
-    trainModelsNow = false;
-}
-
-void testApp::guiEvent(ofxUIEventArgs &e) {
+void ofApp::guiEvent(ofxUIEventArgs &e) {
     string nameStr = e.widget->getName();
     int kind = e.widget->getKind();
     
@@ -497,16 +438,16 @@ void testApp::guiEvent(ofxUIEventArgs &e) {
     
         
     } else { // default
-        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] testApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
+        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] ofApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
     }
     
 }
 
 //--------------------------------------------------------------
-void testApp::update(){
+void ofApp::update(){
     //    openNIRecorder.update();
     openNIPlayer.update();
-    if (trainModelsNow) trainModels();
+    if (trainModelsNow) trainModelsNow = GRTEdtr.trainModel();
 
     // clear joint data for next iteration
     trackedUserJointsPosABS.clear();
@@ -605,7 +546,7 @@ void testApp::update(){
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){
+void ofApp::draw(){
     
     ofBackground(bgRed, bgGreen, bgBlue);
     
@@ -691,6 +632,7 @@ void testApp::draw(){
                 if (images.size())
                 {
                     // set image to draw
+                    ofImage img;
                     img = images[label];
                     ofImage* imgPTR = new ofImage();
                     imgPTR = imagesPTRs[label];
@@ -726,7 +668,7 @@ void testApp::draw(){
 //                    imgPTR->update();
 
                     // image pointer drawing tests
-                    bikersPTR->draw(0, 100);
+//                    bikersPTR->draw(0, 100);
 //                    bikersPTR->draw(100, 100, 50, 50);
 
                     imgPTR->draw(imgPTRRefPoint.x,
@@ -764,6 +706,7 @@ void testApp::draw(){
             // if (img->loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
             if (images.size())
             {
+                ofImage img;
                 img = images[label];
                 ofImage* imgPTR = new ofImage();
                 imgPTR = imagesPTRs[label];
@@ -897,20 +840,20 @@ void testApp::draw(){
 
 
 //--------------------------------------------------------------
-void testApp::invertImage(ofImage* imgPTRlocal) {
+void ofApp::invertImage(ofImage* imgPTRlocal) {
     ofPixels imgPX = imgPTRlocal->getPixelsRef();
     ofTexture imgTEX = imgPTRlocal->getTextureReference();
     invertImage(imgPX, imgTEX);
 }
 
-void testApp::invertImage(ofImage &imgREF) {
+void ofApp::invertImage(ofImage &imgREF) {
     // TODO: optimize image inversions. seems to slow down FPS to ~ 22 from ~55 on my ancient MacBook Pro
     ofPixels imgPX = imgREF.getPixelsRef();
     ofTexture imgTEX = imgREF.getTextureReference();
     invertImage(imgPX, imgTEX);    
 }
 
-void testApp::invertImage(ofPixels &imgPX, ofTexture &imgTEX) {
+void ofApp::invertImage(ofPixels &imgPX, ofTexture &imgTEX) {
     int iPX = 0;
     while ( iPX < imgPX.size() ) {
         imgPX[iPX] = 512.0f - imgPX[iPX];
@@ -921,25 +864,17 @@ void testApp::invertImage(ofPixels &imgPX, ofTexture &imgTEX) {
 
 
 //--------------------------------------------------------------
-void testApp::userEvent(ofxOpenNIUserEvent & event){
-    ofLogNotice() << getUserStatusAsString(event.userStatus) << "for user" << event.id << "from device" << event.deviceID;
-}
+void ofApp::exit(){
+    
+    // kinects
+    kinectInterface.stopKinects();
 
-//--------------------------------------------------------------
-void testApp::gestureEvent(ofxOpenNIGestureEvent & event){
-    ofLogNotice() << event.gestureName << getGestureStatusAsString(event.gestureStatus) << "from device" << event.deviceID << "at" << event.timestampMillis;
-}
-
-//--------------------------------------------------------------
-void testApp::exit(){
-    //    openNIRecorder.stop();
-    openNIPlayer.stop();
-
+    // gui
     delete gui;
 }
 
 //--------------------------------------------------------------
-void testApp::setDisplayState(char newState) {
+void ofApp::setDisplayState(char newState) {
     bool undefinedState = false;
     
     switch (newState) {
@@ -950,8 +885,8 @@ void testApp::setDisplayState(char newState) {
         case 'i':
 
             // save & train model before switching modes
-            saveData();
-            saveModel();
+            GRTEdtr.saveData();
+            GRTEdtr.saveModel();
             
             break;
 
@@ -982,7 +917,7 @@ void testApp::setDisplayState(char newState) {
 }
 
 //--------------------------------------------------------------
-void testApp::keyPressed(int key){
+void ofApp::keyPressed(int key){
 
     int cloudRes = -1;
     bool fileWritten;
@@ -1019,7 +954,7 @@ void testApp::keyPressed(int key){
         case '[':
         case 'p': // previous
            
-            saveData();
+            GRTEdtr.saveData();
             
             if (displayState == 'i') break; // do not train data during installation mode
             
@@ -1033,7 +968,7 @@ void testApp::keyPressed(int key){
         case ']':
         case 'n': // next
             
-            saveData();
+            GRTEdtr.saveData();
             
             if (displayState == 'i') break; // do not train data during installation mode
 
@@ -1045,12 +980,12 @@ void testApp::keyPressed(int key){
         
         case 'r': // random image
             
-            saveData();
+            GRTEdtr.saveData();
 
             if (displayState == 'i') break; // do not train data during installation mode
             
             // display random image from database
-            label = getRandomExcluding(0, images.size() - 1, label);
+            label = bodyClass.getRandomExcluding(0, images.size() - 1, label);
 //            img_name = imageNames[label];
 
             break;
@@ -1058,16 +993,16 @@ void testApp::keyPressed(int key){
         case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
             if (displayState == 'i') break; // do not train data during installation mode
             
-            saveData();
-            saveModel();
+            GRTEdtr.saveData();
+            GRTEdtr.saveModel();
             
             break;
             
         case 'c':
             if (displayState == 'i') break; // do not train data during installation mode
 
-            saveData();
-            saveModel();
+            GRTEdtr.saveData();
+            GRTEdtr.saveModel();
             
             // TODO:
             //  - separate out into a class so it can be called from both here and draw()
@@ -1125,12 +1060,11 @@ void testApp::keyPressed(int key){
         
         case 'x':
 
-            stopKinects();
-            kinected = false;
+            kinected = kinectInterface.stopKinects();
             break;
         
         case 'k':
-            setupKinects();
+            kinectsInitialized = kinectInterface.setupKinects(drawMirrored);
             // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
             kinected = true;
             break;
@@ -1171,172 +1105,20 @@ void testApp::keyPressed(int key){
 }
 
 //--------------------------------------------------------------
-void testApp::saveData(){
-    trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
-    trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
-    trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
-}
-
-//--------------------------------------------------------------
-void testApp::saveModel(){
-    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
-    trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
+void ofApp::keyReleased(int key){
     
-    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
-    trainingModelJointsPosRel.saveModelToFile(ofToDataPath(trainingModelJointsPosRelfileName));
-    
-    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
-    trainingModelJointsRotAxisA.saveModelToFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
 }
 
-//--------------------------------------------------------------
-void testApp::keyReleased(int key){
-
-}
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
-    // TODO: implement image metadata editing
-    //      drag image around Filters:
-    //          - no modifiers = position dragging
-    //          - sift = rotation
-    //          - ctrl = scale
-    //          - opt = reference point
-    //  - or maybe take a "tool" approach where 'w' = translate, 'e' = rotate, 'r' = scale
-}
-
-//--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
-}
-
-//--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
-}
-
-//--------------------------------------------------------------
-void testApp::windowResized(){
+void ofApp::windowResized(){
     windowResized(ofGetWidth(), ofGetHeight());
 }
 
-void testApp::windowResized(int w, int h){
+void ofApp::windowResized(int w, int h){
 
     if (guiColor){
         // reset guiColor location relative to right of window
         guiColor -> setPosition(w - 220, 0);
     }
-}
-
-//--------------------------------------------------------------
-void testApp::setupKinects() {
-    ofSetLogLevel(OF_LOG_VERBOSE);
-    
-    //    if (kinectsInitialized) {
-    //        openNIPlayer.start();
-    //        return;
-    //    }
-    
-    openNIPlayer.setup();
-    openNIPlayer.addDepthGenerator();
-    openNIPlayer.addImageGenerator();
-    openNIPlayer.setRegister(true);
-    openNIPlayer.setMirror(drawMirrored);
-    openNIPlayer.addUserGenerator();
-    openNIPlayer.setMaxNumUsers(4); // was 2
-    openNIPlayer.setDepthColoring(COLORING_BLUES_INV);
-    openNIPlayer.start();
-    
-    kinectsInitialized = true;
-    
-    ofSetLogLevel(OF_LOG_WARNING);
-}
-
-void testApp::stopKinects() {
-    ofSetLogLevel(OF_LOG_VERBOSE);
-    
-//    openNIPlayer.removeDepthGenerator();
-//    openNIPlayer.removeImageGenerator();
-//    openNIPlayer.setRegister(false);
-//    openNIPlayer.removeUserGenerator();
-    openNIPlayer.stop();
-    ofSetLogLevel(OF_LOG_WARNING);
-}
-
-void testApp::setupTestUserJoints() { //TODO: make setting test user joints data more data-driven––load an external XML file or atual positions from a GRT joint data file
-    vector< ofPoint > tempSingleUserJoints;
-    
-    // first user pose //
-    tempSingleUserJoints.push_back(ofPoint(    3.44307  ,   240.111  ,  138.728    ));
-    tempSingleUserJoints.push_back(ofPoint(  -13.2565   ,   429.373  ,  192.71     ));
-    tempSingleUserJoints.push_back(ofPoint(  -24.0613   ,   621.484  ,  261.898    ));
-    tempSingleUserJoints.push_back(ofPoint(   77.3954   ,   472.38   ,   69.9734   ));
-    tempSingleUserJoints.push_back(ofPoint(  297.974    ,   561.992  ,  -55.9768   ));
-    tempSingleUserJoints.push_back(ofPoint(  311.435    ,   845.369  ,   38.7029   ));
-    tempSingleUserJoints.push_back(ofPoint( -103.908    ,   386.367  ,  315.448    ));
-    tempSingleUserJoints.push_back(ofPoint( -197.592    ,   409.68   ,  654.682    ));
-    tempSingleUserJoints.push_back(ofPoint( -211.142    ,   682.998  ,  768.707    ));
-    tempSingleUserJoints.push_back(ofPoint(   74.8465   ,    76.8003 ,   10.6802   ));
-    tempSingleUserJoints.push_back(ofPoint(   15.6446   ,  -316.114  , -112.928    ));
-    tempSingleUserJoints.push_back(ofPoint(    7.12648  ,  -683.95   , -240.483    ));
-    tempSingleUserJoints.push_back(ofPoint(  -34.5611   ,    24.8962 ,  158.811    ));
-    tempSingleUserJoints.push_back(ofPoint(  -96.6418   ,  -371.297  ,   47.5833   ));
-    tempSingleUserJoints.push_back(ofPoint( -147.889    ,  -748.943  ,  -32.6917   ));
-    testUserJoints.push_back(tempSingleUserJoints);
-    tempSingleUserJoints.clear();
-    
-    // second test user pose //
-    tempSingleUserJoints.push_back(ofPoint(-130.336    ,    246.013     ,   101.129     ));
-    tempSingleUserJoints.push_back(ofPoint(-155.394    ,    434.483     ,   166.061     ));
-    tempSingleUserJoints.push_back(ofPoint(-180.079    ,    625.777     ,   241.777     ));
-    tempSingleUserJoints.push_back(ofPoint(-281.048    ,    385.199     ,   260.62      ));
-    tempSingleUserJoints.push_back(ofPoint(-519.791    ,    186.235     ,   210.358     ));
-    tempSingleUserJoints.push_back(ofPoint(-797.064    ,    161.881     ,    83.4888    ));
-    tempSingleUserJoints.push_back(ofPoint( -29.7404   ,    483.767     ,    71.501     ));
-    tempSingleUserJoints.push_back(ofPoint( 230.731    ,    417.279     ,  -129.414     ));
-    tempSingleUserJoints.push_back(ofPoint( 467.356    ,    500.446     ,  -311.709     ));
-    tempSingleUserJoints.push_back(ofPoint(-178.519    ,     28.816     ,    91.3145    ));
-    tempSingleUserJoints.push_back(ofPoint( 156.576    ,   -411.119     ,    86.2422    ));
-    tempSingleUserJoints.push_back(ofPoint( 517.507    ,   -391.487     ,   -73.8542    ));
-    tempSingleUserJoints.push_back(ofPoint( -32.0368   ,     86.2691    ,   -18.9189    ));
-    tempSingleUserJoints.push_back(ofPoint( -76.0083   ,   -319.293     ,   -83.0317    ));
-    tempSingleUserJoints.push_back(ofPoint( -10.8147   ,   -708.284     ,  -110.032     ));
-    testUserJoints.push_back(tempSingleUserJoints);
-    tempSingleUserJoints.clear();
-    
-    // third test user pose //
-    tempSingleUserJoints.push_back(ofPoint(     -19.6065   ,   166.533    ,    68.4897     ));
-    tempSingleUserJoints.push_back(ofPoint(    -185.775    ,   278.772    ,    31.0986     ));
-    tempSingleUserJoints.push_back(ofPoint(    -362.205    ,   390.868    ,    -8.01172    ));
-    tempSingleUserJoints.push_back(ofPoint(    -279.693    ,   154.538    ,    75.5608     ));
-    tempSingleUserJoints.push_back(ofPoint(    -278.583    ,  -108.422    ,    59.2761     ));
-    tempSingleUserJoints.push_back(ofPoint(    -163.701    ,  -100.122    ,  -189.903      ));
-    tempSingleUserJoints.push_back(ofPoint(     -91.8562   ,   403.005    ,   -13.3635     ));
-    tempSingleUserJoints.push_back(ofPoint(     167.173    ,   480.856    ,    24.5776     ));
-    tempSingleUserJoints.push_back(ofPoint(     264.332    ,   254.25     ,   -97.1309     ));
-    tempSingleUserJoints.push_back(ofPoint(      90.3639   ,   -20.0428   ,   132.486      ));
-    tempSingleUserJoints.push_back(ofPoint(     151.953    ,  -427.526    ,   172.202      ));
-    tempSingleUserJoints.push_back(ofPoint(     356.617    ,  -749.295    ,   232.936      ));
-    tempSingleUserJoints.push_back(ofPoint(     202.759    ,   128.632    ,    79.2761     ));
-    tempSingleUserJoints.push_back(ofPoint(      93.9081   ,  -249.735    ,   -48.7756     ));
-    tempSingleUserJoints.push_back(ofPoint(     -11.0111   ,  -615.832    ,  -112.657      ));
-    testUserJoints.push_back(tempSingleUserJoints);
-}
-
-int testApp::getRandomExcluding(int min, int max, int i) {
-    // TODO: Might want to simply hand over a vector of things to select from, and a second vector of filters to exclude?
-    
-    // exceptions
-    if (max - min <= 1 and i <= max and i >= min) return -1;
-    
-    int value = i;
-
-    while (value == i) {
-        value = ofRandom(min, max);
-    }
-    
-    return value;
 }
