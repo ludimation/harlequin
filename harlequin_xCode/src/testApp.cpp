@@ -321,8 +321,15 @@ void testApp::guiEvent(ofxUIEventArgs &e) {
         loadImages(loadImagesNow);
         //ofxUILabelToggle *toggle = (ofxUILabelToggle *) e.widget;
         //loadImagesNow = toggle->getValue();
-        
-        
+    } else if(nameStr == "invert image") {
+        // TODO: debug "invert images" only when toggle is updated.
+//        if (imgColorsAreInverted != imgInvertColors) {
+//            for (int imgI=0; imgI < images.size(); ++imgI){
+//                ofImage* imgTMP = &images[imgI];
+//                invertImage(imgTMP);
+//            }
+//            imgColorsAreInverted = imgInvertColors;
+//        }
     } else if (nameStr == "mirror image") {
         // reverse the effects of pressing the toggle before calling the keypressed function in order to avoid a double-toggle
         drawMirrored = !drawMirrored;
@@ -812,9 +819,9 @@ void testApp::draw(){
 
 
 //--------------------------------------------------------------
-void testApp::invertImage(ofImage* imgREF) {
-    ofPixels imgPX = imgREF->getPixelsRef();
-    ofTexture imgTEX = imgREF->getTextureReference();
+void testApp::invertImage(ofImage* imgPTRlocal) {
+    ofPixels imgPX = imgPTRlocal->getPixelsRef();
+    ofTexture imgTEX = imgPTRlocal->getTextureReference();
     invertImage(imgPX, imgTEX);
 }
 

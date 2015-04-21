@@ -110,7 +110,9 @@ private:
     int                             maxFilesToLoad;
     int                             nFilesToLoad;
     ofImage                         img;
+    void                            invertImage(ofImage* imgPTRlocal);
     void                            invertImage(ofImage &imgREF);
+    void                            invertImage(ofPixels &imgPX, ofTexture &imgTEX);
     
     // training data handling
     GRT::SVM                        trainingModelJointsPosABS;
