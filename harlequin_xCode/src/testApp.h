@@ -6,7 +6,7 @@
 #include "GRT.h"
 #include "ofxUI.h"
 #include "ofxOsc.h"
-#include "harlequinIMGEditor.h"
+#include "imgEditor.h"
 
 #define HOST "localhost"
 #define PORT 9000
@@ -102,7 +102,7 @@ private:
     string                          myPort;
 
     // image editor
-    harlequinIMGEditor              *imgEditor;
+    imgEditor                       *imgEdtr;
     vector < string >               directoriesAll;
     vector < string >               directoriesToLoad;
     

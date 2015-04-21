@@ -1,5 +1,5 @@
 //
-//  harlequinIMGEditor.h
+//  imgEditor.h
 //  harlequin
 //
 //  Created by david allen on 4/15/15.
@@ -8,12 +8,12 @@
 
 #pragma once
 
-//#ifndef harlequin_harlequinIMGEditor_h
-//#define harlequin_harlequinIMGEditor_h
+//#ifndef harlequin_imgEditor_h
+//#define harlequin_imgEditor_h
 
 #include "MSAjoint.h"
 
-class harlequinIMGEditor {
+class imgEditor {
     
 public:
     

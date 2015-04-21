@@ -34,8 +34,8 @@ void testApp::setup() {
     //////////////////
     // Image Editor //
     //////////////////
-    imgEditor = new harlequinIMGEditor();
-    imgEditor->setup();
+    imgEdtr = new imgEditor();
+    imgEdtr->setup();
     imgInvertColors = false;
     imgColorsAreInverted = false;
     

@@ -1,5 +1,5 @@
 //
-//  harlequinIMG.h
+//  imgData.h
 //  harlequin
 //
 //  Created by david allen on 4/15/15.
@@ -8,12 +8,12 @@
 
 #pragma once
 
-//#ifndef harlequin_harlequinIMG_h
-//#define harlequin_harlequinIMG_h
+//#ifndef harlequin_imgData_h
+//#define harlequin_imgData_h
 
 #include "ofMain.h"
 
-class harlequinIMG { // can I extend ": public ofImage {//" ?
+class imgData { // can I extend ": public ofImage {//" ?
     
 public:
     
