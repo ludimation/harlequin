@@ -80,6 +80,7 @@ private:
     float                           bgRed, bgGreen, bgBlue;
     int                             imgBlendMode;
     bool                            imgInvertColors;
+    bool                            imgColorsAreInverted;
     float                           imgRed, imgGreen, imgBlue, imgAlpha;
     
     // debug drawing flags
@@ -109,7 +110,9 @@ private:
     bool                            loadImagesNow;
     int                             maxFilesToLoad;
     int                             nFilesToLoad;
-    ofImage                         img;
+    ofImage                         img; //TODO: delete ofImage version of img (replace with imgPTR).
+//    ofImage*                        imgPTR;
+    ofImage*                        bikersPTR;
     void                            invertImage(ofImage* imgPTRlocal);
     void                            invertImage(ofImage &imgREF);
     void                            invertImage(ofPixels &imgPX, ofTexture &imgTEX);
@@ -141,7 +144,9 @@ private:
     // image display
     string                  img_name;
     vector< string >        imageNames;
-    vector <ofImage>        images;
+    vector <ofImage>        images; //TODO: delete ofImage version of images (replace with imagesPTRs).
+    vector <ofImage*>       imagesPTRs;
+    map<string, ofImage*>   imagesMap;
     
     
     

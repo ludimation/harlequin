@@ -36,6 +36,8 @@ void testApp::setup() {
     //////////////////
     imgEditor = new harlequinIMGEditor();
     imgEditor->setup();
+    imgInvertColors = false;
+    imgColorsAreInverted = false;
     
     ///////////////////////////
     // Image Data Properties //
@@ -227,24 +229,58 @@ void testApp::loadImages(bool load) {
         nFilesInDir = dir.listDir(directoryPath);
         maxFilesToLoad = dir.size();//TODO: update maximum for GUI slider named "number of files to load"
         images.resize(nFilesToLoad);
+        imagesPTRs.resize(nFilesToLoad);
 //        imageNames.resize(nFilesToLoad);
         imgTMP.setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
         //
         // load files
         if(nFilesInDir) {
+            // Test image
+            bikersPTR = new ofImage();
+            bikersPTR->loadImage("images/bikers.jpg");
+            bikersPTR->update();
+            bikersPTR->setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
+            
             for(int i = nFilesLoaded; i < maxFilesToLoad; ++i) {
                 if (nFilesLoaded >= nFilesToLoad) break;
+
+                ofImage*        imgTMPptr;
+                imgTMPptr = new ofImage();
+                imgTMPptr->setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
 
                 // add the image name to a list
                 filePath = dir.getPath(i);
                 if (imgTMP.loadImage(filePath))
                 {
-//                    imageNames[nFilesLoaded] = filePath;
+                    //                    imageNames[nFilesLoaded] = filePath;
+//                    if (imgInvertColors) {
+//                        invertImage(imgTMP); // TODO: invertImage(imgTMP) doesn't seem to be working
+//                    }
                     images[nFilesLoaded] = imgTMP;
-                    nFilesLoaded++;
+//                    nFilesLoaded++;
                     cout << "loaded image [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
                 }
+                
+                if (imgTMPptr->loadImage(filePath))
+                {
+                    //                    imageNames[nFilesLoaded] = filePath;
+//                    if (imgInvertColors) {
+//                        invertImage(imgTMPptr); // TODO: invertImage(imgTMPptr) doesn't seem to be working
+//                    }
+//                    imgTMPptr->update();
+//                    imagesPTRs[nFilesLoaded] = imgTMPptr;
+                    imagesPTRs[nFilesLoaded] = bikersPTR;
+                    imagesMap[filePath] = bikersPTR;
+//                    if (imagesMap.find(filePath) != imagesMap.end()) imagesMap[filePath] = imgTMPptr;
+//                    if (imagesMap.find(filePath) != imagesMap.end()) imagesMap[filePath] = imgTMPptr;
+                    nFilesLoaded++;
+                    cout << "loaded image PTR [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
+                }
+
             }
+            //
+            // imgColorsAreInverted = imgInvertColors;
+            
         } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
         //
         // Select image to start with
@@ -288,10 +324,13 @@ void testApp::loadImages(bool load) {
     else
     {
         // clear image arrays to unload all images
-//        imageNames.clear();
+        //        imageNames.clear();
         images.clear();
+        imagesPTRs.clear();
+        imagesMap.clear();
         // TODO: clean up prediction data & models as well
         cout << "images unloaded -- images.size() = "<< images.size() << endl;
+        cout << "images PTR -- imagesPTRs.size() = " << imagesPTRs.size() << endl;
     }
 }
 
@@ -594,6 +633,7 @@ void testApp::draw(){
     
     ofPoint jointsCenterProjective;
     ofPoint imgRefPoint;
+    ofPoint imgPTRRefPoint;
     ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
     
     // Build debug message string
@@ -638,7 +678,7 @@ void testApp::draw(){
                 }
                 
                 // TODO: implement SSD option selection GUI & implemnet loading images directly from HD
-                //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
+                //if (img->loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
 
                 if (trackedUserCentersProjective.size() >= j+1) {
                     jointsCenterProjective = trackedUserCentersProjective[j];
@@ -652,6 +692,8 @@ void testApp::draw(){
                 {
                     // set image to draw
                     img = images[label];
+                    ofImage* imgPTR = new ofImage();
+                    imgPTR = imagesPTRs[label];
                     
                     // calculate reference points for drawing
                     if(jointsCenterProjective.z != 0) { // scale
@@ -661,21 +703,37 @@ void testApp::draw(){
                     }
                     float xOffset = float( img.width  ) * imgRefPoint.z * imageScale / 2.0f;
                     float yOffset = float( img.height  ) * imgRefPoint.z * imageScale / 2.0f;
+                    float xOffsetPTR = float( imgPTR->width *2 ) * imgRefPoint.z * imageScale / 2.0f;
+                    float yOffsetPTR = float( imgPTR->height *2 ) * imgRefPoint.z * imageScale / 2.0f;
                     imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
                     imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
+                    imgPTRRefPoint.x = jointsCenterProjective.x - xOffsetPTR;
+                    imgPTRRefPoint.y = jointsCenterProjective.y - yOffsetPTR;
                     
                     img.mirror(0, drawMirrored);
+                    imgPTR->mirror(0, drawMirrored);
                     if (imgInvertColors) {
                         invertImage(img);
+                        invertImage(imgPTR);
                     }
-                    
+
                     // TODO: image drawing should be z-sorted so further images draw behind closer ones
                     // draw image at position and scale relative to center of screen and image
-                    img.draw(imgRefPoint.x,
-                             imgRefPoint.y,
-                             img.width * imgRefPoint.z * imageScale,
-                             img.height * imgRefPoint.z * imageScale);
-                    
+//                    img.draw(imgRefPoint.x,
+//                             imgRefPoint.y,
+//                             img.width * imgRefPoint.z * imageScale,
+//                             img.height * imgRefPoint.z * imageScale);
+//                    imgPTR->update();
+
+                    // image pointer drawing tests
+                    bikersPTR->draw(0, 100);
+//                    bikersPTR->draw(100, 100, 50, 50);
+
+                    imgPTR->draw(imgPTRRefPoint.x,
+                                 imgPTRRefPoint.y,
+                                 imgPTR->width * imgPTRRefPoint.z * imageScale,
+                                 imgPTR->height * imgPTRRefPoint.z * imageScale);
+
                     // Build debug message string
                     msg = msg + "\n jointsCenterProjective = " + ofToString(jointsCenterProjective);
                     msg = msg + "\n xOffset = " + ofToString(xOffset);
@@ -703,22 +761,28 @@ void testApp::draw(){
             ofEnableBlendMode((ofBlendMode)imgBlendMode);
 
             // draw image(s)
-            // if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
+            // if (img->loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
             if (images.size())
             {
                 img = images[label];
+                ofImage* imgPTR = new ofImage();
+                imgPTR = imagesPTRs[label];
                 float imgRatioX;
                 float imgRatioY;
                 float imgRatio;
 
                 if (img.width) {
                     imgRatioX = float(ofGetWidth()) / float(img.width);
+//                if (img->width) {
+//                    imgRatioX = float(ofGetWidth()) / float(img->width);
                 } else {
                     imgRatioX = 1.0f;
                 }
 
                 if (img.height) {
                     imgRatioY = float(ofGetHeight()) / float(img.height);
+//                if (img->height) {
+//                    imgRatioY = float(ofGetHeight()) / float(img->height);
                 } else {
                     imgRatioY = 1.0f;
                 }
@@ -730,17 +794,31 @@ void testApp::draw(){
                 }
                 
                 img.mirror(0, drawMirrored);
+                imgPTR->mirror(0, drawMirrored);
                 if (imgInvertColors) {
                     invertImage(img);
+                    invertImage(imgPTR);
                 }
 
                 
-                img.draw(
-                         (ofGetWidth() - img.width * imgRatio) / 2.0f,
-                         (ofGetHeight() - img.height * imgRatio) / 2.0f,
-                         img.width * imgRatio,
-                         img.height * imgRatio
-                         );
+//                img.draw(
+//                         (ofGetWidth() - img.width * imgRatio) / 2.0f,
+//                         (ofGetHeight() - img.height * imgRatio) / 2.0f,
+//                         img.width * imgRatio,
+//                         img.height * imgRatio
+//                         );
+                imgPTR->draw(
+                             (ofGetWidth() - img.width * imgRatio) / 2.0f,
+                             (ofGetHeight() - img.height * imgRatio) / 2.0f,
+                             img.width * imgRatio,
+                             img.height * imgRatio
+                             );
+//                imgPTR->draw(
+//                         (ofGetWidth() - imgPTR->width * imgRatio) / 2.0f,
+//                         (ofGetHeight() - imgPTR->height * imgRatio) / 2.0f,
+//                         imgPTR->width * imgRatio,
+//                         imgPTR->height * imgRatio
+//                         );
             }
             
             // reset drawing matrix and style
