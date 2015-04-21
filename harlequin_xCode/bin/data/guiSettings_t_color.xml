@@ -8,7 +8,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>i0</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -18,7 +18,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>i+</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -33,6 +33,11 @@
 <Widget>
     <Kind>2</Kind>
     <Name>iS</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>invert image</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
