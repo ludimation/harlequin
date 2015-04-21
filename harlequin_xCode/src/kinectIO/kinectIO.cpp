@@ -53,8 +53,9 @@ bool kinectIO::stopKinects() {
     return true;
 }
 
-void kinectIO::setupTestUserJoints() { //TODO: make setting test user joints data more data-driven––load an external XML file or atual positions from a GRT joint data file
+vector< vector<ofPoint> > kinectIO::setupTestUserJoints() { //TODO: make setting test user joints data more data-driven––load an external XML file or atual positions from a GRT joint data file
     vector< ofPoint > tempSingleUserJoints;
+    vector< vector <ofPoint> > testUserJoints;
     
     // first user pose //
     tempSingleUserJoints.push_back(ofPoint(    3.44307  ,   240.111  ,  138.728    ));
@@ -111,4 +112,6 @@ void kinectIO::setupTestUserJoints() { //TODO: make setting test user joints dat
     tempSingleUserJoints.push_back(ofPoint(      93.9081   ,  -249.735    ,   -48.7756     ));
     tempSingleUserJoints.push_back(ofPoint(     -11.0111   ,  -615.832    ,  -112.657      ));
     testUserJoints.push_back(tempSingleUserJoints);
+    
+    return testUserJoints;
 }

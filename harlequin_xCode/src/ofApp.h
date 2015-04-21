@@ -10,15 +10,16 @@
 #define _TEST_APP
 
 #include "ofMain.h"
-#include "GRT.h"
 #include "ofxUI.h"
 #include "ofxOsc.h"
-#include "imgEditor.h"
 #include "kinectIO.h"
 #include "ofxOpenNI.h"
+#include "imgEditor.h"
 #include "body.h"
+#include "GRT.h"
 #include "GRTEditor.h"
 
+// OSC
 #define HOST "localhost"
 #define PORT 9000
 

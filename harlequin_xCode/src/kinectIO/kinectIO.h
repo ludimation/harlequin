@@ -24,7 +24,7 @@ public:
     void gestureEvent(ofxOpenNIGestureEvent & event);
     
     // debug
-    void setupTestUserJoints();
+    vector< vector<ofPoint> > setupTestUserJoints();
 
     // properties
     ofxOpenNI               openNIdevice;

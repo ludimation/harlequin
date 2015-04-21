@@ -8,41 +8,31 @@
 
 #include "ofApp.h"
 
-
-///////////
-// TODO: //
-///////////
-//  - redesign image / training system to be more malleable
-//      - display data associated with current image
-//      - save image positioning data —- translation, scale, and rotation controls for current image
-//          > rotation
-//          > scale (might need to just store corners or dimensions so that image can be scaled independent of file size changes
-//  - experiment with "nearest" method of label prediction for more movement
-//  - do not display the same image more than once every 3 frames
-//  - slow down frame rate to 30, or even as low as 12 or so?
-//  - joint rotations (axis-angles?)
-//  - filters for file tags (drawing, photo, male, female, dancer, pedestrian, public figure, etc.)
-//      > simply use separate directory structures?
-//  - query for short list of potential images (instead of returning just one as we do now)
-//      > could be done in pre-processing and save a list of images closest to the each image
-
-
 //--------------------------------------------------------------
 void ofApp::setup() {
     
     //////////////////
-    // Image Editor //
+    // general init //
     //////////////////
-    imgEdtr = new imgEditor();
-    imgEdtr->setup();
+    drawNextFrameMilliseconds = 0;
+    // gui settings
+    drawFrameRate   = 30;
+    drawMirrored    = false;
     imgInvertColors = false;
     imgColorsAreInverted = false;
+    // debug
+    testUserJoints = kinectInterface.setupTestUserJoints(); // test joints used if Kinect is offline
+    verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
+
     
-    ///////////////////////////
-    // Image Data Properties //
-    ///////////////////////////
+    ////////////////////
+    // image handlers //
+    ////////////////////
+    imgEdtr = new imgEditor();
+    imgEdtr->setup();
+    // image loader // items below should eventually be handled by image loader
     trainedImagesDirectory = "images/hand_drawings/LT/";
-//    trainedImagesDirectory = "images/hand_drawings/V/";
+    //    trainedImagesDirectory = "images/hand_drawings/V/";
     // TODO: make image directory selection dynamic (1. include text input in GUI, 2. separate out data loading into a function that can be called when target data set is changed)
     directoriesAll.push_back(trainedImagesDirectory + "_540"); // i = 0
     directoriesAll.push_back(trainedImagesDirectory + "_1080"); // i = 1
@@ -51,28 +41,14 @@ void ofApp::setup() {
     string          directoryPath;
     ofDirectory     dir;
     int             nFiles;
-    
     //
-    nFilesToLoad = 64; // for testing purposes only (quick load)
     directoryPath = directoriesAll[0]; // loading _540 images
     imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
-
-    
-    ///////////////
-    // Load font //
-    ///////////////
-    verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
+    nFilesToLoad = 64; // for testing purposes only (quick load)
     
     
-    ///////////////////////////////
-    // Artist specified settings //
-    ///////////////////////////////
-    drawFrameRate   = 30;
-    drawMirrored    = false;
-    
-
     //////////////
     // OSC INIT //
     //////////////
@@ -138,7 +114,7 @@ void ofApp::setup() {
     gui -> addToggle("send OSC", &sendOSC);
     gui -> addSpacer();
     //
-    // Load files
+    // Load files // move these to imgLoader
     gui -> addIntSlider("number of files to load", 0, maxFilesToLoad, &nFilesToLoad);
     gui -> addLabelToggle("load images", &loadImagesNow);
     gui -> addSpacer();
@@ -189,17 +165,11 @@ void ofApp::setup() {
     guiColor -> autoSizeToFitWidgets();
     
 
-    /////////////////////////
-    // Initialize settings //
-    /////////////////////////
-    drawNextFrameMilliseconds = 0;
+    ///////////////////////////
+    // initial display state //
+    ///////////////////////////
     setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
     
-    ///////////////
-    // Test Data //
-    ///////////////
-    // user joints for testing while Kinect is offline
-    setupTestUserJoints();
 }
 
 void ofApp::loadImages(bool load) {
