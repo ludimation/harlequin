@@ -52,7 +52,7 @@ public:
 	}
 	
 	virtual void onMouseMove(int x, int y){
-		printf("MyTestObject::onMouseMove(x: %i, y: %i)\n", x, y);
+//		printf("MyTestObject::onMouseMove(x: %i, y: %i)\n", x, y);
 	}
     
     void updatePosition(int x, int y) {
@@ -72,16 +72,16 @@ public:
     }
     
     void mouseDragged(int x, int y, int button) {
-        printf("MyTestObject::mouseDragged(x: %i, y: %i, button: %i)\n", x, y, button);
+//        printf("MyTestObject::mouseDragged(x: %i, y: %i, button: %i)\n", x, y, button);
         if (dragging) updatePosition(x, y);
     }
     
 	virtual void onDragOver(int x, int y, int button) {
-		printf("MyTestObject::onDragOver(x: %i, y: %i, button: %i)\n", x, y, button);
+//		printf("MyTestObject::onDragOver(x: %i, y: %i, button: %i)\n", x, y, button);
 	}
     
 	virtual void onDragOutside(int x, int y, int button) {
-		printf("MyTestObject::onDragOutside(x: %i, y: %i, button: %i)\n", x, y, button);
+//		printf("MyTestObject::onDragOutside(x: %i, y: %i, button: %i)\n", x, y, button);
 	}
 	
 	virtual void onPress(int x, int y, int button) {
