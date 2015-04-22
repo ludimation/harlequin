@@ -25,15 +25,14 @@ public:
     void draw();
     
     // image handling functions
-    void                            guiEvent(ofxUIEventArgs &e);
-    void                            mapAllImages();
-    void                            scanDirectory( // TODO: make "imgEditor::scanDirectory()" more generic and move it to its own class so it returns an array of file paths with a given extension, or an array of directory paths for any object that needs it
-                                                    ofDirectory                     dir
-                                                  , string                          ext
-                                                  );
-    void                            addImgToPathMap(string baseName, string path);
+    void guiEvent(ofxUIEventArgs &e);
+    void mapAllImages();
+    void scanDirectory(ofDirectory dir, string ext);// TODO: make "imgEditor::scanDirectory()" more generic and move it to its own class so it returns an array of file paths with a given extension, or an array of directory paths for any object that needs it
+    void addImgToPathMap(string baseName, string path);
+    void reiterateIt();
     
     // properties
+    bool                            initializing;
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
     vector< vector <MSAjoint*> >    joints;
     int                             jointSets_count, joints_count;

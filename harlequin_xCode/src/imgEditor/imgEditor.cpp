@@ -10,21 +10,13 @@
 
 //--------------------------------------------------------------
 void imgEditor::setup() {
+    
+    initializing = true; // flag to check to make sure application is not running initialization operations twice
     ///////////////////
     // 1) create a map of all unique image file names in the images directory
     //     - include several paths for images that have multiple resolutions
     ///////////////////
     mapAllImages();
-    if (imagePathMap.size()) {
-        it = imagePathMap.begin();
-        currentImgIndex = 1;
-        currentImgIndexFloat = 1.0f;
-    } else {
-        it = imagePathMap.end();
-        currentImgIndex = 0;
-        currentImgIndexFloat = 0.0f;
-    }
-    
 
     ///////////////////
     // 2) gui & keypresses for displaying pathMap & selecting which image to load training
@@ -37,27 +29,38 @@ void imgEditor::setup() {
     //
     // text field with currently displayed image baseName: includes a slider to navigate list quickly, as well as buttons & keybindings to navigate up and down one image at a time
     gui -> addTextArea("current image baseName", "current image: " + it->first);
-    gui -> addSlider("imagePathMap index", currentImgIndex, imagePathMap.size(), &currentImgIndexFloat);
-    ofxUIButton *buttonPrevImg = gui -> addButton("- previous image", false);
-    buttonPrevImg->bindToKey('[');
-    buttonPrevImg->bindToKey('-');
-    buttonPrevImg->bindToKey('_');
-    ofxUIButton *buttonNextImg = gui -> addButton("+ next image", false);
-    buttonNextImg->bindToKey(']');
-    buttonNextImg->bindToKey('=');
-    buttonNextImg->bindToKey('+');
+    gui -> addSlider("imagePathMap index", 1.0f, imagePathMap.size(), &currentImgIndexFloat);
+    ofxUIButton *buttonPrevImg = gui -> addButton("'-' previous image", false);
+    buttonPrevImg -> bindToKey('[');
+    buttonPrevImg -> bindToKey('{');
+    buttonPrevImg -> bindToKey('-');
+    buttonPrevImg -> bindToKey('_');
+    ofxUIButton *buttonNextImg = gui -> addButton("'+' next image", false);
+    buttonNextImg -> bindToKey(']');
+    buttonNextImg -> bindToKey('}');
+    buttonNextImg -> bindToKey('=');
+    buttonNextImg -> bindToKey('+');
+    gui -> addSpacer();
     //
     // update list button
-    gui -> addLabelButton("update image list", false);
+    ofxUILabelButton *buttonUpdateImgList = gui -> addLabelButton("'u' update image list", false);
+    buttonUpdateImgList -> bindToKey('u');
+    buttonUpdateImgList -> bindToKey('U');
     gui -> addSpacer();
     //
     // save image data button
-    gui -> addLabelButton("save image data", false);
+    ofxUILabelButton *buttonSaveData = gui -> addLabelButton("'d' save image data", false);
+    buttonSaveData -> bindToKey('d');
+    buttonSaveData -> bindToKey('D');
+    gui -> addSpacer();
     //
     // save image loader settings button // what would these be? selected image + directories?
-    gui -> addLabelButton("save imgLoader settings", false);
-    gui -> autoSizeToFitWidgets();
+    ofxUILabelButton *buttonSaveSettings = gui -> addLabelButton("'s' save imgLoader settings", false);
+    buttonSaveSettings -> bindToKey('s');
+    buttonSaveSettings -> bindToKey('S');
     //
+    // closing operations
+    gui -> autoSizeToFitWidgets();
     // load settings?
     
     
@@ -84,7 +87,9 @@ void imgEditor::setup() {
     //     - at comon directory level of all image paths (remove "_540" / "_1080" portion)
     //     - include multiple paths in XML file for selection later on
     ///////////////////
+ 
     
+    initializing = false; // done initializing
 }
 
 //--------------------------------------------------------------
@@ -99,23 +104,32 @@ void imgEditor::exit() {
 
 //--------------------------------------------------------------
 void imgEditor::guiEvent(ofxUIEventArgs &e) {
-    string          nameStr = e.widget->getName();
-    ofxUIWidgetType kind    = e.widget->getKind();
-    ofxUIButton     *button;
-    bool            buttonPressed;
+    string              nameStr = e.widget->getName();
+    ofxUIWidgetType     kind    = e.widget->getKind();
+    ofxUIButton         *button;
+    ofxUILabelButton    *labelbutton;
+    bool                buttonPressed = false;
     
     if (kind == OFX_UI_WIDGET_BUTTON) {
         button = (ofxUIButton*)e.widget;
-        buttonPressed = button ->getValue();
+        buttonPressed = button -> getValue();
+    } else if (kind == OFX_UI_WIDGET_LABELBUTTON) {
+        labelbutton = (ofxUILabelButton*)e.widget;
+        buttonPressed = labelbutton -> getValue();
     }
     
-    /*  */ if(nameStr == "- previous image"){
-        if (currentImgIndex > 0) {
+    /*  */ if(nameStr == "'-' previous image"){
+        if (currentImgIndex > 1) {
             if (buttonPressed) currentImgIndexFloat -= 1.0f;
         }
-    } else if(nameStr == "+ next image") {
+    } else if(nameStr == "'+' next image") {
         if (currentImgIndex < imagePathMap.size()) {
             if (buttonPressed) currentImgIndexFloat += 1.0f;
+        }
+    } else if(nameStr == "'u' update image list") {
+        if (!buttonPressed && !initializing && !ofGetMousePressed()) {
+            // when button is released, not when dragging out, or simply when gui is created during setup();
+            mapAllImages();
         }
     } else { // default
         if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
@@ -128,13 +142,19 @@ void imgEditor::update() {
     // check to see if currentImgIndexFloat has been changed
     if ((int)currentImgIndexFloat != currentImgIndex) {
         
-        // store the new image loaded
+        // store the new image index
         currentImgIndex = (int)currentImgIndexFloat;
 
         // increment the image path map iterator to the appropriate image
-        it = imagePathMap.begin();
-        for(int i=1; i<currentImgIndex; ++i) {
-            ++it;
+        reiterateIt();
+        
+        currentImgBaseName = "";
+        bool imgLoaded = img->loadImage(it->second[it->second.size()-1]);
+        if (imgLoaded) {
+            currentImgBaseName = it->first;
+        } else {
+            cout << "imgEditor::update() -- could not load image at it->second[it->second.size()-1] = "
+            << it->second[it->second.size()-1] << endl;
         }
         
         // update the gui text field for current image being displayed to match the updated iterator
@@ -152,26 +172,43 @@ void imgEditor::update() {
 
 //--------------------------------------------------------------
 void imgEditor::draw() {
-    bool drawImage = false;
-    
-    if (img->loadImage(it->second[it->second.size()-1])) {
+    if (currentImgBaseName != "") {
         img->draw(100, 100);
-    } else {
-        cout << "imgEditor::draw() -- could not load image at it->second[0] = " << it->second[0] << endl;
     }
 }
 
 //--------------------------------------------------------------
 void imgEditor::mapAllImages() {
+    
+    // debug
+    cout << "imgEditor::mapAllImages() -- called" << endl;
+    
     ///////////////////
-    // 1) create a map of all unique image file names in the images directory
-    //     - include several paths for images that have multiple resolutions
+    // creates a map of all unique image file names in the images directory
+    //     - includes several paths for images that have multiple resolutions
     ///////////////////
     
+    // clear the map it if has already been populated
+    if (imagePathMap.size()) imagePathMap.clear();
+    
+    // pupulate map
     string path = ofToDataPath("images");
     string ext = "jpg";
     ofDirectory dir(path);
     scanDirectory(dir, ext);
+    
+    // update editor variables based on map dimensions
+    if (imagePathMap.size()){
+        it = imagePathMap.begin();
+        currentImgIndex = 0;
+        currentImgIndexFloat = 1.0f;
+    } else {
+        it = imagePathMap.end();
+        currentImgIndex = 0;
+        currentImgIndexFloat = 0.0f;
+        currentImgBaseName = "";
+        cout << "imgEditor::mapAllImages() -- no images found in the 'data/images' directory" << endl;
+    }
 }
 
 //--------------------------------------------------------------
@@ -195,9 +232,9 @@ void imgEditor::scanDirectory(ofDirectory dir, string ext) {
             addImgToPathMap(fileBaseName, filePath);
             
             // debug
-            cout << "imgEditor::scanDirectory() -- baseName = " << fileBaseName << endl;
-            // cout << "imgEditor::scanDirectory() -- fileNameSTR = " << fileNameSTR << endl;
-            // cout << "imgEditor::scanDirectory() -- path = " << path << endl;
+            //            cout << "imgEditor::scanDirectory() -- fileBaseName = " << fileBaseName << endl;
+            //            cout << "-- fileAbsPath = " << fileAbsPath << endl;
+            //            cout << "-- filePath = " << filePath << endl;
         }
     }
 }
@@ -209,4 +246,12 @@ void imgEditor::addImgToPathMap(string baseName, string imagePath) {
         imagePathMap[baseName] = pathVtmp;
     }
     imagePathMap[baseName].push_back(imagePath);
+}
+
+//--------------------------------------------------------------
+void imgEditor::reiterateIt() {
+    it = imagePathMap.begin();
+    for(int i=1; i<currentImgIndex; ++i) {
+        ++it;
+    }
 }
