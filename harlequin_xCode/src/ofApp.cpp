@@ -11,6 +11,15 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
     
+    ////////////////////
+    // image handlers //
+    ////////////////////
+    imgEdtr = new imgEditor();
+    imgEdtr->setup();
+    GRTMngr = new GRTManager();
+    // move to image handler
+    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
+
     //////////////////
     // general init //
     //////////////////
@@ -24,15 +33,6 @@ void ofApp::setup() {
     testUserJoints = kinectInterface.setupTestUserJoints(); // test joints used if Kinect is offline
     verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
 
-    
-    ////////////////////
-    // image handlers //
-    ////////////////////
-    imgEdtr = new imgEditor();
-    imgEdtr->setup();
-    GRTMngr = new GRTManager();
-    // move to image handler
-    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
     
     //////////////
     // OSC INIT //

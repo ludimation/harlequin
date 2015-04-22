@@ -17,21 +17,31 @@ void imgEditor::setup() {
     imagePathMap = mapAllImages();
 
     ///////////////////
-    // 2) gui & keypresses for selecting which image to load training
+    // 2) gui & keypresses for displaying pathMap & selecting which image to load training
     //     - load metadata for an image if it already exists
     ///////////////////
     gui = new ofxUISuperCanvas("imgEditor");
     ofAddListener(gui -> newGUIEvent, this, &imgEditor::guiEvent);
     gui -> addSpacer();
     //
-    // Load files // move these to imgLoader
-    gui -> addIntSlider("number of files to load", 0, maxFilesToLoad, &nFilesToLoad);
-    gui -> addLabelToggle("load images", &loadImagesNow);
+    // display imagePathMap
+    //    - list all images with selectable unique image names
+    //    - list selectable multiple paths for a selected image
+    //    - update list button
     gui -> addSpacer();
     //
-    // Save Settings
+    // load / display image button
+    gui -> addToggle("display image", false);
+    gui -> addSpacer();
+    //
+    // save image data button
+    gui -> addLabelButton("save image data", false);
+    //
+    // save image loader settings button // what would these be? selected image + directories?
     gui -> addLabelButton("save imgLoader settings", false);
     gui -> autoSizeToFitWidgets();
+    //
+    // load settings
     
     
     ///////////////////
@@ -64,8 +74,8 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
     string nameStr = e.widget->getName();
     int kind = e.widget->getKind();
     
-    /*  */ if(nameStr == "load images"){
-        loadImages(loadImagesNow);
+    /*  */ if(nameStr == ""){
+        //
     } else { // default
         if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
     }
@@ -92,12 +102,4 @@ map <string, vector<string> > imgEditor::mapAllImages() {
     maxFilesToLoad = pathMap.size();
     
     return pathMap;
-}
-
-//--------------------------------------------------------------
-map <string, vector<string> > imgEditor::loadImages(bool load) {
-    ///////////////////
-    // 1) create a map of all unique image file names in the images directory
-    //     - include several paths for images that have multiple resolutions
-    ///////////////////
 }

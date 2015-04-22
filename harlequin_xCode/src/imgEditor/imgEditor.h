@@ -26,7 +26,6 @@ public:
     // image handling functions
     void                            guiEvent(ofxUIEventArgs &e);
     map <string, vector<string> >   mapAllImages();
-    map <string, vector<string> >   loadImages(bool load);
     
     // properties
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
