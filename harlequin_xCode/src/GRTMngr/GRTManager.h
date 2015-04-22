@@ -10,7 +10,6 @@
 //#define __harlequin__GRTEditor__
 #pragma once
 
-#include "ofApp.h"
 #include "ofxUI.h"
 
 class GRTManager {
