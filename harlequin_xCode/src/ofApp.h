@@ -58,7 +58,7 @@ public:
     ////////////
     // 
     // properties
-    kinectIO                kinectInterface;
+    kinectIO                *kinectInterface;
     bool                    kinectsInitialized;
     ofxOpenNI               openNIPlayer;
     ofxOpenNIUser           nTrackedUser;
@@ -71,19 +71,19 @@ public:
     ////////////////////////////////////
     //
     // properties
-    body*                   bodyClass;
-    GRTManager*             GRTMngr;
+    body                    *bodyClass;
+    GRTManager              *GRTMngr;
     string                  trainedImagesDirectory;
     float                   imageScale;
-    GRT::SVM                    trainingModelJointsPosABS;
-    GRT::ClassificationData     trainingDataJointsPosABS;
-    GRT::SVM                    trainingModelJointsPosRel;
-    GRT::ClassificationData     trainingDataJointsPosRel;
-    GRT::SVM                    trainingModelJointsRotAxisA;
-    GRT::ClassificationData     trainingDataJointsRotAxisA;
-    GRT::UINT                   label; // does this need to be global?
-    GRT::UINT                   lbl; // does this need to be global?
-    bool                        trainModelsNow;
+    GRT::SVM                trainingModelJointsPosABS;
+    GRT::ClassificationData trainingDataJointsPosABS;
+    GRT::SVM                trainingModelJointsPosRel;
+    GRT::ClassificationData trainingDataJointsPosRel;
+    GRT::SVM                trainingModelJointsRotAxisA;
+    GRT::ClassificationData trainingDataJointsRotAxisA;
+    GRT::UINT               label; // does this need to be global?
+    GRT::UINT               lbl; // does this need to be global?
+    bool                    trainModelsNow;
     string                  trainingModelJointsPosABSfileName;
     string                  trainingDataJointsPosABSfileName;
     string                  trainingModelJointsPosRelfileName;
@@ -131,7 +131,7 @@ private:
     ////////////////////
     // image handling //
     ////////////////////
-    imgEditor*                  imgEdtr;
+    imgEditor                   *imgEdtr;
     vector < string >           directoriesAll;
     vector < string >           directoriesToLoad;
     void                        loadImages(bool load);

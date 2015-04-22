@@ -20,25 +20,30 @@ public:
     
     // core functions
     void setup();
+    void exit();
     void update();
     void draw();
     
     // image handling functions
     void                            guiEvent(ofxUIEventArgs &e);
-    map <string, vector<string> >   mapAllImages();
+    void                            mapAllImages();
     void                            scanDirectory(
                                                     ofDirectory                     dir
-                                                  , map <string, vector<string> >   &pathMap
-                                                  , string                          &ext
+//                                                  , map <string, vector<string> >   &pathMap
+                                                  , string                          ext
                                                   );
+    void                            addImgToPathMap(string baseName, string path);
     
     // properties
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
     vector< vector <MSAjoint*> >    joints;
     int                             jointSets_count, joints_count;
     map <string, vector<string> >   imagePathMap; // <string imgFileName, vector<string> imgPaths>
-    bool                            loadImagesNow;
-    int                             nFilesToLoad, maxFilesToLoad;
+    map <string, vector<string> >::iterator it; // iterator storage for paths to image that is currently being edited
+    ofImage*                        img;
+    int                             currentImgIndex;
+    float                           currentImgIndexFloat;
+    string                          currentImgBaseName;
     
 private:
     

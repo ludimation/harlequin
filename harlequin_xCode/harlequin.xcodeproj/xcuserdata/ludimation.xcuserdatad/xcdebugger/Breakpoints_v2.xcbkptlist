@@ -6,16 +6,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/imgEditor/imgEditor.cpp"
-            timestampString = "451360218.200285"
+            timestampString = "451398803.851772"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
-            landmarkName = "imgEditor::mapAllImages()"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
+            landmarkName = "imgEditor::draw()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -17,6 +17,8 @@ class kinectIO { // can I extend ofxOpenNI or the ofxKinectForWindows depending 
     
 public:
     
+    void exit();
+    
     // core functions
     bool setupKinects(bool drawMirrored);
     bool stopKinects();
@@ -27,7 +29,8 @@ public:
     vector< vector<ofPoint> > setupTestUserJoints();
 
     // properties
-    ofxOpenNI               openNIdevice;
+    ofxOpenNI*  openNIdevice;
+    bool        initialized;
     
 private:
     // internal data

@@ -32,7 +32,7 @@ void ofApp::setup() {
 //    imgInvertColors = false;
 //    imgColorsAreInverted = false;
 //    // debug
-//    testUserJoints = kinectInterface.setupTestUserJoints(); // test joints used if Kinect is offline
+//    testUserJoints = kinectInterface->setupTestUserJoints(); // test joints used if Kinect is offline
 //    verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
 //
 //    
@@ -407,7 +407,8 @@ void ofApp::update(){
 
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
+    imgEdtr->draw();
     
 //    ofBackground(bgRed, bgGreen, bgBlue);
 //    
@@ -728,8 +729,13 @@ void ofApp::invertImage(ofPixels &imgPX, ofTexture &imgTEX) {
 void ofApp::exit(){
     
     // kinects
-    kinectInterface.stopKinects();
+    kinectInterface->exit();
+    delete kinectInterface;
 
+    // clean up image editor
+    imgEdtr->exit();
+    delete imgEdtr;
+    
     // gui
     delete gui;
 }
@@ -889,11 +895,11 @@ void ofApp::keyPressed(int key){
 //        
 //        case 'x':
 //
-//            kinected = kinectInterface.stopKinects();
+//            kinected = kinectInterface->stopKinects();
 //            break;
 //        
 //        case 'k':
-//            kinectsInitialized = kinectInterface.setupKinects(drawMirrored);
+//            kinectsInitialized = kinectInterface->setupKinects(drawMirrored);
 //            // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
 //            kinected = kinectsInitialized;
 //            break;
