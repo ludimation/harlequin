@@ -22,48 +22,7 @@ void imgEditor::setup() {
     ///////////////////
     // 2) setup a gui & keybindings for displaying pathMap & selecting which image to load training
     ///////////////////
-    guiSettingsPath = ofToDataPath("settings/imgEditorGuiSettings.xml");
-    gui = new ofxUISuperCanvas("imgEditor");
-    gui -> setWidth(600); // NOTE: setting the text of text areas with wider strings will crash the build with "Thread 1: signal SIGABRT"
-    ofAddListener(gui -> newGUIEvent, this, &imgEditor::guiEvent);
-    gui -> addSpacer();
-    //
-    // text field with currently displayed image baseName: includes a slider to navigate list quickly, as well as buttons & keybindings to navigate up and down one image at a time
-    gui -> addTextArea("current image baseName", "current image: " + it->first);
-    gui -> addSlider("imagePathMap index", 1.0f, imagePathMap.size(), &currentImgIndexFloat);
-    ofxUIButton *buttonPrevImg = gui -> addButton("'-' previous image", false);
-    buttonPrevImg -> bindToKey('[');
-    buttonPrevImg -> bindToKey('{');
-    buttonPrevImg -> bindToKey('-');
-    buttonPrevImg -> bindToKey('_');
-    ofxUIButton *buttonNextImg = gui -> addButton("'+' next image", false);
-    buttonNextImg -> bindToKey(']');
-    buttonNextImg -> bindToKey('}');
-    buttonNextImg -> bindToKey('=');
-    buttonNextImg -> bindToKey('+');
-    gui -> addSpacer();
-    //
-    // update list button
-    ofxUILabelButton *buttonUpdateImgList = gui -> addLabelButton("'u' update image list", false);
-    buttonUpdateImgList -> bindToKey('u');
-    buttonUpdateImgList -> bindToKey('U');
-    gui -> addSpacer();
-    //
-    // save image data button
-    ofxUILabelButton *buttonSaveData = gui -> addLabelButton("'d' save image data", false);
-    buttonSaveData -> bindToKey('d');
-    buttonSaveData -> bindToKey('D');
-    gui -> addSpacer();
-    //
-    // save image loader settings button // what would these be? selected image + directories?
-    ofxUILabelButton *buttonSaveSettings = gui -> addLabelButton("'s' save imgLoader settings", false);
-    buttonSaveSettings -> bindToKey('s');
-    buttonSaveSettings -> bindToKey('S');
-    //
-    // closing operations
-    gui -> autoSizeToFitWidgets();
-    // load settings
-    gui -> loadSettings(guiSettingsPath);
+    setupGui();
     
     ///////////////////
     // 3) setup interactive elements for training image metadata
@@ -102,45 +61,6 @@ void imgEditor::exit() {
     joints.clear();
     vector<vector<MSAjoint*> >().swap(joints);
     
-}
-
-//--------------------------------------------------------------
-void imgEditor::guiEvent(ofxUIEventArgs &e) {
-    string              nameStr = e.widget->getName();
-    ofxUIWidgetType     kind    = e.widget->getKind();
-    ofxUIButton         *button;
-    ofxUILabelButton    *labelbutton;
-    bool                buttonPressed = false;
-    
-    if (kind == OFX_UI_WIDGET_BUTTON) {
-        button = (ofxUIButton*)e.widget;
-        buttonPressed = button -> getValue();
-    } else if (kind == OFX_UI_WIDGET_LABELBUTTON) {
-        labelbutton = (ofxUILabelButton*)e.widget;
-        buttonPressed = labelbutton -> getValue();
-    }
-    
-    /*  */ if(nameStr == "'-' previous image"){
-        if (currentImgIndex > 1) {
-            if (buttonPressed) currentImgIndexFloat -= 1.0f;
-        }
-    } else if(nameStr == "'+' next image") {
-        if (currentImgIndex < imagePathMap.size()) {
-            if (buttonPressed) currentImgIndexFloat += 1.0f;
-        }
-    } else if(nameStr == "'u' update image list") {
-        if (!buttonPressed && !initializing && !ofGetMousePressed()) {
-            // when button is released, not when dragging out, or simply when gui is created during setup();
-            mapAllImages();
-        }
-    } else if (nameStr == "'s' save imgLoader settings") {
-        if (!buttonPressed && !initializing && !ofGetMousePressed()) {
-            // when button is released, not when dragging out, or simply when gui is created during setup();
-            gui->saveSettings(guiSettingsPath);
-        }
-    }else { // default
-        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
-    }
 }
 
 //--------------------------------------------------------------
@@ -263,5 +183,98 @@ void imgEditor::reiterateIt() {
     it = imagePathMap.begin();
     for(int i=1; i<currentImgIndex; ++i) {
         ++it;
+    }
+}
+
+
+//==============================================================
+////////////////////////////////////////////////////////////////
+// sets up gui & keybindings setup for displaying & selecting
+// which image to load for training
+////////////////////////////////////////////////////////////////
+
+void imgEditor::setupGui() {
+    
+    guiSettingsPath = ofToDataPath("settings/imgEditorGuiSettings.xml");
+    gui = new ofxUISuperCanvas("imgEditor");
+    gui -> setWidth(600); // NOTE: setting the text of text areas with wider strings will crash the build with "Thread 1: signal SIGABRT"
+    ofAddListener(gui -> newGUIEvent, this, &imgEditor::guiEvent);
+    gui -> addSpacer();
+    //
+    // text field with currently displayed image baseName: includes a slider to navigate list quickly, as well as buttons & keybindings to navigate up and down one image at a time
+    gui -> addTextArea("current image baseName", "current image: " + it->first);
+    gui -> addSlider("imagePathMap index", 1.0f, imagePathMap.size(), &currentImgIndexFloat);
+    ofxUIButton *buttonPrevImg = gui -> addButton("'-' previous image", false);
+    buttonPrevImg -> bindToKey('[');
+    buttonPrevImg -> bindToKey('{');
+    buttonPrevImg -> bindToKey('-');
+    buttonPrevImg -> bindToKey('_');
+    ofxUIButton *buttonNextImg = gui -> addButton("'+' next image", false);
+    buttonNextImg -> bindToKey(']');
+    buttonNextImg -> bindToKey('}');
+    buttonNextImg -> bindToKey('=');
+    buttonNextImg -> bindToKey('+');
+    gui -> addSpacer();
+    //
+    // update list button
+    ofxUILabelButton *buttonUpdateImgList = gui -> addLabelButton("'u' update image list", false);
+    buttonUpdateImgList -> bindToKey('u');
+    buttonUpdateImgList -> bindToKey('U');
+    gui -> addSpacer();
+    //
+    // save image data button
+    ofxUILabelButton *buttonSaveData = gui -> addLabelButton("'d' save image data", false);
+    buttonSaveData -> bindToKey('d');
+    buttonSaveData -> bindToKey('D');
+    gui -> addSpacer();
+    //
+    // save image loader settings button // what would these be? selected image + directories?
+    ofxUILabelButton *buttonSaveSettings = gui -> addLabelButton("'s' save imgLoader settings", false);
+    buttonSaveSettings -> bindToKey('s');
+    buttonSaveSettings -> bindToKey('S');
+    //
+    // closing operations
+    gui -> autoSizeToFitWidgets();
+    // load settings
+    gui -> loadSettings(guiSettingsPath);
+    
+}
+
+//--------------------------------------------------------------
+void imgEditor::guiEvent(ofxUIEventArgs &e) {
+    string              nameStr = e.widget->getName();
+    ofxUIWidgetType     kind    = e.widget->getKind();
+    ofxUIButton         *button;
+    ofxUILabelButton    *labelbutton;
+    bool                buttonPressed = false;
+    
+    if (kind == OFX_UI_WIDGET_BUTTON) {
+        button = (ofxUIButton*)e.widget;
+        buttonPressed = button -> getValue();
+    } else if (kind == OFX_UI_WIDGET_LABELBUTTON) {
+        labelbutton = (ofxUILabelButton*)e.widget;
+        buttonPressed = labelbutton -> getValue();
+    }
+    
+    /*  */ if(nameStr == "'-' previous image"){
+        if (currentImgIndex > 1) {
+            if (buttonPressed) currentImgIndexFloat -= 1.0f;
+        }
+    } else if(nameStr == "'+' next image") {
+        if (currentImgIndex < imagePathMap.size()) {
+            if (buttonPressed) currentImgIndexFloat += 1.0f;
+        }
+    } else if(nameStr == "'u' update image list") {
+        if (!buttonPressed && !initializing && !ofGetMousePressed()) {
+            // when button is released, not when dragging out, or simply when gui is created during setup();
+            mapAllImages();
+        }
+    } else if (nameStr == "'s' save imgLoader settings") {
+        if (!buttonPressed && !initializing && !ofGetMousePressed()) {
+            // when button is released, not when dragging out, or simply when gui is created during setup();
+            gui->saveSettings(guiSettingsPath);
+        }
+    }else { // default
+        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
     }
 }
