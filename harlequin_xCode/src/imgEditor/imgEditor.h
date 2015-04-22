@@ -22,7 +22,7 @@ public:
     void setup();
     void exit();
     void update();
-    void draw();
+    void draw(bool drawMirrored);
     
     // specialized functions
     void setupGui();
@@ -40,10 +40,11 @@ public:
     int                             jointSets_count, joints_count;
     map <string, vector<string> >   imagePathMap; // <string imgFileName, vector<string> imgPaths>
     map <string, vector<string> >::iterator it; // iterator storage for paths to image that is currently being edited
-    ofImage*                        img;
     int                             currentImgIndex;
     float                           currentImgIndexFloat;
     string                          currentImgBaseName;
+    ofImage*                        img;
+    bool                            imgMirrored;
     
 private:
     

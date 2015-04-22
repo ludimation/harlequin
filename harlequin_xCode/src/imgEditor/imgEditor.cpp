@@ -48,7 +48,6 @@ void imgEditor::setup() {
     //     - at comon directory level of all image paths (remove "_540" / "_1080" portion)
     //     - include multiple paths in XML file for selection later on
     ///////////////////
- 
     
     initializing = false; // done initializing
 }
@@ -79,6 +78,7 @@ void imgEditor::update() {
         reiterateIt();
         
         currentImgBaseName = "";
+        imgMirrored = false;
         bool imgLoaded = img->loadImage(it->second[it->second.size()-1]);
         if (imgLoaded) {
             currentImgBaseName = it->first;
@@ -101,9 +101,45 @@ void imgEditor::update() {
 }
 
 //--------------------------------------------------------------
-void imgEditor::draw() {
+void imgEditor::draw(bool drawMirrored) {
     if (currentImgBaseName != "") {
-        img->draw(100, 100);
+        
+        // calculate imageRatio
+        float imgRatioX;
+        float imgRatioY;
+        float imgRatio;
+        if (img->width) {
+            imgRatioX = float(ofGetWidth()) / float(img->width);
+        } else {
+            imgRatioX = 1.0f;
+        }
+        if (img->height) {
+            imgRatioY = float(ofGetHeight()) / float(img->height);
+        } else {
+            imgRatioY = 1.0f;
+        }
+        if (imgRatioX < imgRatioY) {
+            imgRatio = imgRatioX;
+        } else {
+            imgRatio = imgRatioY;
+        }
+        
+        // mirror image if necessary // TODO: is there a way to do this with a transformation instead?
+        if (imgMirrored != drawMirrored) {
+            img->mirror(0, true);
+            imgMirrored = drawMirrored;
+        }
+        img->setAnchorPercent(0.5f, 0.5f);
+        
+        ofPushStyle();
+        img->draw(
+                    ofGetWidth() / 2
+                  , ofGetHeight() / 2
+                  , img->width * imgRatio
+                  , img->height * imgRatio
+                  );
+        
+        ofPopStyle();
     }
 }
 

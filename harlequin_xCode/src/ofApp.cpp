@@ -433,7 +433,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-    imgEdtr->draw();
+    imgEdtr->draw(drawMirrored);
     
 //    ofBackground(bgRed, bgGreen, bgBlue);
 //    
