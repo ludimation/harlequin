@@ -99,7 +99,32 @@ map <string, vector<string> > imgEditor::mapAllImages() {
     ///////////////////
     map <string, vector<string> > pathMap;
     
+    string path = ofToDataPath("images");
+    string ext = "JPG";
+    ofDirectory dir(path);
+    scanDirectory(dir, pathMap, ext);
+    
     maxFilesToLoad = pathMap.size();
     
     return pathMap;
 }
+
+//--------------------------------------------------------------
+void imgEditor::scanDirectory(ofDirectory dir, map <string, vector<string> > &pathMap, string &ext) {
+    int i, size;
+    size = dir.listDir();
+    dir.allowExt(ext);
+    dir.sort();
+    
+    for (int i = 0; i < size; i++){
+        if (dir.getFile(i).isDirectory()==1){
+            ofDirectory newDir(dir.getFile(i).getAbsolutePath());
+            scanDirectory(newDir, pathMap, ext);
+        }else {
+            cout << "imgEditor::scanDirectory() -- file name = " << dir.getName(i) << endl;
+            cout << "imgEditor::scanDirectory() -- path = " << dir.getFile(i).path() << endl;
+//            pathMap[dir.getName(i)][ = ;
+        }
+    }
+}
+

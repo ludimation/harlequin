@@ -16,139 +16,142 @@ void ofApp::setup() {
     ////////////////////
     imgEdtr = new imgEditor();
     imgEdtr->setup();
-    GRTMngr = new GRTManager();
-    // move to image handler
-    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
-
-    //////////////////
-    // general init //
-    //////////////////
-    drawNextFrameMilliseconds = 0;
-    // gui settings
-    drawFrameRate   = 30;
-    drawMirrored    = false;
-    imgInvertColors = false;
-    imgColorsAreInverted = false;
-    // debug
-    testUserJoints = kinectInterface.setupTestUserJoints(); // test joints used if Kinect is offline
-    verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
-
     
-    //////////////
-    // OSC INIT //
-    //////////////
-    sender.setup(HOST, PORT);
-    myHost = HOST;
-    myPort = ofToString(PORT);
-    
-    
-    /////////////////////
-    // Initialize GUIS //
-    /////////////////////
-    //
-    //------------
-    // Main GUI --
-    //////////////
-    gui = new ofxUISuperCanvas("harlequin");
-    ofAddListener(gui -> newGUIEvent, this, &ofApp::guiEvent);
-    gui -> addSpacer();
-    gui -> addTextArea("text", "'h' to hide this panel", OFX_UI_FONT_SMALL);
-    //    gui -> addLabel("text", "'h' to hide this panel");
-    gui -> addSpacer();
-    //
-    // Switch display modes
-    gui -> addLabel("application mode: ");
-    vector<string> appModes; appModes.push_back("i"); appModes.push_back("d"); appModes.push_back("t");
-    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_HORIZONTAL);
-    gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
-    gui -> addSpacer();
-    //
-    // FPS
-    gui -> addFPSSlider("fps");
-    gui -> addSpacer();
-    gui -> addTextArea("text", "'+' or '-' to change frame rate");
-    gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
-    gui -> addSpacer();
-    //
-    // Background Color
-    gui -> addTextArea("text", "background color");
-    gui -> addSlider("red",   0.0, 255.0,    &bgRed   );
-    gui -> addSlider("green", 0.0, 255.0,    &bgGreen );
-    gui -> addSlider("blue",  0.0, 255.0,    &bgBlue  );
-    gui -> addSpacer();
-    //
-    // Kinect
-    gui -> addTextArea("text", "'k' to connect to kinect");
-    gui -> addToggle("kinected", &kinected);
-    gui -> addSpacer();
-    gui -> addTextArea("text", "'m' to mirror kinect input");
-    gui -> addToggle("mirror image", &drawMirrored);
-    gui -> addToggle("draw depth image", &drawDepth);
-    gui -> addToggle("draw depth behind", &drawDepthBehind);
-    gui -> addToggle("draw skeletons", &drawSkeletons);
-    gui -> addToggle("add joints 2 MSG", &drawJoints2MSG);
-    //
-    // Debug Messages
-    gui -> addToggle("draw MSG", &drawMSG);
-    gui -> addSpacer();
-    //
-    // OSC Toggles
-    gui -> addToggle("setup OSC", &setupOSC);
-    gui -> addTextInput("host", "address")->setAutoClear(false);
-    gui -> addTextInput("port", "port")->setAutoClear(false);
-    gui -> addToggle("send OSC", &sendOSC);
-    gui -> addSpacer();
-    //
-    // Save Settings
-    gui -> addLabelButton("save main settings", false);
-    gui -> autoSizeToFitWidgets();
-    //
-    //-------------
-    // Color GUI --
-    ///////////////
-    guiColor = new ofxUISuperCanvas("harlequin colors");
-    ofAddListener(guiColor -> newGUIEvent, this, &ofApp::guiEvent);
-    guiColor -> addSpacer();
-    //
-    guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
-    vector< string > vnamesBlendIMG; vnamesBlendIMG.push_back("i0"); vnamesBlendIMG.push_back("iA"); vnamesBlendIMG.push_back("i+"); vnamesBlendIMG.push_back("i-"); vnamesBlendIMG.push_back("i*"); vnamesBlendIMG.push_back("iS");
-    ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlendIMG, OFX_UI_ORIENTATION_HORIZONTAL);
-    guiColor -> addToggle("invert image", &imgInvertColors);
-    guiColor -> addSlider("image red",   0.0, 255.0, &imgRed   );
-    guiColor -> addSlider("image green", 0.0, 255.0, &imgGreen );
-    guiColor -> addSlider("image blue",  0.0, 255.0, &imgBlue  );
-    guiColor -> addSlider("image alpha", 0.0, 255.0, &imgAlpha );
-    guiColor -> addSpacer();
-    //
-    guiColor -> addLabel("depth image settings", OFX_UI_FONT_MEDIUM);
-    vector< string > vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
-    ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
-    vector< string > vnamesBlendDEPTH; vnamesBlendDEPTH.push_back("d0"); vnamesBlendDEPTH.push_back("dA"); vnamesBlendDEPTH.push_back("d+"); vnamesBlendDEPTH.push_back("d-"); vnamesBlendDEPTH.push_back("d*"); vnamesBlendDEPTH.push_back("dS");
-    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlendDEPTH, OFX_UI_ORIENTATION_HORIZONTAL);
-    guiColor -> addSlider("depth red",   0.0, 255.0, &depthRed   );
-    guiColor -> addSlider("depth green", 0.0, 255.0, &depthGreen );
-    guiColor -> addSlider("depth blue",  0.0, 255.0, &depthBlue  );
-    guiColor -> addSlider("depth alpha", 0.0, 255.0, &depthAlpha );
-    guiColor -> addSpacer();
-    //
-    guiColor -> addLabel("skeleton drawing settings", OFX_UI_FONT_MEDIUM);
-    vector< string > vnamesBlendSKEL; vnamesBlendSKEL.push_back("s0"); vnamesBlendSKEL.push_back("sA"); vnamesBlendSKEL.push_back("s+"); vnamesBlendSKEL.push_back("s-"); vnamesBlendSKEL.push_back("s*"); vnamesBlendSKEL.push_back("sS");
-    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skeleton blend mode", vnamesBlendSKEL, OFX_UI_ORIENTATION_HORIZONTAL);
-    guiColor -> addSlider("skel red",   0.0, 255.0, &skelRed   );
-    guiColor -> addSlider("skel green", 0.0, 255.0, &skelGreen );
-    guiColor -> addSlider("skel blue",  0.0, 255.0, &skelBlue  );
-    guiColor -> addSlider("skel alpha", 0.0, 255.0, &skelAlpha );
-    guiColor -> addSpacer();
-    //
-    // Save Settings
-    guiColor -> addLabelButton("save color settings", false);
-    guiColor -> autoSizeToFitWidgets();
-    
-
-    ///////////////////////////
-    // initial display state //
-    ///////////////////////////
-    setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
+    if (true) {
+//    GRTMngr = new GRTManager();
+//    // move to image handler
+//    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
+//
+//    //////////////////
+//    // general init //
+//    //////////////////
+//    drawNextFrameMilliseconds = 0;
+//    // gui settings
+//    drawFrameRate   = 30;
+//    drawMirrored    = false;
+//    imgInvertColors = false;
+//    imgColorsAreInverted = false;
+//    // debug
+//    testUserJoints = kinectInterface.setupTestUserJoints(); // test joints used if Kinect is offline
+//    verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
+//
+//    
+//    //////////////
+//    // OSC INIT //
+//    //////////////
+//    sender.setup(HOST, PORT);
+//    myHost = HOST;
+//    myPort = ofToString(PORT);
+//    
+//    
+//    /////////////////////
+//    // Initialize GUIS //
+//    /////////////////////
+//    //
+//    //------------
+//    // Main GUI --
+//    //////////////
+//    gui = new ofxUISuperCanvas("harlequin");
+//    ofAddListener(gui -> newGUIEvent, this, &ofApp::guiEvent);
+//    gui -> addSpacer();
+//    gui -> addTextArea("text", "'h' to hide this panel", OFX_UI_FONT_SMALL);
+//    //    gui -> addLabel("text", "'h' to hide this panel");
+//    gui -> addSpacer();
+//    //
+//    // Switch display modes
+//    gui -> addLabel("application mode: ");
+//    vector<string> appModes; appModes.push_back("i"); appModes.push_back("d"); appModes.push_back("t");
+//    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_HORIZONTAL);
+//    gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
+//    gui -> addSpacer();
+//    //
+//    // FPS
+//    gui -> addFPSSlider("fps");
+//    gui -> addSpacer();
+//    gui -> addTextArea("text", "'+' or '-' to change frame rate");
+//    gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
+//    gui -> addSpacer();
+//    //
+//    // Background Color
+//    gui -> addTextArea("text", "background color");
+//    gui -> addSlider("red",   0.0, 255.0,    &bgRed   );
+//    gui -> addSlider("green", 0.0, 255.0,    &bgGreen );
+//    gui -> addSlider("blue",  0.0, 255.0,    &bgBlue  );
+//    gui -> addSpacer();
+//    //
+//    // Kinect
+//    gui -> addTextArea("text", "'k' to connect to kinect");
+//    gui -> addToggle("kinected", &kinected);
+//    gui -> addSpacer();
+//    gui -> addTextArea("text", "'m' to mirror kinect input");
+//    gui -> addToggle("mirror image", &drawMirrored);
+//    gui -> addToggle("draw depth image", &drawDepth);
+//    gui -> addToggle("draw depth behind", &drawDepthBehind);
+//    gui -> addToggle("draw skeletons", &drawSkeletons);
+//    gui -> addToggle("add joints 2 MSG", &drawJoints2MSG);
+//    //
+//    // Debug Messages
+//    gui -> addToggle("draw MSG", &drawMSG);
+//    gui -> addSpacer();
+//    //
+//    // OSC Toggles
+//    gui -> addToggle("setup OSC", &setupOSC);
+//    gui -> addTextInput("host", "address")->setAutoClear(false);
+//    gui -> addTextInput("port", "port")->setAutoClear(false);
+//    gui -> addToggle("send OSC", &sendOSC);
+//    gui -> addSpacer();
+//    //
+//    // Save Settings
+//    gui -> addLabelButton("save main settings", false);
+//    gui -> autoSizeToFitWidgets();
+//    //
+//    //-------------
+//    // Color GUI --
+//    ///////////////
+//    guiColor = new ofxUISuperCanvas("harlequin colors");
+//    ofAddListener(guiColor -> newGUIEvent, this, &ofApp::guiEvent);
+//    guiColor -> addSpacer();
+//    //
+//    guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
+//    vector< string > vnamesBlendIMG; vnamesBlendIMG.push_back("i0"); vnamesBlendIMG.push_back("iA"); vnamesBlendIMG.push_back("i+"); vnamesBlendIMG.push_back("i-"); vnamesBlendIMG.push_back("i*"); vnamesBlendIMG.push_back("iS");
+//    ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlendIMG, OFX_UI_ORIENTATION_HORIZONTAL);
+//    guiColor -> addToggle("invert image", &imgInvertColors);
+//    guiColor -> addSlider("image red",   0.0, 255.0, &imgRed   );
+//    guiColor -> addSlider("image green", 0.0, 255.0, &imgGreen );
+//    guiColor -> addSlider("image blue",  0.0, 255.0, &imgBlue  );
+//    guiColor -> addSlider("image alpha", 0.0, 255.0, &imgAlpha );
+//    guiColor -> addSpacer();
+//    //
+//    guiColor -> addLabel("depth image settings", OFX_UI_FONT_MEDIUM);
+//    vector< string > vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
+//    ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
+//    vector< string > vnamesBlendDEPTH; vnamesBlendDEPTH.push_back("d0"); vnamesBlendDEPTH.push_back("dA"); vnamesBlendDEPTH.push_back("d+"); vnamesBlendDEPTH.push_back("d-"); vnamesBlendDEPTH.push_back("d*"); vnamesBlendDEPTH.push_back("dS");
+//    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlendDEPTH, OFX_UI_ORIENTATION_HORIZONTAL);
+//    guiColor -> addSlider("depth red",   0.0, 255.0, &depthRed   );
+//    guiColor -> addSlider("depth green", 0.0, 255.0, &depthGreen );
+//    guiColor -> addSlider("depth blue",  0.0, 255.0, &depthBlue  );
+//    guiColor -> addSlider("depth alpha", 0.0, 255.0, &depthAlpha );
+//    guiColor -> addSpacer();
+//    //
+//    guiColor -> addLabel("skeleton drawing settings", OFX_UI_FONT_MEDIUM);
+//    vector< string > vnamesBlendSKEL; vnamesBlendSKEL.push_back("s0"); vnamesBlendSKEL.push_back("sA"); vnamesBlendSKEL.push_back("s+"); vnamesBlendSKEL.push_back("s-"); vnamesBlendSKEL.push_back("s*"); vnamesBlendSKEL.push_back("sS");
+//    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skeleton blend mode", vnamesBlendSKEL, OFX_UI_ORIENTATION_HORIZONTAL);
+//    guiColor -> addSlider("skel red",   0.0, 255.0, &skelRed   );
+//    guiColor -> addSlider("skel green", 0.0, 255.0, &skelGreen );
+//    guiColor -> addSlider("skel blue",  0.0, 255.0, &skelBlue  );
+//    guiColor -> addSlider("skel alpha", 0.0, 255.0, &skelAlpha );
+//    guiColor -> addSpacer();
+//    //
+//    // Save Settings
+//    guiColor -> addLabelButton("save color settings", false);
+//    guiColor -> autoSizeToFitWidgets();
+//    
+//
+//    ///////////////////////////
+//    // initial display state //
+//    ///////////////////////////
+//    setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
+    }
     
 }
 
@@ -733,201 +736,201 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::setDisplayState(char newState) {
-    bool undefinedState = false;
-    
-    switch (newState) {
-        case 't': // training
-            // fall through (intentional)
-        case 'd': // debug
-            // fall through (intentional)
-        case 'i':
-
-            // save & train model before switching modes
-            GRTMngr->saveData();
-            GRTMngr->saveModel();
-            
-            break;
-
-        default:
-            // TODO: log or cout an error messsage for undefined state change?
-            undefinedState = true;
-            break;
-    }
-    
-
-    if (!undefinedState)
-    {
-        displayState = newState;
-        
-        // Load GUI settings // TODO: load setting xml files into memory to speed up switching states?
-        if (gui) {
-            gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
-        }
-        if (guiColor) {
-            guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-            
-            // run windowResized method to reset guiColor's position
-            windowResized();
-        }
-    } else {
-        // TODO: Throw display state change error if state is not recognized
-    }
+//    bool undefinedState = false;
+//    
+//    switch (newState) {
+//        case 't': // training
+//            // fall through (intentional)
+//        case 'd': // debug
+//            // fall through (intentional)
+//        case 'i':
+//
+//            // save & train model before switching modes
+//            GRTMngr->saveData();
+//            GRTMngr->saveModel();
+//            
+//            break;
+//
+//        default:
+//            // TODO: log or cout an error messsage for undefined state change?
+//            undefinedState = true;
+//            break;
+//    }
+//    
+//
+//    if (!undefinedState)
+//    {
+//        displayState = newState;
+//        
+//        // Load GUI settings // TODO: load setting xml files into memory to speed up switching states?
+//        if (gui) {
+//            gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
+//        }
+//        if (guiColor) {
+//            guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+//            
+//            // run windowResized method to reset guiColor's position
+//            windowResized();
+//        }
+//    } else {
+//        // TODO: Throw display state change error if state is not recognized
+//    }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
-    // initialize flags
-    bool displayStateKeyed;
-    
-    // hand key pressed to editors
-    GRTMngr -> keyPressed(key);
-    
-    // process key pressed
-    switch (key) {
-            
-        case 'h':
-            gui->toggleVisible();
-            guiColor->toggleVisible();
-            GRTMngr;
-            break;
-            
-        case 'b': // NOTE: updated to 'b' for BUILD DATA
-            if (displayState == 'i') break; // do not train data during installation mode
-
-            // Store data to associate with currently displayed image
-            //  - joint positions (0–15) — 0 = center, 1–15 = joints
-            
-            if ((displayState == 'd' || displayState == 't') && trackedUserJointsPosABS.size()){
-                trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
-                trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
-                trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
-            } else {
-                // TODO: display some kind of error message that says data can only be saved in training mode?
-            }
-            
-            break;
-        
-        case '<':
-        case ',':
-        case '[':
-        case 'p': // previous
-           
-            GRTMngr->saveData();
-            
-            if (displayState == 'i') break; // do not train data during installation mode
-            
-            // display previous image in database
-            if (label > 0) label--;
-//            img_name = imageNames[label];
-
-            break;
-        
-        case '>':
-        case ']':
-        case 'n': // next
-            
-            GRTMngr->saveData();
-            
-            if (displayState == 'i') break; // do not train data during installation mode
-
-            // display next image in database
-            if (label < images.size()-1) label++;
-//            img_name = imageNames[label];
-
-            break;
-        
-        case 'r': // random image
-            
-            GRTMngr->saveData();
-
-            if (displayState == 'i') break; // do not train data during installation mode
-            
-            // display random image from database
-            label = bodyClass->getRandomExcluding(0, images.size() - 1, label);
-//            img_name = imageNames[label];
-
-            break;
-        
-        case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
-            if (displayState == 'i') break; // do not train data during installation mode
-            
-            GRTMngr->saveData();
-            GRTMngr->saveModel();
-            
-            break;
-            
-        case 'i': // interactive mode
-        case 't': // training
-        case 'd': // debug
-            
-            displayStateKeyed = true;
-            break;
-    
-        case '=': // increase drawFrameRate
-            // fall through (intentional)
-        case '+': // increase drawFrameRate
-            
-            if (drawFrameRate < 90) drawFrameRate = drawFrameRate + 5;
-            break;
-            
-        case '_': // decrease drawFrameRate
-            // fall through (intentional)
-        case '-': // decrease drawFrameRate
-            
-            if (drawFrameRate > 5) drawFrameRate = drawFrameRate - 5;
-            break;
-
-        case 'm':
-            
-            drawMirrored = !drawMirrored;
-            openNIPlayer.setMirror(drawMirrored);
-            break;
-        
-        case 'x':
-
-            kinected = kinectInterface.stopKinects();
-            break;
-        
-        case 'k':
-            kinectsInitialized = kinectInterface.setupKinects(drawMirrored);
-            // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
-            kinected = kinectsInitialized;
-            break;
-            
-        case 'f':
-            ofToggleFullscreen();
-            windowResized();
-            break;
-            
-        default:
-            cout << "Unrecognized key press = " << key << endl;
-            // TODO: plan error sound when receiving unrecognized key presses.
-            break;
-    }
-    
-    if (displayStateKeyed && key != displayState)
-    {
-        switch(key){
-            case 'i': // interactive mode
-                
-                // TODO: clean out displayStateString code. nothing seems to reference it.
-                displayStateString = "interactive";
-                break;
-                
-            case 't': // training
-                
-                displayStateString = "training";
-                break;
-                
-            case 'd': // debug
-                
-                displayStateString = "debug";
-                break;
-        }
-
-        setDisplayState(key);
-    }
+//    // initialize flags
+//    bool displayStateKeyed;
+//    
+//    // hand key pressed to editors
+//    GRTMngr -> keyPressed(key);
+//    
+//    // process key pressed
+//    switch (key) {
+//            
+//        case 'h':
+//            gui->toggleVisible();
+//            guiColor->toggleVisible();
+//            GRTMngr;
+//            break;
+//            
+//        case 'b': // NOTE: updated to 'b' for BUILD DATA
+//            if (displayState == 'i') break; // do not train data during installation mode
+//
+//            // Store data to associate with currently displayed image
+//            //  - joint positions (0–15) — 0 = center, 1–15 = joints
+//            
+//            if ((displayState == 'd' || displayState == 't') && trackedUserJointsPosABS.size()){
+//                trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
+//                trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
+//                trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
+//            } else {
+//                // TODO: display some kind of error message that says data can only be saved in training mode?
+//            }
+//            
+//            break;
+//        
+//        case '<':
+//        case ',':
+//        case '[':
+//        case 'p': // previous
+//           
+//            GRTMngr->saveData();
+//            
+//            if (displayState == 'i') break; // do not train data during installation mode
+//            
+//            // display previous image in database
+//            if (label > 0) label--;
+////            img_name = imageNames[label];
+//
+//            break;
+//        
+//        case '>':
+//        case ']':
+//        case 'n': // next
+//            
+//            GRTMngr->saveData();
+//            
+//            if (displayState == 'i') break; // do not train data during installation mode
+//
+//            // display next image in database
+//            if (label < images.size()-1) label++;
+////            img_name = imageNames[label];
+//
+//            break;
+//        
+//        case 'r': // random image
+//            
+//            GRTMngr->saveData();
+//
+//            if (displayState == 'i') break; // do not train data during installation mode
+//            
+//            // display random image from database
+//            label = bodyClass->getRandomExcluding(0, images.size() - 1, label);
+////            img_name = imageNames[label];
+//
+//            break;
+//        
+//        case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
+//            if (displayState == 'i') break; // do not train data during installation mode
+//            
+//            GRTMngr->saveData();
+//            GRTMngr->saveModel();
+//            
+//            break;
+//            
+//        case 'i': // interactive mode
+//        case 't': // training
+//        case 'd': // debug
+//            
+//            displayStateKeyed = true;
+//            break;
+//    
+//        case '=': // increase drawFrameRate
+//            // fall through (intentional)
+//        case '+': // increase drawFrameRate
+//            
+//            if (drawFrameRate < 90) drawFrameRate = drawFrameRate + 5;
+//            break;
+//            
+//        case '_': // decrease drawFrameRate
+//            // fall through (intentional)
+//        case '-': // decrease drawFrameRate
+//            
+//            if (drawFrameRate > 5) drawFrameRate = drawFrameRate - 5;
+//            break;
+//
+//        case 'm':
+//            
+//            drawMirrored = !drawMirrored;
+//            openNIPlayer.setMirror(drawMirrored);
+//            break;
+//        
+//        case 'x':
+//
+//            kinected = kinectInterface.stopKinects();
+//            break;
+//        
+//        case 'k':
+//            kinectsInitialized = kinectInterface.setupKinects(drawMirrored);
+//            // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
+//            kinected = kinectsInitialized;
+//            break;
+//            
+//        case 'f':
+//            ofToggleFullscreen();
+//            windowResized();
+//            break;
+//            
+//        default:
+//            cout << "Unrecognized key press = " << key << endl;
+//            // TODO: plan error sound when receiving unrecognized key presses.
+//            break;
+//    }
+//    
+//    if (displayStateKeyed && key != displayState)
+//    {
+//        switch(key){
+//            case 'i': // interactive mode
+//                
+//                // TODO: clean out displayStateString code. nothing seems to reference it.
+//                displayStateString = "interactive";
+//                break;
+//                
+//            case 't': // training
+//                
+//                displayStateString = "training";
+//                break;
+//                
+//            case 'd': // debug
+//                
+//                displayStateString = "debug";
+//                break;
+//        }
+//
+//        setDisplayState(key);
+//    }
 }
 
 //--------------------------------------------------------------

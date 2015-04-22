@@ -16,24 +16,24 @@ class GRTManager {
 
 public:
     
-    // core fuctions
-    void setup();
-    void update();
-    void draw();
-    void keyPressed(int key);
-    
-    // gui
-    void guiEvent(ofxUIEventArgs &e);
-    // properties
-    ofxUISuperCanvas* gui;
-    bool loadImagesNow;
-    
-    // file handling functions
-    bool loadData();
-    bool saveData();
-    bool loadModel();
-    bool trainModel();
-    bool saveModel();
+//    // core fuctions
+//    void setup();
+//    void update();
+//    void draw();
+//    void keyPressed(int key);
+//    
+//    // gui
+//    void guiEvent(ofxUIEventArgs &e);
+//    // properties
+//    ofxUISuperCanvas* gui;
+//    bool loadImagesNow;
+//    
+//    // file handling functions
+//    bool loadData();
+//    bool saveData();
+//    bool loadModel();
+//    bool trainModel();
+//    bool saveModel();
     
 private:
     // internal data

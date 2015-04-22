@@ -155,7 +155,6 @@
 		6A0383F91AE6BA1400E6C259 /* kinectIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0383F81AE6BA1400E6C259 /* kinectIO.cpp */; };
 		6A0384001AE6C2D000E6C259 /* body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0383FE1AE6C2D000E6C259 /* body.cpp */; };
 		6A0384031AE6CDA800E6C259 /* imgLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0384011AE6CDA800E6C259 /* imgLoader.cpp */; };
-		6A0384041AE70A8500E6C259 /* GRTManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0383FB1AE6C17100E6C259 /* GRTManager.cpp */; };
 		6A0384061AE7156E00E6C259 /* imgEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0384051AE7156E00E6C259 /* imgEditor.cpp */; };
 		6A2587C119E0593000C2658C /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A2587C019E0593000C2658C /* CoreVideo.framework */; };
 		6A9A569C1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */; };
@@ -572,8 +571,6 @@
 		6A0383931AE6AE9C00E6C259 /* MSAjoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSAjoint.h; sourceTree = "<group>"; };
 		6A0383F71AE6AFA100E6C259 /* kinectIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kinectIO.h; sourceTree = "<group>"; };
 		6A0383F81AE6BA1400E6C259 /* kinectIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kinectIO.cpp; sourceTree = "<group>"; };
-		6A0383FB1AE6C17100E6C259 /* GRTManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GRTManager.cpp; path = ../GRTMngr/GRTManager.cpp; sourceTree = "<group>"; };
-		6A0383FC1AE6C17100E6C259 /* GRTManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GRTManager.h; path = ../GRTMngr/GRTManager.h; sourceTree = "<group>"; };
 		6A0383FE1AE6C2D000E6C259 /* body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = body.cpp; sourceTree = "<group>"; };
 		6A0383FF1AE6C2D000E6C259 /* body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = body.h; sourceTree = "<group>"; };
 		6A0384011AE6CDA800E6C259 /* imgLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgLoader.cpp; sourceTree = "<group>"; };
@@ -583,6 +580,8 @@
 		6A6F221319FBEB4F00C4C803 /* openFrameworksDebug.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = openFrameworksDebug.a; path = ../../../libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a; sourceTree = "<group>"; };
 		6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMSAInteractiveObject.cpp; sourceTree = "<group>"; };
 		6A9A569B1ADECC2900722AF0 /* ofxMSAInteractiveObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMSAInteractiveObject.h; sourceTree = "<group>"; };
+		6AF65D661AE7337C0008E00D /* GRTManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GRTManager.cpp; sourceTree = "<group>"; };
+		6AF65D671AE7337C0008E00D /* GRTManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GRTManager.h; sourceTree = "<group>"; };
 		7704EC2114C70657001AF021 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofApp.cpp; sourceTree = "<group>"; };
 		7704EC2214C70657001AF021 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
 		7704EC2514C7066A001AF021 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -1690,16 +1689,6 @@
 			path = kinectIO;
 			sourceTree = "<group>";
 		};
-		6A0383FA1AE6C15700E6C259 /* GRTMngr */ = {
-			isa = PBXGroup;
-			children = (
-				6A0383FB1AE6C17100E6C259 /* GRTManager.cpp */,
-				6A0383FC1AE6C17100E6C259 /* GRTManager.h */,
-			);
-			name = GRTMngr;
-			path = GRTEditor;
-			sourceTree = "<group>";
-		};
 		6A9A56981ADECC0B00722AF0 /* ofxMSAInteractiveObject */ = {
 			isa = PBXGroup;
 			children = (
@@ -1727,6 +1716,15 @@
 			);
 			name = ofxOpenNI;
 			path = ../../../addons/ofxOpenNI/src;
+			sourceTree = "<group>";
+		};
+		6AF65D651AE7337C0008E00D /* GRTMngr */ = {
+			isa = PBXGroup;
+			children = (
+				6AF65D661AE7337C0008E00D /* GRTManager.cpp */,
+				6AF65D671AE7337C0008E00D /* GRTManager.h */,
+			);
+			path = GRTMngr;
 			sourceTree = "<group>";
 		};
 		770F031514B9969E003CCE99 /* lib */ = {
@@ -2047,11 +2045,11 @@
 				7704EC2514C7066A001AF021 /* main.cpp */,
 				7704EC2114C70657001AF021 /* ofApp.cpp */,
 				7704EC2214C70657001AF021 /* ofApp.h */,
-				6A0382701AE6AE9B00E6C259 /* body */,
-				6A0382711AE6AE9B00E6C259 /* GRT */,
-				6A0383FA1AE6C15700E6C259 /* GRTMngr */,
 				6A0383901AE6AE9C00E6C259 /* imgEditor */,
 				6A0383941AE6AE9C00E6C259 /* imgLoader */,
+				6AF65D651AE7337C0008E00D /* GRTMngr */,
+				6A0382701AE6AE9B00E6C259 /* body */,
+				6A0382711AE6AE9B00E6C259 /* GRT */,
 				6A0383951AE6AE9C00E6C259 /* kinectIO */,
 			);
 			path = src;
@@ -2341,7 +2339,6 @@
 				5C8F766019FC166700A8AC13 /* ofxUI2DPad.cpp in Sources */,
 				6A03839A1AE6AE9C00E6C259 /* ANBC.cpp in Sources */,
 				6A0383A71AE6AE9C00E6C259 /* RandomForests.cpp in Sources */,
-				6A0384041AE70A8500E6C259 /* GRTManager.cpp in Sources */,
 				ECC960731AAD1A7100718DD1 /* UdpSocket.cpp in Sources */,
 				6A0383C31AE6AE9C00E6C259 /* RegressionSample.cpp in Sources */,
 				6A0383A51AE6AE9C00E6C259 /* MinDist.cpp in Sources */,

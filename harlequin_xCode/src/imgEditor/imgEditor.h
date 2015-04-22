@@ -26,6 +26,11 @@ public:
     // image handling functions
     void                            guiEvent(ofxUIEventArgs &e);
     map <string, vector<string> >   mapAllImages();
+    void                            scanDirectory(
+                                                    ofDirectory                     dir
+                                                  , map <string, vector<string> >   &pathMap
+                                                  , string                          &ext
+                                                  );
     
     // properties
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
