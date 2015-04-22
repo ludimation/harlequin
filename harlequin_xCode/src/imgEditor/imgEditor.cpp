@@ -35,7 +35,7 @@ void imgEditor::setup() {
     ofAddListener(gui -> newGUIEvent, this, &imgEditor::guiEvent);
     gui -> addSpacer();
     //
-    // text field with currently displayed image baseName: slider to navigate list quickly, buttons & keybindings to navigate up and down one image
+    // text field with currently displayed image baseName: includes a slider to navigate list quickly, as well as buttons & keybindings to navigate up and down one image at a time
     gui -> addTextArea("current image baseName", "current image: " + it->first);
     gui -> addSlider("imagePathMap index", currentImgIndex, imagePathMap.size(), &currentImgIndexFloat);
     ofxUIButton *buttonPrevImg = gui -> addButton("- previous image", false);
