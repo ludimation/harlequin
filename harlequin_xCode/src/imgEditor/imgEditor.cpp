@@ -12,6 +12,7 @@
 void imgEditor::setup() {
     
     initializing = true; // flag to check to make sure application is not running initialization operations twice
+    
     ///////////////////
     // 1) create a map of all unique image file names in the images directory
     //     - include several paths for images that have multiple resolutions
@@ -22,6 +23,7 @@ void imgEditor::setup() {
     // 2) gui & keypresses for displaying pathMap & selecting which image to load training
     //     - load metadata for an image if it already exists
     ///////////////////
+    guiSettingsPath = ofToDataPath("settings/imgEditorGuiSettings.xml");
     gui = new ofxUISuperCanvas("imgEditor");
     gui -> setWidth(600); // NOTE: setting the text of text areas with wider strings will crash the build with "Thread 1: signal SIGABRT"
     ofAddListener(gui -> newGUIEvent, this, &imgEditor::guiEvent);
@@ -61,8 +63,8 @@ void imgEditor::setup() {
     //
     // closing operations
     gui -> autoSizeToFitWidgets();
-    // load settings?
-    
+    // load settings
+    gui -> loadSettings(guiSettingsPath);
     
     ///////////////////
     // 3) gui for training image metadata
@@ -131,7 +133,12 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
             // when button is released, not when dragging out, or simply when gui is created during setup();
             mapAllImages();
         }
-    } else { // default
+    } else if (nameStr == "'s' save imgLoader settings") {
+        if (!buttonPressed && !initializing && !ofGetMousePressed()) {
+            // when button is released, not when dragging out, or simply when gui is created during setup();
+            gui->saveSettings(guiSettingsPath);
+        }
+    }else { // default
         if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
     }
 }
@@ -141,6 +148,9 @@ void imgEditor::update() {
     
     // check to see if currentImgIndexFloat has been changed
     if ((int)currentImgIndexFloat != currentImgIndex) {
+        
+        // clamp current ImgIndex to length of image map
+        if ((int)currentImgIndexFloat > imagePathMap.size()) currentImgIndexFloat = imagePathMap.size();
         
         // store the new image index
         currentImgIndex = (int)currentImgIndexFloat;
@@ -201,7 +211,6 @@ void imgEditor::mapAllImages() {
     if (imagePathMap.size()){
         it = imagePathMap.begin();
         currentImgIndex = 0;
-        currentImgIndexFloat = 1.0f;
     } else {
         it = imagePathMap.end();
         currentImgIndex = 0;
