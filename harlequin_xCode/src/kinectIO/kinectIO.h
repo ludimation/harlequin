@@ -22,7 +22,7 @@ public:
     
     // core functions
     bool setupKinects(bool drawMirrored);
-    bool stopKinects();
+    bool stopKinects(); // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
     void userEvent(ofxOpenNIUserEvent & event);
     void gestureEvent(ofxOpenNIGestureEvent & event);
     
