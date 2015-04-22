@@ -17,6 +17,13 @@ void ofApp::setup() {
     imgEdtr = new imgEditor();
     imgEdtr->setup();
     
+    
+    //////////////////////
+    // kinect interface //
+    //////////////////////
+    kinectInterface = new kinectIO();
+    kinectInterface->setup();
+    
     if (true) {
 //    GRTMngr = new GRTManager();
 //    // move to image handler
@@ -152,7 +159,21 @@ void ofApp::setup() {
 //    ///////////////////////////
 //    setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
     }
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
     
+    // kinects
+    kinectInterface->exit();
+    delete kinectInterface;
+    
+    // clean up image editor
+    imgEdtr->exit();
+    delete imgEdtr;
+    
+    // gui
+    delete gui;
 }
 
 //--------------------------------------------------------------
@@ -305,6 +326,10 @@ void ofApp::guiEvent(ofxUIEventArgs &e) {
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    
+    imgEdtr->update();
+    
+    
 //    //    openNIRecorder.update();
 //    openNIPlayer.update();
 //    if (trainModelsNow) trainModelsNow = GRTMngr->trainModel();
@@ -724,21 +749,6 @@ void ofApp::invertImage(ofPixels &imgPX, ofTexture &imgTEX) {
     imgTEX.loadData(imgPX);
 }
 
-
-//--------------------------------------------------------------
-void ofApp::exit(){
-    
-    // kinects
-    kinectInterface->exit();
-    delete kinectInterface;
-
-    // clean up image editor
-    imgEdtr->exit();
-    delete imgEdtr;
-    
-    // gui
-    delete gui;
-}
 
 //--------------------------------------------------------------
 void ofApp::setDisplayState(char newState) {

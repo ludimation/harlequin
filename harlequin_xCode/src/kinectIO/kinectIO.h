@@ -17,6 +17,7 @@ class kinectIO { // can I extend ofxOpenNI or the ofxKinectForWindows depending 
     
 public:
     
+    void setup();
     void exit();
     
     // core functions

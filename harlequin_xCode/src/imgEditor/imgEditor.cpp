@@ -15,32 +15,39 @@ void imgEditor::setup() {
     //     - include several paths for images that have multiple resolutions
     ///////////////////
     mapAllImages();
-    currentImgIndex = 1;
-    currentImgIndexFloat = 1.0f;
+    if (imagePathMap.size()) {
+        it = imagePathMap.begin();
+        currentImgIndex = 1;
+        currentImgIndexFloat = 1.0f;
+    } else {
+        it = imagePathMap.end();
+        currentImgIndex = 0;
+        currentImgIndexFloat = 0.0f;
+    }
+    
 
     ///////////////////
     // 2) gui & keypresses for displaying pathMap & selecting which image to load training
     //     - load metadata for an image if it already exists
     ///////////////////
     gui = new ofxUISuperCanvas("imgEditor");
+    gui -> setWidth(600); // NOTE: setting the text of text areas with wider strings will crash the build with "Thread 1: signal SIGABRT"
     ofAddListener(gui -> newGUIEvent, this, &imgEditor::guiEvent);
     gui -> addSpacer();
     //
-    // display imagePathMap
-    //    - text field with currently displayed image baseName
-    //        - (WISH: list all images with selectable unique image names)
-    //            - vector<string> ddStrV; ddStrV.push_back("dirA"); ddStrV.push_back("dirB"); ddStrV.push_back("dirC");
-    //              gui -> addDropDownList("directory list", ddStrV);
-    //            - gui -> addRangeSlider(<#string _name#>, <#float _min#>, <#float _max#>, <#float *_valuelow#>, <#float *_valuehigh#>);
-    //            - vector<string> slStrV; slStrV.push_back("imgA");  slStrV.push_back("imgB"); slStrV.push_back("imgC");
-    //              gui -> addSortableList("images in directory", slStrV);
-    //    - slider with index of currently displayed image(s)
-    gui -> addSlider("imagePathMap index", 1, imagePathMap.size(), &currentImgIndexFloat);
-    //    - previous image and next image buttons
-    //    - sortable list with for multiple paths of the current image baseName
-    vector<string> irpStrV; irpStrV.push_back("pathA");  irpStrV.push_back("pathB"); irpStrV.push_back("pathC");
-    gui -> addSortableList("image resolution paths", irpStrV);
-    //    - update list button
+    // text field with currently displayed image baseName: slider to navigate list quickly, buttons & keybindings to navigate up and down one image
+    gui -> addTextArea("current image baseName", "current image: " + it->first);
+    gui -> addSlider("imagePathMap index", currentImgIndex, imagePathMap.size(), &currentImgIndexFloat);
+    ofxUIButton *buttonPrevImg = gui -> addButton("- previous image", false);
+    buttonPrevImg->bindToKey('[');
+    buttonPrevImg->bindToKey('-');
+    buttonPrevImg->bindToKey('_');
+    ofxUIButton *buttonNextImg = gui -> addButton("+ next image", false);
+    buttonNextImg->bindToKey(']');
+    buttonNextImg->bindToKey('=');
+    buttonNextImg->bindToKey('+');
+    //
+    // update list button
     gui -> addLabelButton("update image list", false);
     gui -> addSpacer();
     //
@@ -92,11 +99,24 @@ void imgEditor::exit() {
 
 //--------------------------------------------------------------
 void imgEditor::guiEvent(ofxUIEventArgs &e) {
-    string nameStr = e.widget->getName();
-    int kind = e.widget->getKind();
+    string          nameStr = e.widget->getName();
+    ofxUIWidgetType kind    = e.widget->getKind();
+    ofxUIButton     *button;
+    bool            buttonPressed;
     
-    /*  */ if(nameStr == ""){
-        //
+    if (kind == OFX_UI_WIDGET_BUTTON) {
+        button = (ofxUIButton*)e.widget;
+        buttonPressed = button ->getValue();
+    }
+    
+    /*  */ if(nameStr == "- previous image"){
+        if (currentImgIndex > 0) {
+            if (buttonPressed) currentImgIndexFloat -= 1.0f;
+        }
+    } else if(nameStr == "+ next image") {
+        if (currentImgIndex < imagePathMap.size()) {
+            if (buttonPressed) currentImgIndexFloat += 1.0f;
+        }
     } else { // default
         if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
     }
@@ -104,15 +124,37 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
 
 //--------------------------------------------------------------
 void imgEditor::update() {
+    
+    // check to see if currentImgIndexFloat has been changed
     if ((int)currentImgIndexFloat != currentImgIndex) {
+        
+        // store the new image loaded
         currentImgIndex = (int)currentImgIndexFloat;
-        it = imagePathMap.begin() + currentImgIndex;
+
+        // increment the image path map iterator to the appropriate image
+        it = imagePathMap.begin();
+        for(int i=1; i<currentImgIndex; ++i) {
+            ++it;
+        }
+        
+        // update the gui text field for current image being displayed to match the updated iterator
+        ofxUIWidget* widget = gui -> getWidget("current image baseName");
+        ofxUIWidgetType widgetType = widget->getKind();
+        string newText = "current image: " + it->first;
+        if (widgetType == OFX_UI_WIDGET_TEXTAREA) {
+            ofxUITextArea * textArea = (ofxUITextArea *)widget;
+            textArea -> setTextString(newText);
+        } else {
+            cout << "imgEditor::update() -- gui->getWidget(\"current image baseName\")->getKind() == " + ofToString(widgetType) << cout;
+        }
     }
 }
 
 //--------------------------------------------------------------
 void imgEditor::draw() {
-    if (img->loadImage(it->second[0])) {
+    bool drawImage = false;
+    
+    if (img->loadImage(it->second[it->second.size()-1])) {
         img->draw(100, 100);
     } else {
         cout << "imgEditor::draw() -- could not load image at it->second[0] = " << it->second[0] << endl;
@@ -133,7 +175,7 @@ void imgEditor::mapAllImages() {
 }
 
 //--------------------------------------------------------------
-void imgEditor::scanDirectory(ofDirectory dir, string ext) { // TODO: make this more generic so it returns an array of file paths with a given extension, or an array of directory paths
+void imgEditor::scanDirectory(ofDirectory dir, string ext) {
     int i, size;
     size = dir.listDir();
     dir.sort();
@@ -161,12 +203,10 @@ void imgEditor::scanDirectory(ofDirectory dir, string ext) { // TODO: make this 
 }
 
 //--------------------------------------------------------------
-void imgEditor::addImgToPathMap(string baseName, string path) {
+void imgEditor::addImgToPathMap(string baseName, string imagePath) {
     if (imagePathMap.find(baseName) == imagePathMap.end()) {
         vector<string> pathVtmp;
-        pathVtmp.push_back(path);
         imagePathMap[baseName] = pathVtmp;
-    } else {
-        imagePathMap[baseName].push_back(path);
     }
+    imagePathMap[baseName].push_back(imagePath);
 }

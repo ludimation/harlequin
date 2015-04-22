@@ -27,9 +27,8 @@ public:
     // image handling functions
     void                            guiEvent(ofxUIEventArgs &e);
     void                            mapAllImages();
-    void                            scanDirectory(
+    void                            scanDirectory( // TODO: make "imgEditor::scanDirectory()" more generic and move it to its own class so it returns an array of file paths with a given extension, or an array of directory paths for any object that needs it
                                                     ofDirectory                     dir
-//                                                  , map <string, vector<string> >   &pathMap
                                                   , string                          ext
                                                   );
     void                            addImgToPathMap(string baseName, string path);
