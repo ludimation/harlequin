@@ -21,6 +21,7 @@ public:
     void setup();
     void update();
     void draw();
+    void keyPressed(int key);
     
     // gui
     void guiEvent(ofxUIEventArgs &e);

@@ -11,36 +11,34 @@
 //#ifndef harlequin_imgEditor_h
 //#define harlequin_imgEditor_h
 
+#include "ofxUI.h"
 #include "MSAjoint.h"
 
 class imgEditor {
     
 public:
     
-    //
-    ofxUISuperCanvas                *gui; // gui = new ofxUISuperCanvas("harlequin");
-    vector< vector <MSAjoint*> >    joints;
+    // core functions
+    void setup();
+    void update();
+    void draw();
     
-    void setup() {
-        //////////////////////
-        // MSA joints setup //
-        //////////////////////
-        int joints_count = 15;
-        joints.resize(1);
-        //
-        for( int i = 0; i < joints_count; i++)
-        {
-            MSAjoint *obj = new MSAjoint();
-            obj->set(300 + (i*15), 400, 10, 10);
-            obj->enabled = true;
-            obj->enableMouseEvents();
-            joints[0].push_back(obj);
-        }
-    }
+    // image handling functions
+    void                            guiEvent(ofxUIEventArgs &e);
+    map <string, vector<string> >   mapAllImages();
+    map <string, vector<string> >   loadImages(bool load);
+    
+    // properties
+    ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
+    vector< vector <MSAjoint*> >    joints;
+    int                             jointSets_count, joints_count;
+    map <string, vector<string> >   imagePathMap; // <string imgFileName, vector<string> imgPaths>
+    bool                            loadImagesNow;
+    int                             nFilesToLoad, maxFilesToLoad;
     
 private:
     
-    //
+    // internal data
     
 };
 

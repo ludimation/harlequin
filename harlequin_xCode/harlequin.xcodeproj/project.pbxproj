@@ -156,6 +156,7 @@
 		6A0384001AE6C2D000E6C259 /* body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0383FE1AE6C2D000E6C259 /* body.cpp */; };
 		6A0384031AE6CDA800E6C259 /* imgLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0384011AE6CDA800E6C259 /* imgLoader.cpp */; };
 		6A0384041AE70A8500E6C259 /* GRTManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0383FB1AE6C17100E6C259 /* GRTManager.cpp */; };
+		6A0384061AE7156E00E6C259 /* imgEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A0384051AE7156E00E6C259 /* imgEditor.cpp */; };
 		6A2587C119E0593000C2658C /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A2587C019E0593000C2658C /* CoreVideo.framework */; };
 		6A9A569C1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */; };
 		7704EC2414C70657001AF021 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7704EC2114C70657001AF021 /* ofApp.cpp */; };
@@ -577,6 +578,7 @@
 		6A0383FF1AE6C2D000E6C259 /* body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = body.h; sourceTree = "<group>"; };
 		6A0384011AE6CDA800E6C259 /* imgLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgLoader.cpp; sourceTree = "<group>"; };
 		6A0384021AE6CDA800E6C259 /* imgLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgLoader.h; sourceTree = "<group>"; };
+		6A0384051AE7156E00E6C259 /* imgEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgEditor.cpp; sourceTree = "<group>"; };
 		6A2587C019E0593000C2658C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		6A6F221319FBEB4F00C4C803 /* openFrameworksDebug.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = openFrameworksDebug.a; path = ../../../libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a; sourceTree = "<group>"; };
 		6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMSAInteractiveObject.cpp; sourceTree = "<group>"; };
@@ -1664,6 +1666,7 @@
 			children = (
 				6A0383911AE6AE9C00E6C259 /* imgData.h */,
 				6A0383921AE6AE9C00E6C259 /* imgEditor.h */,
+				6A0384051AE7156E00E6C259 /* imgEditor.cpp */,
 				6A0383931AE6AE9C00E6C259 /* MSAjoint.h */,
 			);
 			path = imgEditor;
@@ -2265,6 +2268,7 @@
 				6A0383DC1AE6AE9C00E6C259 /* LowPassFilter.cpp in Sources */,
 				5C8F76A219FC166700A8AC13 /* ofxUISuperCanvas.cpp in Sources */,
 				5C8F76C019FC167400A8AC13 /* tinyxmlerror.cpp in Sources */,
+				6A0384061AE7156E00E6C259 /* imgEditor.cpp in Sources */,
 				5C8F76A019FC166700A8AC13 /* ofxUISpectrum.cpp in Sources */,
 				6A0383D91AE6AE9C00E6C259 /* DoubleMovingAverageFilter.cpp in Sources */,
 				5C8F76C219FC167400A8AC13 /* tinyxmlparser.cpp in Sources */,

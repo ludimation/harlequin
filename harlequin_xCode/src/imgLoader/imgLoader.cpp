@@ -11,6 +11,11 @@
 
 void imgLoader::setup() {
     
+    // loader
+    // compile a list of available GRT & XML models
+    // gui for selecting which ones to load
+    // interface for grabbing a reference to an image based on filename
+    
     // image loader // items below should eventually be handled by image loader
     string trainedImagesDirectory = "images/hand_drawings/LT/";
     //    trainedImagesDirectory = "images/hand_drawings/V/";
