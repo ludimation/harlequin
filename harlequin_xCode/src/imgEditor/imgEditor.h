@@ -24,7 +24,7 @@ public:
     void update();
     void draw();
     
-    // image handling functions
+    // specialized functions
     void guiEvent(ofxUIEventArgs &e);
     void mapAllImages();
     void scanDirectory(ofDirectory dir, string ext);// TODO: make "imgEditor::scanDirectory()" more generic and move it to its own class so it returns an array of file paths with a given extension, or an array of directory paths for any object that needs it

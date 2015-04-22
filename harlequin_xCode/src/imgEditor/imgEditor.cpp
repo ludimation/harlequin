@@ -20,8 +20,7 @@ void imgEditor::setup() {
     mapAllImages();
 
     ///////////////////
-    // 2) gui & keypresses for displaying pathMap & selecting which image to load training
-    //     - load metadata for an image if it already exists
+    // 2) setup a gui & keybindings for displaying pathMap & selecting which image to load training
     ///////////////////
     guiSettingsPath = ofToDataPath("settings/imgEditorGuiSettings.xml");
     gui = new ofxUISuperCanvas("imgEditor");
@@ -67,7 +66,8 @@ void imgEditor::setup() {
     gui -> loadSettings(guiSettingsPath);
     
     ///////////////////
-    // 3) gui for training image metadata
+    // 3) setup interactive elements for training image metadata
+    //     - load metadata for an image if it already exists
     ///////////////////
     img = new ofImage();
     // MSA joints for editing joint position data
@@ -85,7 +85,7 @@ void imgEditor::setup() {
     }
     
     ///////////////////
-    // 4) gui to save image metadata
+    // 4) setup gui & functions that save image metadata
     //     - at comon directory level of all image paths (remove "_540" / "_1080" portion)
     //     - include multiple paths in XML file for selection later on
     ///////////////////
@@ -187,16 +187,17 @@ void imgEditor::draw() {
     }
 }
 
-//--------------------------------------------------------------
+//==============================================================
+////////////////////////////////////////////////////////////////
+// create a map of all unique image file names in the
+// images directory, including several paths for images that have
+// multiple resolutions
+////////////////////////////////////////////////////////////////
+
 void imgEditor::mapAllImages() {
     
     // debug
     cout << "imgEditor::mapAllImages() -- called" << endl;
-    
-    ///////////////////
-    // creates a map of all unique image file names in the images directory
-    //     - includes several paths for images that have multiple resolutions
-    ///////////////////
     
     // clear the map it if has already been populated
     if (imagePathMap.size()) imagePathMap.clear();
