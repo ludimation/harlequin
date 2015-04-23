@@ -68,6 +68,7 @@ public:
 	}
     
     void updatePosition(int x, int y) {
+        // TODO: extend this class to include a Z coordinate >> to be set relative to MSAlimb
         this->x += x - pMouseX;
         this->y += y - pMouseY;
         

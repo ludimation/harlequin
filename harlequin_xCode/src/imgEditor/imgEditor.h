@@ -32,7 +32,9 @@ public:
     void addImgToPathMap(string baseName, string path);
     void reiterateIt();
     
-    // properties
+    ////////////////
+    // properties //
+    ////////////////
     bool                            initializing;
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
     string                          guiSettingsPath, imagesDirectory;
@@ -41,6 +43,8 @@ public:
     int                             trackedUserIndex;
     vector< vector <MSAjoint*> >    joints;
     int                             jointSets_count, joints_count;
+    //
+    // images
     map <string, vector<string> >   imagePathMap; // <string imgFileName, vector<string> imgPaths>
     map <string, vector<string> >::iterator it; // iterator storage for paths to image that is currently being edited
     int                             currentImgIndex;
