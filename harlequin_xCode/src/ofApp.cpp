@@ -16,6 +16,10 @@ void ofApp::setup() {
     ////////////////////
     imgEdtr = new imgEditor();
     imgEdtr->setup("settings/imgEditorGuiSettings.xml", "images");
+    //    GRTMngr = new GRTManager();
+    //    // move to image handler
+    //    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
+
     
     //////////////////////
     // kinect interface //
@@ -23,141 +27,142 @@ void ofApp::setup() {
     kinectInterface = new kinectIO();
     kinectInterface->setup();
     
-    if (true) {
-//    GRTMngr = new GRTManager();
-//    // move to image handler
-//    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
-//
-//    //////////////////
-//    // general init //
-//    //////////////////
-//    drawNextFrameMilliseconds = 0;
-//    // gui settings
-//    drawFrameRate   = 30;
-//    drawMirrored    = false;
-//    imgInvertColors = false;
-//    imgColorsAreInverted = false;
-//    // debug
-//    testUserJoints = kinectInterface->setupTestUserJoints(); // test joints used if Kinect is offline
-//    verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
-//
-//    
-//    //////////////
-//    // OSC INIT //
-//    //////////////
-//    sender.setup(HOST, PORT);
-//    myHost = HOST;
-//    myPort = ofToString(PORT);
-//    
-//    
-//    /////////////////////
-//    // Initialize GUIS //
-//    /////////////////////
-//    //
-//    //------------
-//    // Main GUI --
-//    //////////////
-//    gui = new ofxUISuperCanvas("harlequin");
-//    ofAddListener(gui -> newGUIEvent, this, &ofApp::guiEvent);
-//    gui -> addSpacer();
-//    gui -> addTextArea("text", "'h' to hide this panel", OFX_UI_FONT_SMALL);
-//    //    gui -> addLabel("text", "'h' to hide this panel");
-//    gui -> addSpacer();
-//    //
-//    // Switch display modes
-//    gui -> addLabel("application mode: ");
-//    vector<string> appModes; appModes.push_back("i"); appModes.push_back("d"); appModes.push_back("t");
-//    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_HORIZONTAL);
-//    gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
-//    gui -> addSpacer();
-//    //
-//    // FPS
-//    gui -> addFPSSlider("fps");
-//    gui -> addSpacer();
-//    gui -> addTextArea("text", "'+' or '-' to change frame rate");
-//    gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
-//    gui -> addSpacer();
-//    //
-//    // Background Color
-//    gui -> addTextArea("text", "background color");
-//    gui -> addSlider("red",   0.0, 255.0,    &bgRed   );
-//    gui -> addSlider("green", 0.0, 255.0,    &bgGreen );
-//    gui -> addSlider("blue",  0.0, 255.0,    &bgBlue  );
-//    gui -> addSpacer();
-//    //
-//    // Kinect
-//    gui -> addTextArea("text", "'k' to connect to kinect");
-//    gui -> addToggle("kinected", &kinected);
-//    gui -> addSpacer();
-//    gui -> addTextArea("text", "'m' to mirror kinect input");
-//    gui -> addToggle("mirror image", &drawMirrored);
-//    gui -> addToggle("draw depth image", &drawDepth);
-//    gui -> addToggle("draw depth behind", &drawDepthBehind);
-//    gui -> addToggle("draw skeletons", &drawSkeletons);
-//    gui -> addToggle("add joints 2 MSG", &drawJoints2MSG);
-//    //
-//    // Debug Messages
-//    gui -> addToggle("draw MSG", &drawMSG);
-//    gui -> addSpacer();
-//    //
-//    // OSC Toggles
-//    gui -> addToggle("setup OSC", &setupOSC);
-//    gui -> addTextInput("host", "address")->setAutoClear(false);
-//    gui -> addTextInput("port", "port")->setAutoClear(false);
-//    gui -> addToggle("send OSC", &sendOSC);
-//    gui -> addSpacer();
-//    //
-//    // Save Settings
-//    gui -> addLabelButton("save main settings", false);
-//    gui -> autoSizeToFitWidgets();
-//    //
-//    //-------------
-//    // Color GUI --
-//    ///////////////
-//    guiColor = new ofxUISuperCanvas("harlequin colors");
-//    ofAddListener(guiColor -> newGUIEvent, this, &ofApp::guiEvent);
-//    guiColor -> addSpacer();
-//    //
-//    guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
-//    vector< string > vnamesBlendIMG; vnamesBlendIMG.push_back("i0"); vnamesBlendIMG.push_back("iA"); vnamesBlendIMG.push_back("i+"); vnamesBlendIMG.push_back("i-"); vnamesBlendIMG.push_back("i*"); vnamesBlendIMG.push_back("iS");
-//    ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlendIMG, OFX_UI_ORIENTATION_HORIZONTAL);
-//    guiColor -> addToggle("invert image", &imgInvertColors);
-//    guiColor -> addSlider("image red",   0.0, 255.0, &imgRed   );
-//    guiColor -> addSlider("image green", 0.0, 255.0, &imgGreen );
-//    guiColor -> addSlider("image blue",  0.0, 255.0, &imgBlue  );
-//    guiColor -> addSlider("image alpha", 0.0, 255.0, &imgAlpha );
-//    guiColor -> addSpacer();
-//    //
-//    guiColor -> addLabel("depth image settings", OFX_UI_FONT_MEDIUM);
-//    vector< string > vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
-//    ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
-//    vector< string > vnamesBlendDEPTH; vnamesBlendDEPTH.push_back("d0"); vnamesBlendDEPTH.push_back("dA"); vnamesBlendDEPTH.push_back("d+"); vnamesBlendDEPTH.push_back("d-"); vnamesBlendDEPTH.push_back("d*"); vnamesBlendDEPTH.push_back("dS");
-//    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlendDEPTH, OFX_UI_ORIENTATION_HORIZONTAL);
-//    guiColor -> addSlider("depth red",   0.0, 255.0, &depthRed   );
-//    guiColor -> addSlider("depth green", 0.0, 255.0, &depthGreen );
-//    guiColor -> addSlider("depth blue",  0.0, 255.0, &depthBlue  );
-//    guiColor -> addSlider("depth alpha", 0.0, 255.0, &depthAlpha );
-//    guiColor -> addSpacer();
-//    //
-//    guiColor -> addLabel("skeleton drawing settings", OFX_UI_FONT_MEDIUM);
-//    vector< string > vnamesBlendSKEL; vnamesBlendSKEL.push_back("s0"); vnamesBlendSKEL.push_back("sA"); vnamesBlendSKEL.push_back("s+"); vnamesBlendSKEL.push_back("s-"); vnamesBlendSKEL.push_back("s*"); vnamesBlendSKEL.push_back("sS");
-//    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skeleton blend mode", vnamesBlendSKEL, OFX_UI_ORIENTATION_HORIZONTAL);
-//    guiColor -> addSlider("skel red",   0.0, 255.0, &skelRed   );
-//    guiColor -> addSlider("skel green", 0.0, 255.0, &skelGreen );
-//    guiColor -> addSlider("skel blue",  0.0, 255.0, &skelBlue  );
-//    guiColor -> addSlider("skel alpha", 0.0, 255.0, &skelAlpha );
-//    guiColor -> addSpacer();
-//    //
-//    // Save Settings
-//    guiColor -> addLabelButton("save color settings", false);
-//    guiColor -> autoSizeToFitWidgets();
-//    
+    //////////////////
+    // general init //
+    //////////////////
+    drawNextFrameMilliseconds = 0;
+    // gui settings
+    drawFrameRate   = 30;
+    drawMirrored    = false;
+    imgInvertColors = false;
+    imgColorsAreInverted = false;
+    // debug
+    testUserJoints = kinectInterface->setupTestUserJoints(); // test joints used if Kinect is offline
+    verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
+
+    
+    //////////////
+    // OSC INIT //
+    //////////////
+    sender.setup(HOST, PORT);
+    myHost = HOST;
+    myPort = ofToString(PORT);
+    
+    
+    /////////////////////
+    // Initialize GUIS //
+    /////////////////////
+    //
+    //------------
+    // Main GUI --
+    //////////////
+    gui = new ofxUISuperCanvas("harlequin");
+    ofAddListener(gui -> newGUIEvent, this, &ofApp::guiEvent);
+    gui -> addSpacer();
+    gui -> addTextArea("text", "'h' to hide this panel", OFX_UI_FONT_SMALL);
+    //    gui -> addLabel("text", "'h' to hide this panel");
+    gui -> addSpacer();
+    //
+    // Switch display modes
+    gui -> addLabel("application mode: ");
+    vector<string> appModes; appModes.push_back("i"); appModes.push_back("d"); appModes.push_back("t");
+    ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_HORIZONTAL);
+    gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
+    gui -> addSpacer();
+    //
+    // FPS
+    gui -> addFPSSlider("fps");
+    gui -> addSpacer();
+    gui -> addTextArea("text", "'+' or '-' to change frame rate");
+    gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
+    gui -> addSpacer();
+    //
+    // Background Color
+    gui -> addTextArea("text", "background color");
+    gui -> addSlider("red",   0.0, 255.0,    &bgRed   );
+    gui -> addSlider("green", 0.0, 255.0,    &bgGreen );
+    gui -> addSlider("blue",  0.0, 255.0,    &bgBlue  );
+    gui -> addSpacer();
+    //
+    // Kinect
+    gui -> addTextArea("text", "'k' to kinect, 'x' to diskinnect");
+    ofxUIToggle* toggleKinected = gui -> addToggle("kinected", &kinected);
+    toggleKinected->bindToKey('k');
+    toggleKinected->bindToKey('K');
+    toggleKinected->bindToKey('x');
+    toggleKinected->bindToKey('X');
+    gui -> addSpacer();
+    gui -> addTextArea("text", "'m' to mirror kinect input");
+    ofxUIToggle* mirrorImageToggle = gui -> addToggle("mirror image", &drawMirrored);
+    mirrorImageToggle -> bindToKey('m');
+    mirrorImageToggle -> bindToKey('M');
+    gui -> addToggle("draw depth image", &drawDepth);
+    gui -> addToggle("draw depth behind", &drawDepthBehind);
+    gui -> addToggle("draw skeletons", &drawSkeletons);
+    gui -> addToggle("add joints 2 MSG", &drawJoints2MSG);
+    //
+    // Debug Messages
+    gui -> addToggle("draw MSG", &drawMSG);
+    gui -> addSpacer();
+    //
+    // OSC Toggles
+    gui -> addToggle("setup OSC", &setupOSC);
+    gui -> addTextInput("host", "address") -> setAutoClear(false);
+    gui -> addTextInput("port", "port") -> setAutoClear(false);
+    gui -> addToggle("send OSC", &sendOSC);
+    gui -> addSpacer();
+    //
+    // Save Settings
+    gui -> addLabelButton("save main settings", false);
+    gui -> autoSizeToFitWidgets();
+    //
+    //-------------
+    // Color GUI --
+    ///////////////
+    guiColor = new ofxUISuperCanvas("harlequin colors");
+    ofAddListener(guiColor -> newGUIEvent, this, &ofApp::guiEvent);
+    guiColor -> addSpacer();
+    //
+    guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
+    vector< string > vnamesBlendIMG; vnamesBlendIMG.push_back("i0"); vnamesBlendIMG.push_back("iA"); vnamesBlendIMG.push_back("i+"); vnamesBlendIMG.push_back("i-"); vnamesBlendIMG.push_back("i*"); vnamesBlendIMG.push_back("iS");
+    ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlendIMG, OFX_UI_ORIENTATION_HORIZONTAL);
+    guiColor -> addToggle("invert image", &imgInvertColors);
+    guiColor -> addSlider("image red",   0.0, 255.0, &imgRed   );
+    guiColor -> addSlider("image green", 0.0, 255.0, &imgGreen );
+    guiColor -> addSlider("image blue",  0.0, 255.0, &imgBlue  );
+    guiColor -> addSlider("image alpha", 0.0, 255.0, &imgAlpha );
+    guiColor -> addSpacer();
+    //
+    guiColor -> addLabel("depth image settings", OFX_UI_FONT_MEDIUM);
+    vector< string > vnamesDepthCLR; vnamesDepthCLR.push_back("PSYCHEDELIC_SHADES"); vnamesDepthCLR.push_back("PSYCHEDELIC"); vnamesDepthCLR.push_back("RAINBOW"); vnamesDepthCLR.push_back("CYCLIC_RAINBOW"); vnamesDepthCLR.push_back("BLUES"); vnamesDepthCLR.push_back("BLUES_INV"); vnamesDepthCLR.push_back("GREY"); vnamesDepthCLR.push_back("STATUS");
+    ofxUIRadio *radioMode = guiColor -> addRadio("depth color mode", vnamesDepthCLR, OFX_UI_ORIENTATION_VERTICAL);
+    vector< string > vnamesBlendDEPTH; vnamesBlendDEPTH.push_back("d0"); vnamesBlendDEPTH.push_back("dA"); vnamesBlendDEPTH.push_back("d+"); vnamesBlendDEPTH.push_back("d-"); vnamesBlendDEPTH.push_back("d*"); vnamesBlendDEPTH.push_back("dS");
+    ofxUIRadio *radioBlendDepth = guiColor -> addRadio("depth blend mode", vnamesBlendDEPTH, OFX_UI_ORIENTATION_HORIZONTAL);
+    guiColor -> addSlider("depth red",   0.0, 255.0, &depthRed   );
+    guiColor -> addSlider("depth green", 0.0, 255.0, &depthGreen );
+    guiColor -> addSlider("depth blue",  0.0, 255.0, &depthBlue  );
+    guiColor -> addSlider("depth alpha", 0.0, 255.0, &depthAlpha );
+    guiColor -> addSpacer();
+    //
+    guiColor -> addLabel("skeleton drawing settings", OFX_UI_FONT_MEDIUM);
+    vector< string > vnamesBlendSKEL; vnamesBlendSKEL.push_back("s0"); vnamesBlendSKEL.push_back("sA"); vnamesBlendSKEL.push_back("s+"); vnamesBlendSKEL.push_back("s-"); vnamesBlendSKEL.push_back("s*"); vnamesBlendSKEL.push_back("sS");
+    ofxUIRadio *radioBlendSkel = guiColor -> addRadio("skeleton blend mode", vnamesBlendSKEL, OFX_UI_ORIENTATION_HORIZONTAL);
+    guiColor -> addSlider("skel red",   0.0, 255.0, &skelRed   );
+    guiColor -> addSlider("skel green", 0.0, 255.0, &skelGreen );
+    guiColor -> addSlider("skel blue",  0.0, 255.0, &skelBlue  );
+    guiColor -> addSlider("skel alpha", 0.0, 255.0, &skelAlpha );
+    guiColor -> addSpacer();
+    //
+    // Save Settings
+    guiColor -> addLabelButton("save color settings", false);
+    guiColor -> autoSizeToFitWidgets();
+
+    
 //
 //    ///////////////////////////
 //    // initial display state //
 //    ///////////////////////////
 //    setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
-    }
 }
 
 //--------------------------------------------------------------
@@ -177,156 +182,157 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::guiEvent(ofxUIEventArgs &e) {
+    bool noCallbackForWidget = false;
     string nameStr = e.widget->getName();
     int kind = e.widget->getKind();
-    
-//    /*  */ if(nameStr == "invert image") {
-//        // TODO: debug "invert images" only when toggle is updated.
-////        if (imgColorsAreInverted != imgInvertColors) {
-////            for (int imgI=0; imgI < images.size(); ++imgI){
-////                ofImage* imgTMP = &images[imgI];
-////                invertImage(imgTMP);
-////            }
-////            imgColorsAreInverted = imgInvertColors;
-////        }
-//    } else if (nameStr == "mirror image") {
-//        // reverse the effects of pressing the toggle before calling the keypressed function in order to avoid a double-toggle
-//        drawMirrored = !drawMirrored;
-//        keyPressed('m');
-//        
-//        
-//    } else if (nameStr == "kinected") {
-//        if (kinected)
-//        {
-//            keyPressed('k');
+    /*  */ if(nameStr == "invert image") {
+        // TODO: debug "invert images" only when toggle is updated.
+//        if (imgColorsAreInverted != imgInvertColors) {
+//            for (int imgI=0; imgI < images.size(); ++imgI){
+//                ofImage* imgTMP = &images[imgI];
+//                invertImage(imgTMP);
+//            }
+//            imgColorsAreInverted = imgInvertColors;
 //        }
-//        else
-//        {
-//            keyPressed('x');
-//        }
-//        
-//        
-//    } else if (nameStr == "host") {
-//        ofxUITextInput *ti = (ofxUITextInput *) e.widget;
-//        if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_ENTER)
-//        {
-//            cout << "ON ENTER "<< nameStr<<": ";
-//            myHost = ti->getTextString();
-//            cout << myPort << endl;
-//        }
-//        else if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_UNFOCUS)
-//        {
-//            cout << "ON BLUR: ";
-//            myHost = ti->getTextString();
-//            cout << myPort << endl;
-//        }
-//        //
-//    } else if(nameStr == "port") {
-//        ofxUITextInput *ti = (ofxUITextInput *) e.widget;
-//        if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_ENTER)
-//        {
-//            cout << "ON ENTER" << nameStr << ": " ;
-//            myPort = ti->getTextString();
-//            cout << myPort << endl;
-//        }
-//        else if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_UNFOCUS)
-//        {
-//            cout << "ON BLUR: ";
-//            myPort = ti->getTextString();
-//        }
-//       
-//        
-//    } else if (nameStr == "application mode") {
-//        ofxUIRadio *radioAppMode = (ofxUIRadio *) e.widget;
-//        switch (radioAppMode -> getValue()) {
-//            case 0: // interactive
-//                if (displayState != 'i') setDisplayState('i');
-//                break;
-//                
-//            case 1: // debug
-//                if (displayState != 'd') setDisplayState('d');
-//                break;
-//                
-//            case 2: // training
-//                if (displayState != 't') setDisplayState('t');
-//                break;
-//                
-//            default:
-//                break;
-//        }
-////    } else if (nameStr == "i" || nameStr == "d" || nameStr == "t") {
-////        ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
-////        if (toggle -> getValue()) //do something
-////            ;
-////            
+    } else if (nameStr == "mirror image") {
+        //            openNIPlayer.setMirror(drawMirrored);
+        
+    } else if (nameStr == "kinected") {
+        if (kinected ) // || ofGetKeyPressed('k')?
+        {
+//            kinectsInitialized = kinectInterface->setupKinects(drawMirrored);
+//            kinected = kinectsInitialized;
+        }
+        else
+        {
+//            kinected = !kinectInterface->stopKinects();
+        }
+        
+        
+    } else if (nameStr == "host") {
+        ofxUITextInput *ti = (ofxUITextInput *) e.widget;
+        if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_ENTER)
+        {
+            cout << "ON ENTER "<< nameStr<<": ";
+            myHost = ti->getTextString();
+            cout << myPort << endl;
+        }
+        else if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_UNFOCUS)
+        {
+            cout << "ON BLUR: ";
+            myHost = ti->getTextString();
+            cout << myPort << endl;
+        }
+        //
+    } else if(nameStr == "port") {
+        ofxUITextInput *ti = (ofxUITextInput *) e.widget;
+        if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_ENTER)
+        {
+            cout << "ON ENTER" << nameStr << ": " ;
+            myPort = ti->getTextString();
+            cout << myPort << endl;
+        }
+        else if(ti->getInputTriggerType() == OFX_UI_TEXTINPUT_ON_UNFOCUS)
+        {
+            cout << "ON BLUR: ";
+            myPort = ti->getTextString();
+        }
+       
+        
+    } else if (nameStr == "application mode") {
+        ofxUIRadio *radioAppMode = (ofxUIRadio *) e.widget;
+        switch (radioAppMode -> getValue()) {
+            case 0: // interactive
+                if (displayState != 'i') setDisplayState('i');
+                break;
+                
+            case 1: // debug
+                if (displayState != 'd') setDisplayState('d');
+                break;
+                
+            case 2: // training
+                if (displayState != 't') setDisplayState('t');
+                break;
+                
+            default:
+                break;
+        }
 //    } else if (nameStr == "save main settings") {
 //        gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
 //    } else if (nameStr == "save color settings") {
 //        guiColor -> saveSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
 //        
-//        
-//    } else if (nameStr == "image blend mode") {
-//        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-//        imgBlendMode = radio -> getValue();
-//    } else if (nameStr == "i0"||nameStr == "iA"||nameStr == "i+"||nameStr == "i-"||nameStr == "i*"||nameStr == "iS") {
-//        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-//        /**/ if (nameStr == "i0" && toggle -> getValue()) imgBlendMode = 0;
-//        else if (nameStr == "iA" && toggle -> getValue()) imgBlendMode = 1;
-//        else if (nameStr == "i+" && toggle -> getValue()) imgBlendMode = 2;
-//        else if (nameStr == "i-" && toggle -> getValue()) imgBlendMode = 3;
-//        else if (nameStr == "i*" && toggle -> getValue()) imgBlendMode = 4;
-//        else if (nameStr == "iS" && toggle -> getValue()) imgBlendMode = 5;
-//    } else if (nameStr == "depth color mode"||nameStr == "PSYCHEDELIC_SHADES"||nameStr == "PSYCHEDELIC"||nameStr == "RAINBOW"||nameStr == "CYCLIC_RAINBOW"||nameStr == "BLUES"||nameStr == "BLUES_INV"||nameStr == "GREY"||nameStr == "STATUS") {
-//        if (nameStr == "depth color mode") {
-//            ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-//            depthColorMode = radio -> getValue();
-//        } else {
-//            ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-//            /**/ if (nameStr == "PSYCHEDELIC_SHADES"    && toggle -> getValue()) depthColorMode = 0;
-//            else if (nameStr == "PSYCHEDELIC"           && toggle -> getValue()) depthColorMode = 1;
-//            else if (nameStr == "RAINBOW+"              && toggle -> getValue()) depthColorMode = 2;
-//            else if (nameStr == "CYCLIC_RAINBOW-"       && toggle -> getValue()) depthColorMode = 3;
-//            else if (nameStr == "BLUES*"                && toggle -> getValue()) depthColorMode = 4;
-//            else if (nameStr == "BLUES_INV"             && toggle -> getValue()) depthColorMode = 5;
-//            else if (nameStr == "GREY"                  && toggle -> getValue()) depthColorMode = 6;
-//            else if (nameStr == "STATUS"                && toggle -> getValue()) depthColorMode = 7;
-//        }
-//        openNIPlayer.setDepthColoring((DepthColoring)depthColorMode);
-//    } else if (nameStr == "depth blend mode") {
-//        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-//        depthBlendMode = radio -> getValue();
-//    } else if (nameStr == "d0"||nameStr == "dA"||nameStr == "d+"||nameStr == "d-"||nameStr == "d*"||nameStr == "dS") {
-//        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-//        /**/ if (nameStr == "d0" && toggle -> getValue()) depthBlendMode = 0;
-//        else if (nameStr == "dA" && toggle -> getValue()) depthBlendMode = 1;
-//        else if (nameStr == "d+" && toggle -> getValue()) depthBlendMode = 2;
-//        else if (nameStr == "d-" && toggle -> getValue()) depthBlendMode = 3;
-//        else if (nameStr == "d*" && toggle -> getValue()) depthBlendMode = 4;
-//        else if (nameStr == "dS" && toggle -> getValue()) depthBlendMode = 5;
-//    } else if (nameStr == "skleton blend mode") {
-//        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-//        skelBlendMode = radio -> getValue();
-//    } else if (nameStr == "s0"||nameStr == "sA"||nameStr == "s+"||nameStr == "s-"||nameStr == "s*"||nameStr == "sS") {
-//        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-//        /**/ if (nameStr == "s0" && toggle -> getValue()) skelBlendMode = 0;
-//        else if (nameStr == "sA" && toggle -> getValue()) skelBlendMode = 1;
-//        else if (nameStr == "s+" && toggle -> getValue()) skelBlendMode = 2;
-//        else if (nameStr == "s-" && toggle -> getValue()) skelBlendMode = 3;
-//        else if (nameStr == "s*" && toggle -> getValue()) skelBlendMode = 4;
-//        else if (nameStr == "sS" && toggle -> getValue()) skelBlendMode = 5;
-//    
-//        
-//    } else { // default
-//        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] ofApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
-//    }
+        
+    } else if (nameStr == "image blend mode") {
+        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+        imgBlendMode = radio -> getValue();
+    } else if (nameStr == "i0"||nameStr == "iA"||nameStr == "i+"||nameStr == "i-"||nameStr == "i*"||nameStr == "iS") {
+        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
+        /**/ if (nameStr == "i0" && toggle -> getValue()) imgBlendMode = 0;
+        else if (nameStr == "iA" && toggle -> getValue()) imgBlendMode = 1;
+        else if (nameStr == "i+" && toggle -> getValue()) imgBlendMode = 2;
+        else if (nameStr == "i-" && toggle -> getValue()) imgBlendMode = 3;
+        else if (nameStr == "i*" && toggle -> getValue()) imgBlendMode = 4;
+        else if (nameStr == "iS" && toggle -> getValue()) imgBlendMode = 5;
+    } else if (nameStr == "depth color mode"||nameStr == "PSYCHEDELIC_SHADES"||nameStr == "PSYCHEDELIC"||nameStr == "RAINBOW"||nameStr == "CYCLIC_RAINBOW"||nameStr == "BLUES"||nameStr == "BLUES_INV"||nameStr == "GREY"||nameStr == "STATUS") {
+        if (nameStr == "depth color mode") {
+            ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+            depthColorMode = radio -> getValue();
+        } else {
+            ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
+            /**/ if (nameStr == "PSYCHEDELIC_SHADES"    && toggle -> getValue()) depthColorMode = 0;
+            else if (nameStr == "PSYCHEDELIC"           && toggle -> getValue()) depthColorMode = 1;
+            else if (nameStr == "RAINBOW+"              && toggle -> getValue()) depthColorMode = 2;
+            else if (nameStr == "CYCLIC_RAINBOW-"       && toggle -> getValue()) depthColorMode = 3;
+            else if (nameStr == "BLUES*"                && toggle -> getValue()) depthColorMode = 4;
+            else if (nameStr == "BLUES_INV"             && toggle -> getValue()) depthColorMode = 5;
+            else if (nameStr == "GREY"                  && toggle -> getValue()) depthColorMode = 6;
+            else if (nameStr == "STATUS"                && toggle -> getValue()) depthColorMode = 7;
+        }
+        openNIPlayer.setDepthColoring((DepthColoring)depthColorMode);
+    } else if (nameStr == "depth blend mode") {
+        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+        depthBlendMode = radio -> getValue();
+    } else if (nameStr == "d0"||nameStr == "dA"||nameStr == "d+"||nameStr == "d-"||nameStr == "d*"||nameStr == "dS") {
+        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
+        /**/ if (nameStr == "d0" && toggle -> getValue()) depthBlendMode = 0;
+        else if (nameStr == "dA" && toggle -> getValue()) depthBlendMode = 1;
+        else if (nameStr == "d+" && toggle -> getValue()) depthBlendMode = 2;
+        else if (nameStr == "d-" && toggle -> getValue()) depthBlendMode = 3;
+        else if (nameStr == "d*" && toggle -> getValue()) depthBlendMode = 4;
+        else if (nameStr == "dS" && toggle -> getValue()) depthBlendMode = 5;
+    } else if (nameStr == "skleton blend mode") {
+        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+        skelBlendMode = radio -> getValue();
+    } else if (nameStr == "s0"||nameStr == "sA"||nameStr == "s+"||nameStr == "s-"||nameStr == "s*"||nameStr == "sS") {
+        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
+        /**/ if (nameStr == "s0" && toggle -> getValue()) skelBlendMode = 0;
+        else if (nameStr == "sA" && toggle -> getValue()) skelBlendMode = 1;
+        else if (nameStr == "s+" && toggle -> getValue()) skelBlendMode = 2;
+        else if (nameStr == "s-" && toggle -> getValue()) skelBlendMode = 3;
+        else if (nameStr == "s*" && toggle -> getValue()) skelBlendMode = 4;
+        else if (nameStr == "sS" && toggle -> getValue()) skelBlendMode = 5;
+    
+        
+    } else {
+        // default
+        noCallbackForWidget = true;
+    }
 
-    cout << "[verbose] ofApp::guiEvent(ofxUIEventArgs &e) -- gui element name = " << nameStr << endl;
+    // debug
+    if(ofGetLogLevel() == OF_LOG_VERBOSE){
+        if (noCallbackForWidget) {
+            cout << "[verbose] ofApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
+        } else {
+            cout << "[verbose] ofApp::guiEvent(ofxUIEventArgs &e) -- gui element name = " << nameStr << endl;
+        }
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    imgEdtr->update();
+    imgEdtr->update(testUserJoints);
     
     
 //    //    openNIRecorder.update();
@@ -436,6 +442,7 @@ void ofApp::draw() {
     
 //    ofBackground(bgRed, bgGreen, bgBlue);
 //    
+//
 //    // idle until it's time to draw the next frame
 //    while (ofGetElapsedTimeMillis() < drawNextFrameMilliseconds) {
 //        // TODO: put streaming events here
@@ -577,7 +584,7 @@ void ofApp::draw() {
 //            
 //            break;
 //            
-//        case 't': // training
+//        case 't': // training // move these to an "if (flag) statement" so that flags can be set in GUI, and get wrid of this complicated switch statement
 //        default:
 //
 //            // manage style and drawing matrix
@@ -592,62 +599,13 @@ void ofApp::draw() {
 //            // if (img->loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
 //            if (images.size())
 //            {
-//                ofImage img;
-//                img = images[label];
-//                ofImage* imgPTR = new ofImage();
-//                imgPTR = imagesPTRs[label];
-//                float imgRatioX;
-//                float imgRatioY;
-//                float imgRatio;
 //
-//                if (img.width) {
-//                    imgRatioX = float(ofGetWidth()) / float(img.width);
-////                if (img->width) {
-////                    imgRatioX = float(ofGetWidth()) / float(img->width);
-//                } else {
-//                    imgRatioX = 1.0f;
-//                }
-//
-//                if (img.height) {
-//                    imgRatioY = float(ofGetHeight()) / float(img.height);
-////                if (img->height) {
-////                    imgRatioY = float(ofGetHeight()) / float(img->height);
-//                } else {
-//                    imgRatioY = 1.0f;
-//                }
-//                
-//                if (imgRatioX < imgRatioY) {
-//                    imgRatio = imgRatioX;
-//                } else {
-//                    imgRatio = imgRatioY;
-//                }
-//                
-//                img.mirror(0, drawMirrored);
-//                imgPTR->mirror(0, drawMirrored);
 //                if (imgInvertColors) {
 //                    invertImage(img);
 //                    invertImage(imgPTR);
 //                }
 //
 //                
-////                img.draw(
-////                         (ofGetWidth() - img.width * imgRatio) / 2.0f,
-////                         (ofGetHeight() - img.height * imgRatio) / 2.0f,
-////                         img.width * imgRatio,
-////                         img.height * imgRatio
-////                         );
-//                imgPTR->draw(
-//                             (ofGetWidth() - img.width * imgRatio) / 2.0f,
-//                             (ofGetHeight() - img.height * imgRatio) / 2.0f,
-//                             img.width * imgRatio,
-//                             img.height * imgRatio
-//                             );
-////                imgPTR->draw(
-////                         (ofGetWidth() - imgPTR->width * imgRatio) / 2.0f,
-////                         (ofGetHeight() - imgPTR->height * imgRatio) / 2.0f,
-////                         imgPTR->width * imgRatio,
-////                         imgPTR->height * imgRatio
-////                         );
 //            }
 //            
 //            // reset drawing matrix and style
@@ -751,45 +709,45 @@ void ofApp::invertImage(ofPixels &imgPX, ofTexture &imgTEX) {
 
 //--------------------------------------------------------------
 void ofApp::setDisplayState(char newState) {
-//    bool undefinedState = false;
-//    
-//    switch (newState) {
-//        case 't': // training
-//            // fall through (intentional)
-//        case 'd': // debug
-//            // fall through (intentional)
-//        case 'i':
-//
-//            // save & train model before switching modes
+    bool undefinedState = false;
+    
+    switch (newState) {
+        case 't': // training
+            // fall through (intentional)
+        case 'd': // debug
+            // fall through (intentional)
+        case 'i':
+
+//            // save & train model before switching modes?
 //            GRTMngr->saveData();
 //            GRTMngr->saveModel();
-//            
-//            break;
-//
-//        default:
-//            // TODO: log or cout an error messsage for undefined state change?
-//            undefinedState = true;
-//            break;
-//    }
-//    
-//
-//    if (!undefinedState)
-//    {
-//        displayState = newState;
-//        
-//        // Load GUI settings // TODO: load setting xml files into memory to speed up switching states?
-//        if (gui) {
-//            gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
-//        }
-//        if (guiColor) {
-//            guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-//            
-//            // run windowResized method to reset guiColor's position
-//            windowResized();
-//        }
-//    } else {
-//        // TODO: Throw display state change error if state is not recognized
-//    }
+            
+            break;
+
+        default:
+            // TODO: log or cout an error messsage for undefined state change?
+            undefinedState = true;
+            break;
+    }
+
+
+    if (!undefinedState)
+    {
+        displayState = newState;
+        
+        // Load GUI settings // TODO: load setting xml files into memory to speed up switching states?
+        if (gui) {
+            gui -> loadSettings("guiSettings_" + ofToString(displayState) + ".xml");
+        }
+        if (guiColor) {
+            guiColor -> loadSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+            
+            // run windowResized method to reset guiColor's position
+            windowResized();
+        }
+    } else {
+        // TODO: Throw display state change error if state is not recognized
+    }
 }
 
 //--------------------------------------------------------------
@@ -896,21 +854,7 @@ void ofApp::keyPressed(int key){
 //            if (drawFrameRate > 5) drawFrameRate = drawFrameRate - 5;
 //            break;
 //
-//        case 'm':
-//            
-//            drawMirrored = !drawMirrored;
-//            openNIPlayer.setMirror(drawMirrored);
-//            break;
-//        
-//        case 'x':
-//
-//            kinected = kinectInterface->stopKinects();
-//            break;
-//        
 //        case 'k':
-//            kinectsInitialized = kinectInterface->setupKinects(drawMirrored);
-//            // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
-//            kinected = kinectsInitialized;
 //            break;
 //            
 //        case 'f':
