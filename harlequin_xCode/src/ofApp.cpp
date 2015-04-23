@@ -15,8 +15,7 @@ void ofApp::setup() {
     // image handlers //
     ////////////////////
     imgEdtr = new imgEditor();
-    imgEdtr->setup();
-    
+    imgEdtr->setup("settings/imgEditorGuiSettings.xml", "images");
     
     //////////////////////
     // kinect interface //

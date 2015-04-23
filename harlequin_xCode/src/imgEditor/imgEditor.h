@@ -19,7 +19,7 @@ class imgEditor {
 public:
     
     // core functions
-    void setup();
+    void setup(string guiSettingsPath, string imagesDirectory);
     void exit();
     void update();
     void draw(bool drawMirrored);
@@ -35,7 +35,7 @@ public:
     // properties
     bool                            initializing;
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
-    string                          guiSettingsPath;
+    string                          guiSettingsPath, imagesDirectory;
     //
     // joint tracking
     int                             trackedUserIndex;

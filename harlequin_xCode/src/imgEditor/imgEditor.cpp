@@ -9,7 +9,7 @@
 #include "imgEditor.h"
 
 //--------------------------------------------------------------
-void imgEditor::setup() {
+void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_) {
     
     initializing = true; // flag to check to make sure application is not running initialization operations twice
     
@@ -17,11 +17,13 @@ void imgEditor::setup() {
     // 1) create a map of all unique image file names in the images directory
     //     - include several paths for images that have multiple resolutions
     ///////////////////
+    imagesDirectory = imagesDirectory_;
     mapAllImages();
 
     ///////////////////
     // 2) setup a gui & keybindings for displaying pathMap & selecting which image to load training
     ///////////////////
+    guiSettingsPath = guiSettingsPath_;
     setupGui();
     
     ///////////////////
@@ -159,7 +161,7 @@ void imgEditor::mapAllImages() {
     if (imagePathMap.size()) imagePathMap.clear();
     
     // pupulate map
-    string path = ofToDataPath("images");
+    string path = ofToDataPath(imagesDirectory);
     string ext = "jpg";
     ofDirectory dir(path);
     scanDirectory(dir, ext);
@@ -230,8 +232,7 @@ void imgEditor::reiterateIt() {
 ////////////////////////////////////////////////////////////////
 
 void imgEditor::setupGui() {
-    
-    guiSettingsPath = ofToDataPath("settings/imgEditorGuiSettings.xml");
+
     gui = new ofxUISuperCanvas("imgEditor");
     gui -> setWidth(600); // NOTE: setting the text of text areas with wider strings will crash the build with "Thread 1: signal SIGABRT"
     gui -> addSpacer();
