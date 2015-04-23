@@ -16,13 +16,18 @@ public:
     
     bool dragging;
     int pMouseX, pMouseY;
+    int colorIdle, colorOver, colorDown;
     
-	void setup() {
+    void setup() {
+        setup(IDLE_COLOR, OVER_COLOR, DOWN_COLOR);
+    }
+    
+	void setup(int colorIdle_, int colorOver_, int colorDown_) {
 		printf("MyTestObject::setup() - hello!\n");
 		enableMouseEvents();
 		enableKeyEvents();
+        setColors(colorIdle_, colorOver_, colorDown_);
 	}
-	
 	
 	void exit() {
 		printf("MyTestObject::exit() - goodbye!\n");
@@ -36,12 +41,19 @@ public:
 	
 	
 	void draw() {
-		if(isMousePressed()) ofSetHexColor(DOWN_COLOR);
-		else if(isMouseOver()) ofSetHexColor(OVER_COLOR);
-		else ofSetHexColor(IDLE_COLOR);
+		if(isMousePressed()) ofSetHexColor(colorDown);
+		else if(isMouseOver()) ofSetHexColor(colorOver);
+		else ofSetHexColor(colorIdle);
 		
         ofRect(x, y, width, height);
     }
+    
+    void setColors(int colorIdle_, int colorOver_, int colorDown_) {
+        colorIdle = colorIdle_;
+        colorOver = colorOver_;
+        colorDown = colorDown_;
+    }
+
     
 	virtual void onRollOver(int x, int y) {
 		printf("MyTestObject::onRollOver(x: %i, y: %i)\n", x, y);

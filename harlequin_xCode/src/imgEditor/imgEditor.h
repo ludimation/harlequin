@@ -21,7 +21,7 @@ public:
     // core functions
     void setup(string guiSettingsPath, string imagesDirectory);
     void exit();
-    void update();
+    void update(vector< vector<ofPoint> > trackedUserJoints);
     void draw(bool drawMirrored);
     
     // specialized functions

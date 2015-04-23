@@ -35,13 +35,23 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_) {
     jointSets_count = 4;
     joints_count = 15;
     joints.resize(jointSets_count);
-    for(int s = 0; s <jointSets_count; ++s) {
-        for(int j = 0; j < joints_count; ++j) {
+    for(int set = 0; set <jointSets_count; ++set) {
+        for(int jnt = 0; jnt < joints_count; ++jnt) {
             MSAjoint *obj = new MSAjoint();
-            obj->set(300 + (j*15), 400, 10, 10);
+            obj->set(830 + (jnt*15), 0 + (set*15), 10, 10);
             obj->enabled = true;
             obj->enableMouseEvents();
-            joints[s].push_back(obj);
+            if (set == 0) {
+                // set input-based joint color
+                obj->setup(0x00FFFF, 0x0000FF, 0xFFFF00);
+            } else if (set == 1) {
+                // set user-specified joint color
+                obj->setup(0xFFFF00, 0x00FF00, 0xFF00FF);
+            } else {
+                // set traing data joint color
+                obj->setup();
+            }
+            joints[set].push_back(obj);
         }
     }
     
@@ -65,9 +75,9 @@ void imgEditor::exit() {
 }
 
 //--------------------------------------------------------------
-void imgEditor::update() {
+void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints) {
     
-    // check to see if currentImgIndexFloat has been changed
+    // load a new image if currentImgIndexFloat has been changed
     if ((int)currentImgIndexFloat != currentImgIndex) {
         
         // clamp current ImgIndex to length of image map
@@ -99,6 +109,22 @@ void imgEditor::update() {
         } else {
             cout << "imgEditor::update() -- gui->getWidget(\"current image baseName\")->getKind() == " + ofToString(widgetType) << cout;
         }
+    }
+    
+    // update MSAjoints positions to match trackedUserJoints
+    for(int jnt = 0; jnt < joints_count; ++jnt) {
+        int usr;
+        if (trackedUserIndex < trackedUserJoints.size())
+            usr = trackedUserIndex;
+        else {
+            usr = trackedUserJoints.size() - 1;
+            // TODO: updated GUI to reflect number of possible tracked users
+        }
+        ofPoint j = trackedUserJoints[usr][jnt];
+        joints[0][jnt]->setPosition(
+                                    ofGetWidth() / 2 + j.x
+                                  , ofGetHeight() / 2 + j.y
+                                  );
     }
 }
 
