@@ -23,14 +23,14 @@ public:
     }
     
 	void setup(int colorIdle_, int colorOver_, int colorDown_) {
-		printf("MyTestObject::setup() - hello!\n");
+		printf("MSAjoint::setup() - hello!\n");
 		enableMouseEvents();
 		enableKeyEvents();
         setColors(colorIdle_, colorOver_, colorDown_);
 	}
 	
 	void exit() {
-		printf("MyTestObject::exit() - goodbye!\n");
+		printf("MSAjoint::exit() - goodbye!\n");
 	}
 	
 	
@@ -56,15 +56,15 @@ public:
 
     
 	virtual void onRollOver(int x, int y) {
-		printf("MyTestObject::onRollOver(x: %i, y: %i)\n", x, y);
+		printf("MSAjoint::onRollOver(x: %i, y: %i)\n", x, y);
 	}
 	
 	virtual void onRollOut() {
-		printf("MyTestObject::onRollOut()\n");
+		printf("MSAjoint::onRollOut()\n");
 	}
 	
 	virtual void onMouseMove(int x, int y){
-//		printf("MyTestObject::onMouseMove(x: %i, y: %i)\n", x, y);
+//		printf("MSAjoint::onMouseMove(x: %i, y: %i)\n", x, y);
 	}
     
     void updatePosition(int x, int y) {
@@ -85,41 +85,41 @@ public:
     }
     
     void mouseDragged(int x, int y, int button) {
-//        printf("MyTestObject::mouseDragged(x: %i, y: %i, button: %i)\n", x, y, button);
+//        printf("MSAjoint::mouseDragged(x: %i, y: %i, button: %i)\n", x, y, button);
         if (dragging) updatePosition(x, y);
     }
     
 	virtual void onDragOver(int x, int y, int button) {
-//		printf("MyTestObject::onDragOver(x: %i, y: %i, button: %i)\n", x, y, button);
+//		printf("MSAjoint::onDragOver(x: %i, y: %i, button: %i)\n", x, y, button);
 	}
     
 	virtual void onDragOutside(int x, int y, int button) {
-//		printf("MyTestObject::onDragOutside(x: %i, y: %i, button: %i)\n", x, y, button);
+//		printf("MSAjoint::onDragOutside(x: %i, y: %i, button: %i)\n", x, y, button);
 	}
 	
 	virtual void onPress(int x, int y, int button) {
-		printf("MyTestObject::onPress(x: %i, y: %i, button: %i)\n", x, y, button);
+		printf("MSAjoint::onPress(x: %i, y: %i, button: %i)\n", x, y, button);
         dragging = true;
         pMouseX = x;
         pMouseY = y;
 	}
 	
 	virtual void onRelease(int x, int y, int button) {
-		printf("MyTestObject::onRelease(x: %i, y: %i, button: %i)\n", x, y, button);
+		printf("MSAjoint::onRelease(x: %i, y: %i, button: %i)\n", x, y, button);
         if (dragging) dragging = false;
 	}
 	
 	virtual void onReleaseOutside(int x, int y, int button) {
-		printf("MyTestObject::onReleaseOutside(x: %i, y: %i, button: %i)\n", x, y, button);
+		printf("MSAjoint::onReleaseOutside(x: %i, y: %i, button: %i)\n", x, y, button);
         if (dragging) dragging = false;
 	}
 	
 	virtual void keyPressed(int key) {
-		printf("MyTestObject::keyPressed(key: %i)\n", key);
+		printf("MSAjoint::keyPressed(key: %i)\n", key);
 	}
 	
 	virtual void keyReleased(int key) {
-		printf("MyTestObject::keyReleased(key: %i)\n", key);
+		printf("MSAjoint::keyReleased(key: %i)\n", key);
 	}
 	
 };
