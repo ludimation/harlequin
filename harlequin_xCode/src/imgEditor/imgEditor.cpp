@@ -234,7 +234,6 @@ void imgEditor::setupGui() {
     guiSettingsPath = ofToDataPath("settings/imgEditorGuiSettings.xml");
     gui = new ofxUISuperCanvas("imgEditor");
     gui -> setWidth(600); // NOTE: setting the text of text areas with wider strings will crash the build with "Thread 1: signal SIGABRT"
-    ofAddListener(gui -> newGUIEvent, this, &imgEditor::guiEvent);
     gui -> addSpacer();
     //
     // text field with currently displayed image baseName: includes a slider to navigate list quickly, as well as buttons & keybindings to navigate up and down one image at a time
@@ -258,6 +257,17 @@ void imgEditor::setupGui() {
     buttonUpdateImgList -> bindToKey('U');
     gui -> addSpacer();
     //
+    // GUI for selecting user from tracked joints list
+    gui -> addLabel("'<' '>' user being tracked");
+    vector<string> trkdUserV;
+    trkdUserV.push_back("0"); trkdUserV.push_back("1"); trkdUserV.push_back("2"); trkdUserV.push_back("3"); trkdUserV.push_back("4"); trkdUserV.push_back("5"); trkdUserV.push_back("6"); trkdUserV.push_back("7"); trkdUserV.push_back("<"); trkdUserV.push_back(">");
+    ofxUIRadio* trkdUserRadio = gui -> addRadio("traked user", trkdUserV, OFX_UI_ORIENTATION_HORIZONTAL);
+    trkdUserRadio -> getEmbeddedWidget(8) -> bindToKey(',');
+    trkdUserRadio -> getEmbeddedWidget(8) -> bindToKey('<');
+    trkdUserRadio -> getEmbeddedWidget(9) -> bindToKey('.');
+    trkdUserRadio -> getEmbeddedWidget(9) -> bindToKey('>');
+    trkdUserRadio -> activateToggle(ofToString(trackedUserIndex));
+    //
     // save image data button
     ofxUILabelButton *buttonSaveData = gui -> addLabelButton("'d' save image data", false);
     buttonSaveData -> bindToKey('d');
@@ -271,6 +281,7 @@ void imgEditor::setupGui() {
     //
     // closing operations
     gui -> autoSizeToFitWidgets();
+    ofAddListener(gui -> newGUIEvent, this, &imgEditor::guiEvent);
     // load settings
     gui -> loadSettings(guiSettingsPath);
     
@@ -305,6 +316,29 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
             // when button is released, not when dragging out, or simply when gui is created during setup();
             mapAllImages();
         }
+        
+        
+    } else if (nameStr == "tracked user" ||nameStr=="0"||nameStr=="1"||nameStr=="2"||nameStr=="3"||nameStr=="4"||nameStr=="5"||nameStr=="6"||nameStr=="7"||nameStr=="<"||nameStr==">") {
+        //
+        ofxUIRadio* radio;
+        if (kind == OFX_UI_WIDGET_RADIO) {
+            radio = (ofxUIRadio*)e.widget;
+        } else {
+            radio = (ofxUIRadio*)e.widget->getParent();
+        }
+        //
+        int i = radio -> getValue();
+        if (i!= trackedUserIndex)
+            trackedUserIndex =
+              (i>=0 && i<=7) * i
+            + (trackedUserIndex-1>=0 && i==8) * (trackedUserIndex-1)
+            + (trackedUserIndex+1<=7 && i==9) * (trackedUserIndex+1)
+            + (trackedUserIndex==7&&i==9) * trackedUserIndex
+            ;
+        //
+        radio -> activateToggle(ofToString(trackedUserIndex));
+        
+        
     } else if (nameStr == "'s' save imgLoader settings") {
         if (!buttonPressed && !initializing && !ofGetMousePressed()) {
             // when button is released, not when dragging out, or simply when gui is created during setup();

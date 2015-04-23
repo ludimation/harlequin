@@ -36,6 +36,9 @@ public:
     bool                            initializing;
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
     string                          guiSettingsPath;
+    //
+    // joint tracking
+    int                             trackedUserIndex;
     vector< vector <MSAjoint*> >    joints;
     int                             jointSets_count, joints_count;
     map <string, vector<string> >   imagePathMap; // <string imgFileName, vector<string> imgPaths>
