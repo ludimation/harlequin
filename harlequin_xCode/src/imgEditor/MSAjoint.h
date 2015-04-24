@@ -14,21 +14,27 @@
 class MSAjoint : public ofxMSAInteractiveObject {
 public:
     
-    bool dragging;
+    bool draggable, dragging;
     int pMouseX, pMouseY;
     int colorIdle, colorOver, colorDown;
     
-    void setup() {
-        setup(IDLE_COLOR, OVER_COLOR, DOWN_COLOR);
+    MSAjoint() {
+        initializeColors();
+        dragging = false;
+        draggable = false;
     }
     
-	void setup(int colorIdle_, int colorOver_, int colorDown_) {
-		printf("MSAjoint::setup() - hello!\n");
-		enableMouseEvents();
-		enableKeyEvents();
-        setColors(colorIdle_, colorOver_, colorDown_);
-	}
-	
+    ~MSAjoint() {
+        // do nothing for now
+    }
+    
+    void setup() {
+        printf("MSAjoint::setup() - hello!\n");
+        enableMouseEvents();
+        enableKeyEvents();
+        initializeColors();
+    }
+    
 	void exit() {
 		printf("MSAjoint::exit() - goodbye!\n");
 	}
@@ -48,10 +54,18 @@ public:
         ofRect(x, y, width, height);
     }
     
+    void initializeColors() {
+        setColors(IDLE_COLOR, OVER_COLOR, DOWN_COLOR);
+    }
+    
     void setColors(int colorIdle_, int colorOver_, int colorDown_) {
         colorIdle = colorIdle_;
         colorOver = colorOver_;
         colorDown = colorDown_;
+    }
+    
+    void setDraggable(bool draggable_) {
+        draggable = draggable_;
     }
 
     
@@ -99,9 +113,11 @@ public:
 	
 	virtual void onPress(int x, int y, int button) {
 		printf("MSAjoint::onPress(x: %i, y: %i, button: %i)\n", x, y, button);
-        dragging = true;
-        pMouseX = x;
-        pMouseY = y;
+        if (draggable) {
+            dragging = true;
+            pMouseX = x;
+            pMouseY = y;
+        }
 	}
 	
 	virtual void onRelease(int x, int y, int button) {

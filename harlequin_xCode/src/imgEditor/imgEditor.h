@@ -40,9 +40,10 @@ public:
     string                          guiSettingsPath, imagesDirectory;
     //
     // joint tracking
-    int                             trackedUserIndex;
+    int                             trackedUserIndex, trackedUsersCount;
     vector< vector <MSAjoint*> >    joints;
-    int                             jointSets_count, joints_count;
+    float                           jointsScale;
+    int                             jointSetsCount, jointsCount;
     //
     // images
     map <string, vector<string> >   imagePathMap; // <string imgFileName, vector<string> imgPaths>
@@ -51,6 +52,7 @@ public:
     float                           currentImgIndexFloat;
     string                          currentImgBaseName;
     ofImage*                        img;
+    float                           imgScale;
     bool                            imgMirrored;
     
 private:

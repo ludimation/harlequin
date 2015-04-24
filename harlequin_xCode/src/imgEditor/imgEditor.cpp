@@ -31,25 +31,25 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_) {
     //     - load metadata for an image if it already exists
     ///////////////////
     img = new ofImage();
+    jointsScale = -0.5f;
     // MSA joints for editing joint position data
-    jointSets_count = 4;
-    joints_count = 15;
-    joints.resize(jointSets_count);
-    for(int set = 0; set <jointSets_count; ++set) {
-        for(int jnt = 0; jnt < joints_count; ++jnt) {
+    jointSetsCount = 18; // 0 is input skeleton, 1 is trained skeleton, 2-17 are training data points skeleton
+    jointsCount = 15;
+    joints.resize(jointSetsCount);
+    for(int set = 0; set <jointSetsCount; ++set) {
+        for(int jnt = 0; jnt < jointsCount; ++jnt) {
             MSAjoint *obj = new MSAjoint();
-            obj->set(830 + (jnt*15), 0 + (set*15), 10, 10);
-            obj->enabled = true;
-            obj->enableMouseEvents();
+            obj->set(830 + (jnt*15), 15 + (set*15), 10, 10);
             if (set == 0) {
                 // set input-based joint color
-                obj->setup(0x00FFFF, 0x0000FF, 0xFFFF00);
+                obj->setColors(0x00FFFF, 0x0000FF, 0xFFFF00);
             } else if (set == 1) {
                 // set user-specified joint color
-                obj->setup(0xFFFF00, 0x00FF00, 0xFF00FF);
+                obj->setColors(0xFFFF00, 0x00FF00, 0xFF00FF);
+                obj->enableMouseEvents();
+                obj->setDraggable(true);
             } else {
                 // set traing data joint color
-                obj->setup();
             }
             joints[set].push_back(obj);
         }
@@ -109,22 +109,36 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints) {
         } else {
             cout << "imgEditor::update() -- gui->getWidget(\"current image baseName\")->getKind() == " + ofToString(widgetType) << cout;
         }
+        
+    }
+    
+    // update GUI to match number of users in trackedUserJoints
+    if (trackedUsersCount != trackedUserJoints.size()) {
+        trackedUsersCount = trackedUserJoints.size();
+        // TODO: updated GUI to reflect number of possible tracked users
+        
     }
     
     // update MSAjoints positions to match trackedUserJoints
-    for(int jnt = 0; jnt < joints_count; ++jnt) {
-        int usr;
-        if (trackedUserIndex < trackedUserJoints.size())
-            usr = trackedUserIndex;
-        else {
-            usr = trackedUserJoints.size() - 1;
-            // TODO: updated GUI to reflect number of possible tracked users
+    for(int jnt = 0; jnt < jointsCount; ++jnt) {
+        for (int set = 0; set < jointSetsCount; ++set) {
+            MSAjoint *obj = joints[set][jnt];
+            if (set == 0) {
+                if (trackedUserIndex < trackedUsersCount) {
+                    ofPoint j = trackedUserJoints[trackedUserIndex][jnt];
+                    obj->setPosition(
+                                     ofGetWidth() / 2 + j.x * jointsScale
+                                     , ofGetHeight() / 2 + j.y * jointsScale
+                                     );
+                } else {
+                    obj->set(830 + (jnt*15), 15 + (set*15), 10, 10);
+                }
+            } else if (set == 1) {
+                // set position based on user-specified skeleton
+            } else {
+                // set position based on trained data sets
+            }
         }
-        ofPoint j = trackedUserJoints[usr][jnt];
-        joints[0][jnt]->setPosition(
-                                    ofGetWidth() / 2 + j.x
-                                  , ofGetHeight() / 2 + j.y
-                                  );
     }
 }
 
@@ -294,6 +308,30 @@ void imgEditor::setupGui() {
     trkdUserRadio -> getEmbeddedWidget(9) -> bindToKey('.');
     trkdUserRadio -> getEmbeddedWidget(9) -> bindToKey('>');
     trkdUserRadio -> activateToggle(ofToString(trackedUserIndex));
+    // capture user data button
+    ofxUILabelButton *captureUsrJntsButton = gui -> addLabelButton("'b' capture user joints", false);
+    captureUsrJntsButton -> bindToKey('b');
+    captureUsrJntsButton -> bindToKey('B');
+    gui -> addSpacer();
+    //
+    // select user data radio (add & remove embedded toggles)
+    gui -> addLabel("';' ''' captured data joints");
+    ofxUIToggleMatrix *dataTglMtx = gui -> addToggleMatrix("trained data joints", 1, 16);
+    dataTglMtx -> bindToKey(';');
+    dataTglMtx -> bindToKey(':');
+    dataTglMtx -> bindToKey('\'');
+    dataTglMtx -> bindToKey('"');
+    dataTglMtx -> bindToKey('A');
+    dataTglMtx -> setAllowMultiple(true);
+    vector<ofxUIToggle*> dataTglMtxTgls = dataTglMtx -> getToggles();
+    for (int i = 0; i < dataTglMtxTgls.size(); ++i) {
+        dataTglMtxTgls[i] -> setVisible(false);
+    }
+    // delete selected data points
+    ofxUILabelButton *deleteSelJntSetsButton = gui -> addLabelButton("'r' remove selected data joints", false);
+    deleteSelJntSetsButton -> bindToKey('r');
+    deleteSelJntSetsButton -> bindToKey('R');
+    gui -> addSpacer();
     //
     // save image data button
     ofxUILabelButton *buttonSaveData = gui -> addLabelButton("'d' save image data", false);
