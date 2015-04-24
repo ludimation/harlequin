@@ -76,7 +76,7 @@ void imgEditor::exit() {
 }
 
 //--------------------------------------------------------------
-void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints) {
+void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
     
     // load a new image if currentImgIndexFloat has been changed
     if ((int)currentImgIndexFloat != currentImgIndex) {
@@ -115,8 +115,8 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints) {
     }
     
     // update GUI to match number of users in trackedUserJoints
-    if (trackedUsersCount != trackedUserJoints.size()) {
-        trackedUsersCount = trackedUserJoints.size();
+    if (trackedUsersCount != trackedUserJoints_.size()) {
+        trackedUsersCount = trackedUserJoints_.size();
         // TODO: updated GUI to reflect number of possible tracked users
         
     }
@@ -127,7 +127,7 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints) {
             MSAjoint *obj = joints[set][jnt];
             if (set == 0) {
                 if (trackedUserIndex < trackedUsersCount) {
-                    ofPoint j = trackedUserJoints[trackedUserIndex][jnt];
+                    ofPoint j = trackedUserJoints_[trackedUserIndex][jnt];
                     obj->setPosition(
                                      ofGetWidth() / 2 + j.x * jointsScale
                                      , ofGetHeight() / 2 + j.y * jointsScale
@@ -145,7 +145,7 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints) {
 }
 
 //--------------------------------------------------------------
-void imgEditor::draw(bool drawMirrored) {
+void imgEditor::draw(bool drawMirrored_) {
     if (currentImgBaseName != "") {
         
         // calculate imageRatio
@@ -169,9 +169,9 @@ void imgEditor::draw(bool drawMirrored) {
         }
         
         // mirror image if necessary // TODO: is there a way to do this with a transformation instead?
-        if (imgMirrored != drawMirrored) {
+        if (imgMirrored != drawMirrored_) {
             img->mirror(0, true);
-            imgMirrored = drawMirrored;
+            imgMirrored = drawMirrored_;
         }
         img->setAnchorPercent(0.5f, 0.5f);
         

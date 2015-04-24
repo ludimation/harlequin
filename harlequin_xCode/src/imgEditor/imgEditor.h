@@ -19,10 +19,10 @@ class imgEditor {
 public:
     
     // core functions
-    void setup(string guiSettingsPath, string imagesDirectory);
+    void setup(string guiSettingsPath_, string imagesDirectory_);
     void exit();
-    void update(vector< vector<ofPoint> > trackedUserJoints);
-    void draw(bool drawMirrored);
+    void update(vector< vector<ofPoint> > trackedUserJoints_);
+    void draw(bool drawMirrored_);
     
     // specialized functions
     void setupGui();
