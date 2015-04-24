@@ -12,31 +12,32 @@
 //#define harlequin_imgData_h
 
 #include "ofMain.h"
+#include "ofxXmlSettings.h"
+#include "MSAjoint.h"
 
 class imgData { // can I extend ": public ofImage {//" ?
     
 public:
     
     // functions
-    bool                            open(string path);
-    bool                            save();
-    void                            draw(); // draw image
-    ofImage*                        getOFImagePTR();
+    bool open(map <string, vector<string> >::iterator it);
+    void draw(); // draw image
+    bool save();
     
-    void                            pushTrainingData(vector< ofPoint > tJoints, ofImage tImg);
-    void                            eraseTrainingData(int ti);
-    ofImage                         getTrainingIMG(int ti);
-    vector< ofPoint >               getTrainingJointSet(int ti);
+    void pushTrnData(vector< MSAjoint* > tJoints);
+    void setJointsFromJointSet(int i);
+    void showTrnData(int i);
+    void hideTrnData(int i);
+    void eraseTrnData(int i);
     // properties
-    ofColor                         drawColor;
-    ofBlendMode                     drawMode;
     
 private:
     // internal data
-    string                          path;
-    ofImage                         IMG;
-    vector< ofImage >               trainingIMGS;
-    vector< vector< ofPoint > >     trainingJointSets;
+    string                          myBaseName, mySavePath;
+    vector< ofImage* >              myImgs;
+    map< string, float >            myImgsPathScaleMap; // map of paths and their perspective scales relative to the joints skeleton
+    vector< MSAjoint* >             myJoints;
+    vector< vector< MSAjoint* > >   myTrnJointSets;
     
 };
 
