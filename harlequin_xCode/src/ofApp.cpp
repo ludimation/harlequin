@@ -554,6 +554,7 @@ void ofApp::draw() {
 //
 //                    // TODO: image drawing should be z-sorted so further images draw behind closer ones
 //                    // draw image at position and scale relative to center of screen and image
+//                    // ofSetDepthTest()?
 ////                    img.draw(imgRefPoint.x,
 ////                             imgRefPoint.y,
 ////                             img.width * imgRefPoint.z * imageScale,
