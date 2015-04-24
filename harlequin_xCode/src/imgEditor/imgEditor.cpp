@@ -12,18 +12,19 @@
 void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_) {
     
     initializing = true; // flag to check to make sure application is not running initialization operations twice
+
+    imagesDirectory = imagesDirectory_;
+    guiSettingsPath = guiSettingsPath_;
     
     ///////////////////
     // 1) create a map of all unique image file names in the images directory
     //     - include several paths for images that have multiple resolutions
     ///////////////////
-    imagesDirectory = imagesDirectory_;
     mapAllImages();
 
     ///////////////////
     // 2) setup a gui & keybindings for displaying pathMap & selecting which image to load training
     ///////////////////
-    guiSettingsPath = guiSettingsPath_;
     setupGui();
     
     ///////////////////
@@ -80,6 +81,7 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints) {
     // load a new image if currentImgIndexFloat has been changed
     if ((int)currentImgIndexFloat != currentImgIndex) {
         
+        
         // clamp current ImgIndex to length of image map
         if ((int)currentImgIndexFloat > imagePathMap.size()) currentImgIndexFloat = imagePathMap.size();
         
@@ -100,11 +102,11 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints) {
         }
         
         // update the gui text field for current image being displayed to match the updated iterator
-        ofxUIWidget* widget = gui -> getWidget("current image baseName");
+        ofxUIWidget *widget = gui -> getWidget("current image baseName");
         ofxUIWidgetType widgetType = widget->getKind();
         string newText = "current image: " + it->first;
         if (widgetType == OFX_UI_WIDGET_TEXTAREA) {
-            ofxUITextArea * textArea = (ofxUITextArea *)widget;
+            ofxUITextArea   *textArea = (ofxUITextArea *)widget;
             textArea -> setTextString(newText);
         } else {
             cout << "imgEditor::update() -- gui->getWidget(\"current image baseName\")->getKind() == " + ofToString(widgetType) << cout;
@@ -149,7 +151,7 @@ void imgEditor::draw(bool drawMirrored) {
         // calculate imageRatio
         float imgRatioX;
         float imgRatioY;
-        float imgRatio;
+        float imgScale;
         if (img->width) {
             imgRatioX = float(ofGetWidth()) / float(img->width);
         } else {
@@ -161,9 +163,9 @@ void imgEditor::draw(bool drawMirrored) {
             imgRatioY = 1.0f;
         }
         if (imgRatioX < imgRatioY) {
-            imgRatio = imgRatioX;
+            imgScale = imgRatioX;
         } else {
-            imgRatio = imgRatioY;
+            imgScale = imgRatioY;
         }
         
         // mirror image if necessary // TODO: is there a way to do this with a transformation instead?
@@ -177,8 +179,8 @@ void imgEditor::draw(bool drawMirrored) {
         img->draw(
                     ofGetWidth() / 2
                   , ofGetHeight() / 2
-                  , img->width * imgRatio
-                  , img->height * imgRatio
+                  , img->width * imgScale
+                  , img->height * imgScale
                   );
         
         ofPopStyle();
@@ -298,11 +300,11 @@ void imgEditor::setupGui() {
     buttonUpdateImgList -> bindToKey('U');
     gui -> addSpacer();
     //
-    // GUI for selecting user from tracked joints list
+    // tracked user radio
     gui -> addLabel("'<' '>' user being tracked");
     vector<string> trkdUserV;
     trkdUserV.push_back("0"); trkdUserV.push_back("1"); trkdUserV.push_back("2"); trkdUserV.push_back("3"); trkdUserV.push_back("4"); trkdUserV.push_back("5"); trkdUserV.push_back("6"); trkdUserV.push_back("7"); trkdUserV.push_back("<"); trkdUserV.push_back(">");
-    ofxUIRadio* trkdUserRadio = gui -> addRadio("traked user", trkdUserV, OFX_UI_ORIENTATION_HORIZONTAL);
+    ofxUIRadio *trkdUserRadio = gui -> addRadio("traked user", trkdUserV, OFX_UI_ORIENTATION_HORIZONTAL);
     trkdUserRadio -> getEmbeddedWidget(8) -> bindToKey(',');
     trkdUserRadio -> getEmbeddedWidget(8) -> bindToKey('<');
     trkdUserRadio -> getEmbeddedWidget(9) -> bindToKey('.');
@@ -334,15 +336,15 @@ void imgEditor::setupGui() {
     gui -> addSpacer();
     //
     // save image data button
-    ofxUILabelButton *buttonSaveData = gui -> addLabelButton("'d' save image data", false);
-    buttonSaveData -> bindToKey('d');
-    buttonSaveData -> bindToKey('D');
+    ofxUILabelButton *saveImgDataButton = gui -> addLabelButton("'d' save image data", false);
+    saveImgDataButton -> bindToKey('d');
+    saveImgDataButton -> bindToKey('D');
     gui -> addSpacer();
     //
     // save image loader settings button // what would these be? selected image + directories?
-    ofxUILabelButton *buttonSaveSettings = gui -> addLabelButton("'s' save imgLoader settings", false);
-    buttonSaveSettings -> bindToKey('s');
-    buttonSaveSettings -> bindToKey('S');
+    ofxUILabelButton *saveImgEditorSettingsButton = gui -> addLabelButton("'s' save imgEditor settings", false);
+    saveImgEditorSettingsButton -> bindToKey('s');
+    saveImgEditorSettingsButton -> bindToKey('S');
     //
     // closing operations
     gui -> autoSizeToFitWidgets();
@@ -358,6 +360,7 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
     ofxUIWidgetType     kind    = e.widget->getKind();
     ofxUIButton         *button;
     ofxUILabelButton    *labelbutton;
+    ofxUIRadio          *radio;
     bool                buttonPressed = false;
     
     if (kind == OFX_UI_WIDGET_BUTTON) {
@@ -385,7 +388,6 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
         
     } else if (nameStr == "tracked user" ||nameStr=="0"||nameStr=="1"||nameStr=="2"||nameStr=="3"||nameStr=="4"||nameStr=="5"||nameStr=="6"||nameStr=="7"||nameStr=="<"||nameStr==">") {
         //
-        ofxUIRadio* radio;
         if (kind == OFX_UI_WIDGET_RADIO) {
             radio = (ofxUIRadio*)e.widget;
         } else {
@@ -404,7 +406,7 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
         radio -> activateToggle(ofToString(trackedUserIndex));
         
         
-    } else if (nameStr == "'s' save imgLoader settings") {
+    } else if (nameStr == "'s' save imgEditor settings") {
         if (!buttonPressed && !initializing && !ofGetMousePressed()) {
             // when button is released, not when dragging out, or simply when gui is created during setup();
             gui->saveSettings(guiSettingsPath);
