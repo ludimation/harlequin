@@ -9,10 +9,11 @@
 #include "imgEditor.h"
 
 //--------------------------------------------------------------
-void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_) {
+void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string imageJointDataDirectory_) {
     
     initializing = true; // flag to check to make sure application is not running initialization operations twice
-
+    currentImgBaseName = "";
+    
     imagesDirectory = imagesDirectory_;
     guiSettingsPath = guiSettingsPath_;
     
@@ -31,29 +32,17 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_) {
     // 3) setup interactive elements for training image metadata
     //     - load metadata for an image if it already exists
     ///////////////////
+    imgData *imgDataObj = new imgData();
+    imgDataObj -> open(it, imageJointDataDirectory_);
     img = new ofImage();
     jointsScale = -0.5f;
-    // MSA joints for editing joint position data
-    jointSetsCount = 18; // 0 is input skeleton, 1 is trained skeleton, 2-17 are training data points skeleton
+    // MSA joints for displaying joint position data before capturing it
     jointsCount = 15;
-    joints.resize(jointSetsCount);
-    for(int set = 0; set <jointSetsCount; ++set) {
-        for(int jnt = 0; jnt < jointsCount; ++jnt) {
-            MSAjoint *obj = new MSAjoint();
-            obj->set(830 + (jnt*15), 15 + (set*15), 10, 10);
-            if (set == 0) {
-                // set input-based joint color
-                obj->setColors(0x00FFFF, 0x0000FF, 0xFFFF00);
-            } else if (set == 1) {
-                // set user-specified joint color
-                obj->setColors(0xFFFF00, 0x00FF00, 0xFF00FF);
-                obj->enableMouseEvents();
-                obj->setDraggable(true);
-            } else {
-                // set traing data joint color
-            }
-            joints[set].push_back(obj);
-        }
+    for(int jnt = 0; jnt < jointsCount; ++jnt) {
+        MSAjoint *obj = new MSAjoint();
+        obj->set(830 + (jnt*15), 15, 10, 10);
+        obj->setColors(0x00FFFF, 0x0000FF, 0xFFFF00);
+        joints.push_back(obj);
     }
     
     ///////////////////
@@ -72,6 +61,7 @@ void imgEditor::exit() {
     delete img;
     joints.clear();
     vector<vector<MSAjoint*> >().swap(joints);
+    delete imgDataObj; imgDataObj = NULL;
     
 }
 
@@ -123,23 +113,16 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
     
     // update MSAjoints positions to match trackedUserJoints
     for(int jnt = 0; jnt < jointsCount; ++jnt) {
-        for (int set = 0; set < jointSetsCount; ++set) {
-            MSAjoint *obj = joints[set][jnt];
-            if (set == 0) {
-                if (trackedUserIndex < trackedUsersCount) {
-                    ofPoint j = trackedUserJoints_[trackedUserIndex][jnt];
-                    obj->setPosition(
-                                     ofGetWidth() / 2 + j.x * jointsScale
-                                     , ofGetHeight() / 2 + j.y * jointsScale
-                                     );
-                } else {
-                    obj->set(830 + (jnt*15), 15 + (set*15), 10, 10);
-                }
-            } else if (set == 1) {
-                // set position based on user-specified skeleton
-            } else {
-                // set position based on trained data sets
-            }
+        MSAjoint *obj = joints[jnt];
+        if (trackedUserIndex < trackedUsersCount) {
+            ofPoint j = trackedUserJoints_[trackedUserIndex][jnt];
+            obj->setPosition3D(
+                                 ofGetWidth() / 2   + j.x * jointsScale
+                               , ofGetHeight() / 2  + j.y * jointsScale
+                               ,                    + j.z * jointsScale
+                             );
+        } else {
+            obj->set(830 + (jnt*15), 15, 10, 10);
         }
     }
 }

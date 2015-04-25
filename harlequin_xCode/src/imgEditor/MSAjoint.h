@@ -17,22 +17,26 @@ public:
     bool draggable, dragging;
     int pMouseX, pMouseY;
     int colorIdle, colorOver, colorDown;
+    float z;
     
     MSAjoint() {
-        initializeColors();
+        setColors(IDLE_COLOR, OVER_COLOR, DOWN_COLOR);
         dragging = false;
         draggable = false;
+        pMouseX = ofGetMouseX();
+        pMouseY = ofGetMouseY();
+        z = 0;
     }
     
     ~MSAjoint() {
         // do nothing for now
     }
-    
+
+    // core functions
     void setup() {
         printf("MSAjoint::setup() - hello!\n");
         enableMouseEvents();
         enableKeyEvents();
-        initializeColors();
     }
     
 	void exit() {
@@ -54,14 +58,16 @@ public:
         ofRect(x, y, width, height);
     }
     
-    void initializeColors() {
-        setColors(IDLE_COLOR, OVER_COLOR, DOWN_COLOR);
-    }
     
     void setColors(int colorIdle_, int colorOver_, int colorDown_) {
         colorIdle = colorIdle_;
         colorOver = colorOver_;
         colorDown = colorDown_;
+    }
+    
+    void setPosition3D(float _x, float _y, float _z) {
+        z = _z;
+        this->setPosition(_x, _y);
     }
     
     void setDraggable(bool draggable_) {

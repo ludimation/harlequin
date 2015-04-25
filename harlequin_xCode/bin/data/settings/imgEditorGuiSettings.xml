@@ -8,7 +8,7 @@
 <Widget>
     <Kind>4</Kind>
     <Name>imagePathMap index</Name>
-    <Value>40.587837219</Value>
+    <Value>20.587837219</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -62,81 +62,81 @@
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(0,0)</Name>
+    <Name>trained data joints(0,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(1,0)</Name>
+    <Name>trained data joints(1,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(2,0)</Name>
+    <Name>trained data joints(2,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(3,0)</Name>
+    <Name>trained data joints(3,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(4,0)</Name>
+    <Name>trained data joints(4,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(5,0)</Name>
+    <Name>trained data joints(5,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(6,0)</Name>
+    <Name>trained data joints(6,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(7,0)</Name>
+    <Name>trained data joints(7,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(8,0)</Name>
+    <Name>trained data joints(8,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(9,0)</Name>
+    <Name>trained data joints(9,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(10,0)</Name>
+    <Name>trained data joints(10,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(11,0)</Name>
+    <Name>trained data joints(11,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(12,0)</Name>
+    <Name>trained data joints(12,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(13,0)</Name>
+    <Name>trained data joints(13,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(14,0)</Name>
+    <Name>trained data joints(14,0)</Name>
     <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>trained data(15,0)</Name>
+    <Name>trained data joints(15,0)</Name>
     <Value>0</Value>
 </Widget>

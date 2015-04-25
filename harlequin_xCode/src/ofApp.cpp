@@ -15,7 +15,7 @@ void ofApp::setup() {
     // image handlers //
     ////////////////////
     imgEdtr = new imgEditor();
-    imgEdtr->setup("settings/imgEditorGuiSettings.xml", "images");
+    imgEdtr->setup("settings/imgEditorGuiSettings.xml", "images", "imageJointData");
     //    GRTMngr = new GRTManager();
     //    // move to image handler
     //    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image

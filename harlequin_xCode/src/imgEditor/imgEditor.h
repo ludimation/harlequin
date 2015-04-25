@@ -12,6 +12,7 @@
 //#define harlequin_imgEditor_h
 
 #include "ofxUI.h"
+#include "imgData.h"
 #include "MSAjoint.h"
 
 class imgEditor {
@@ -19,7 +20,7 @@ class imgEditor {
 public:
     
     // core functions
-    void setup(string guiSettingsPath_, string imagesDirectory_);
+    void setup(string guiSettingsPath_, string imagesDirectory_, string imageJointDataDirectory_);
     void exit();
     void update(vector< vector<ofPoint> > trackedUserJoints_);
     void draw(bool drawMirrored_);
@@ -41,7 +42,7 @@ public:
     //
     // joint tracking
     int                             trackedUserIndex, trackedUsersCount;
-    vector< vector <MSAjoint*> >    joints;
+    vector<MSAjoint*>               joints;
     float                           jointsScale;
     int                             jointSetsCount, jointsCount;
     //
@@ -51,7 +52,9 @@ public:
     int                             currentImgIndex;
     float                           currentImgIndexFloat;
     string                          currentImgBaseName;
-    ofImage*                        img;
+    imgData                         *imgDataObj;
+    // move to imgData
+    ofImage                         *img;
     float                           imgScale;
     bool                            imgMirrored;
     
