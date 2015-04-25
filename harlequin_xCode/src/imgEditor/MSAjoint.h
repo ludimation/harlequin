@@ -43,12 +43,10 @@ public:
 		printf("MSAjoint::exit() - goodbye!\n");
 	}
 	
-	
 	void update() {
 		//		x = ofGetWidth()/2 + cos(ofGetElapsedTimef() * 0.2) * ofGetWidth()/4;
 		//		y = ofGetHeight()/2 + sin(ofGetElapsedTimef() * 0.2) * ofGetHeight()/4;
 	}
-	
 	
 	void draw() {
 		if(isMousePressed()) ofSetHexColor(colorDown);
@@ -57,7 +55,6 @@ public:
 		
         ofRect(x, y, width, height);
     }
-    
     
     void setColors(int colorIdle_, int colorOver_, int colorDown_) {
         colorIdle = colorIdle_;
@@ -74,7 +71,6 @@ public:
         draggable = draggable_;
     }
 
-    
 	virtual void onRollOver(int x, int y) {
 		printf("MSAjoint::onRollOver(x: %i, y: %i)\n", x, y);
 	}
