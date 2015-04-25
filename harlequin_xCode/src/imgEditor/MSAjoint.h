@@ -72,11 +72,11 @@ public:
     }
 
 	virtual void onRollOver(int x, int y) {
-		printf("MSAjoint::onRollOver(x: %i, y: %i)\n", x, y);
+//		printf("MSAjoint::onRollOver(x: %i, y: %i)\n", x, y);
 	}
 	
 	virtual void onRollOut() {
-		printf("MSAjoint::onRollOut()\n");
+//		printf("MSAjoint::onRollOut()\n");
 	}
 	
 	virtual void onMouseMove(int x, int y){
@@ -114,30 +114,30 @@ public:
 	}
 	
 	virtual void onPress(int x, int y, int button) {
-		printf("MSAjoint::onPress(x: %i, y: %i, button: %i)\n", x, y, button);
         if (draggable) {
             dragging = true;
             pMouseX = x;
             pMouseY = y;
         }
+//		printf("MSAjoint::onPress(x: %i, y: %i, button: %i)\n", x, y, button);
 	}
 	
 	virtual void onRelease(int x, int y, int button) {
-		printf("MSAjoint::onRelease(x: %i, y: %i, button: %i)\n", x, y, button);
         if (dragging) dragging = false;
+//		printf("MSAjoint::onRelease(x: %i, y: %i, button: %i)\n", x, y, button);
 	}
 	
 	virtual void onReleaseOutside(int x, int y, int button) {
-		printf("MSAjoint::onReleaseOutside(x: %i, y: %i, button: %i)\n", x, y, button);
         if (dragging) dragging = false;
+//		printf("MSAjoint::onReleaseOutside(x: %i, y: %i, button: %i)\n", x, y, button);
 	}
 	
 	virtual void keyPressed(int key) {
-		printf("MSAjoint::keyPressed(key: %i)\n", key);
+//		printf("MSAjoint::keyPressed(key: %i)\n", key);
 	}
 	
 	virtual void keyReleased(int key) {
-		printf("MSAjoint::keyReleased(key: %i)\n", key);
+//		printf("MSAjoint::keyReleased(key: %i)\n", key);
 	}
 	
 };
