@@ -70,6 +70,10 @@ public:
     void setDraggable(bool draggable_) {
         draggable = draggable_;
     }
+    
+    bool getDragging() {
+        return dragging;
+    }
 
 	virtual void onRollOver(int x, int y) {
 //		printf("MSAjoint::onRollOver(x: %i, y: %i)\n", x, y);
@@ -83,10 +87,20 @@ public:
 //		printf("MSAjoint::onMouseMove(x: %i, y: %i)\n", x, y);
 	}
     
+    void startDragging() {
+        if (draggable) {
+            dragging = true;
+        }
+    }
+    
+    void stopDragging() {
+        if (dragging) dragging = false;
+    }
+    
     void updatePosition(int x, int y) {
         // TODO: extend this class to include a Z coordinate >> to be set relative to MSAlimb
-        this->x += x - pMouseX;
-        this->y += y - pMouseY;
+        this->x += x - ofGetPreviousMouseX();
+        this->y += y - ofGetPreviousMouseY();
         
         // TODO: make sure objects cannnot get dragged off the edge of the screen
         //        this->x -= (float)((int)this->x % ofGetWidth());
@@ -95,9 +109,6 @@ public:
         //        this->y = fmod(this->y, ofGetHeight());
         //
         //        if this-> >= ofGetWidth();
-        
-        pMouseX = x;
-        pMouseY = y;
     }
     
     void mouseDragged(int x, int y, int button) {
@@ -114,22 +125,18 @@ public:
 	}
 	
 	virtual void onPress(int x, int y, int button) {
-        if (draggable) {
-            dragging = true;
-            pMouseX = x;
-            pMouseY = y;
-        }
 //		printf("MSAjoint::onPress(x: %i, y: %i, button: %i)\n", x, y, button);
+        startDragging();
 	}
 	
 	virtual void onRelease(int x, int y, int button) {
-        if (dragging) dragging = false;
 //		printf("MSAjoint::onRelease(x: %i, y: %i, button: %i)\n", x, y, button);
+        stopDragging();
 	}
 	
 	virtual void onReleaseOutside(int x, int y, int button) {
-        if (dragging) dragging = false;
 //		printf("MSAjoint::onReleaseOutside(x: %i, y: %i, button: %i)\n", x, y, button);
+        stopDragging();
 	}
 	
 	virtual void keyPressed(int key) {

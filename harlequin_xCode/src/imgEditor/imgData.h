@@ -26,7 +26,7 @@ public:
     int                             myJointsCount;
     vector< MSAjoint* >             myJoints;
     vector< vector< MSAjoint* > >   myTrnJointSets;
-    bool                            myJointsEdited; // flag to check to see if the joints have been edited yet
+    bool                            myJointsEdited, dragging; // flag to check to see if the joints have been edited yet
     int                             myJointSize, myTrainingDataJointsSize;
 
     // obj creator
@@ -35,19 +35,24 @@ public:
         myBaseName, mySavePath = "";
         myJointsCount = 15;
         myJointsEdited = false;
+        dragging = false;
         myJointSize = 10;
         myTrainingDataJointsSize = 5;
         
         // populate gui joints vector
         for(int jnt = 0; jnt < myJointsCount; ++jnt) {
             MSAjoint *obj = new MSAjoint();
-            obj->set(830 + (jnt*myJointSize + 5), myJointSize*3, myJointSize, myJointSize);
+            obj->set(830 + (jnt * (myJointSize + 5)), myJointSize*3, myJointSize, myJointSize);
             // set user-specified joint color
             obj->setColors(0xFFFF00, 0x00FF00, 0xFF00FF);
             obj->enableMouseEvents();
             obj->setDraggable(true);
             myJoints.push_back(obj);
         }
+        
+        // add mousepressed listener AFTER creating joints above so that it executes after one of them was pressed
+        ofAddListener(ofEvents().mousePressed, this, &imgData::mousePressed);
+        ofAddListener(ofEvents().mouseReleased, this, &imgData::mouseReleased);
     };
     // obj destructor
     ~imgData() {
@@ -91,6 +96,44 @@ public:
     };
     
     // training data manipulation functions
+    void mousePressed(ofMouseEventArgs &e) {
+        
+        cout << "imgEditor::mousePressed() -- executing" << endl;
+        
+        int x = e.x;
+        int y = e.y;
+        int button = e.button;
+        int jntBeingDragged = -1;
+        
+        // cycle through myJoints to see if any of them are being dragged
+        for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
+            if (myJoints[jnt] -> getDragging()) {
+                jntBeingDragged = jnt;
+                
+                cout << " -- myJoints[" << ofToString(jnt) << "] -> getDragging() = " << ofToString(myJoints[jnt] -> getDragging()) << endl;
+            }
+        }
+        cout << " -- jntBeingDragged = " << ofToString(jntBeingDragged) << endl;
+        
+        // cycle through myJoints again to send mousePressed message so they all drag together
+        if (jntBeingDragged != -1) {
+            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
+                if (jnt != jntBeingDragged) myJoints[jnt]->onPress(x, y, button);
+            }
+            dragging = true;
+            myJointsEdited = true;
+        }
+    }
+    
+    void mouseReleased(ofMouseEventArgs &e) {
+        if (dragging) {
+            dragging = false;
+            // update the anchor of image (as percentage) in data based on position of root joint relative to the center of the image
+            float xPct = (myJoints[0]->x - (ofGetWidth()/2.0f)) /  * (float)myImgs[currentImgIndex]->width / (float)ofGetWidth();
+            float yPct = 0.0f;
+        }
+    }
+
     void pushTrnData(vector< MSAjoint* > tJoints_) {
         // if the number of pushed joints matches the expected number of joints
         if (tJoints_.size() != myJointsCount) {
