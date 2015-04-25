@@ -22,7 +22,7 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string i
     //     - include several paths for images that have multiple resolutions
     ///////////////////
     mapAllImages();
-
+    
     ///////////////////
     // 2) setup a gui & keybindings for displaying pathMap & selecting which image to load training
     ///////////////////
@@ -57,12 +57,16 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string i
 //--------------------------------------------------------------
 void imgEditor::exit() {
     
-    delete gui;
-    delete img;
-    joints.clear();
-    vector<vector<MSAjoint*> >().swap(joints);
+    // clean up objects
+    delete gui; gui = NULL;
+    delete img; img = NULL;
     delete imgDataObj; imgDataObj = NULL;
     
+    // MSAjoints list
+    for (int i = 0; i < joints.size(); ++i) {
+        delete joints[i]; joints[i] = NULL;
+    }
+    vector<MSAjoint*>().swap(joints); // TODO: joints -- does swapping it for an empty vector call "delete" for each object pointed to?
 }
 
 //--------------------------------------------------------------
