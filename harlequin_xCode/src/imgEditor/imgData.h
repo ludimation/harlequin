@@ -26,6 +26,7 @@ public:
     int                             myJointsCount;
     vector< MSAjoint* >             myJoints;
     vector< vector< MSAjoint* > >   myTrnJointSets;
+    int                             myTrnJointSetsSize;
     bool                            myJointsEdited, dragging; // flag to check to see if the joints have been edited yet
     int                             myJointSize, myTrainingDataJointsSize;
 
@@ -38,6 +39,7 @@ public:
         dragging = false;
         myJointSize = 10;
         myTrainingDataJointsSize = 5;
+        myTrnJointSetsSize = 0;
         
         // populate gui joints vector
         for(int jnt = 0; jnt < myJointsCount; ++jnt) {
@@ -152,7 +154,12 @@ public:
         }
         // push the vector to the vector of training joint sets
         myTrnJointSets.push_back(tJoints);
+        myTrnJointSetsSize++;
     };
+    
+    int getTrnDataSize () {
+        return myTrnJointSetsSize;
+    }
     
     void setTrnDataVisibilty(int i_, bool visible_) {
         // if specified training set exists
@@ -182,7 +189,7 @@ public:
         for (int jnt = 0; jnt < myJointsCount; ++jnt) {
             delete myTrnJointSets[i_][jnt]; myTrnJointSets[i_][jnt] = NULL;
         }
-        
+        myTrnJointSetsSize--;
     };
     
     void setJointsFromTrainingJointSet(int i_) {
