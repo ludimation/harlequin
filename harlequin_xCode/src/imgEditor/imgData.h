@@ -283,6 +283,38 @@ public:
         myJointsEdited = true;
     };
     
+    //    enum Joint { // joint reference from OpenNI code
+    //
+    //        // start at root joint
+    //        JOINT_TORSO = 0,
+    //        JOINT_NECK,
+    //        JOINT_HEAD,
+    //
+    //        // left arm + shoulder
+    //        JOINT_LEFT_SHOULDER,
+    //        JOINT_LEFT_ELBOW,
+    //        JOINT_LEFT_HAND,
+    //
+    //        // right arm + shoulder
+    //        JOINT_RIGHT_SHOULDER,
+    //        JOINT_RIGHT_ELBOW,
+    //        JOINT_RIGHT_HAND,
+    //
+    //        // left leg
+    //        JOINT_LEFT_HIP,
+    //        JOINT_LEFT_KNEE,
+    //        JOINT_LEFT_FOOT,
+    //
+    //        // right leg
+    //        JOINT_RIGHT_HIP,
+    //        JOINT_RIGHT_KNEE,
+    //        JOINT_RIGHT_FOOT,
+    //
+    //        JOINT_COUNT,
+    //        JOINT_UNKOWN
+    //    };
+
+    
 private:
 
     // internal data
