@@ -95,48 +95,47 @@ public:
     bool open(map <string, vector<string> >::iterator it_, string imageJointDataDirectory_, float jointsScale_) {
         // try to load the XML file
         // if it exists, set imgData properties to match
-        // otherwise, use default data (should already be set up?
+        // otherwise, use default data (should already be set up in constructor)
         
-//        cout << "imgData::open() -- it->first = " << it->first << "; it->second = " << ofToString(it->second) << endl;
-//        cout << "imgData::open() -- it_->first = " << it_->first << "; it_->second = " << ofToString(it_->second) << endl;
-//        it = it_;
-//    
-//        mySavePath = imageJointDataDirectory_;
-//        myBaseName = it->first;
-//        currentImgIndex = it->second.size() -1;
-//        jointsScale = jointsScale_;
-//        for (int imgPathIndex = 0; imgPathIndex <it->second.size(); ++imgPathIndex) {
-//            ofImage *img = new ofImage();
-//            string path = it->second[imgPathIndex];
-//            if (img->loadImage(path)) {
-//                img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
-//                myImgs.push_back(img);
-//                
-//                // calculate imageScale
-//                float imgRatioX;
-//                float imgRatioY;
-//                float imgScale;
-//                if (img->width) {
-//                    imgRatioX = float(ofGetWidth()) / float(img->width);
-//                } else {
-//                    imgRatioX = 1.0f;
-//                }
-//                if (img->height) {
-//                    imgRatioY = float(ofGetHeight()) / float(img->height);
-//                } else {
-//                    imgRatioY = 1.0f;
-//                }
-//                if (imgRatioX < imgRatioY) {
-//                    imgScale = imgRatioX;
-//                } else {
-//                    imgScale = imgRatioY;
-//                }
-//
-//                myImgsPathScaleMap[path]= imgScale;
-//            } else {
-//                cout << "imgData::open() -- could not load image at path = " << path << endl;
-//            }
-//        }
+        it = it_;
+        mySavePath = imageJointDataDirectory_;
+        myBaseName = it->first;
+        currentImgIndex = it->second.size() -1;
+        jointsScale = jointsScale_;
+        
+        // load images and calculate scales
+        for (int imgPathIndex = 0; imgPathIndex <it->second.size(); ++imgPathIndex) {
+            ofImage *img = new ofImage();
+            string path = it->second[imgPathIndex];
+            if (img->loadImage(path)) {
+                img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
+                myImgs.push_back(img);
+                
+                // calculate imageScale
+                float imgRatioX;
+                float imgRatioY;
+                float imgScale;
+                if (img->width) {
+                    imgRatioX = float(ofGetWidth()) / float(img->width);
+                } else {
+                    imgRatioX = 1.0f;
+                }
+                if (img->height) {
+                    imgRatioY = float(ofGetHeight()) / float(img->height);
+                } else {
+                    imgRatioY = 1.0f;
+                }
+                if (imgRatioX < imgRatioY) {
+                    imgScale = imgRatioX;
+                } else {
+                    imgScale = imgRatioY;
+                }
+
+                myImgsPathScaleMap[path]= imgScale;
+            } else {
+                cout << "imgData::open() -- could not load image at path = " << path << endl;
+            }
+        }
     };
     
     void draw(bool drawMirrored_) {
@@ -172,9 +171,7 @@ public:
     
     // training data manipulation functions
     void mousePressed(ofMouseEventArgs &e) {
-        
-//        cout << "imgData::mousePressed() -- executing" << endl;
-        
+
         int x = e.x;
         int y = e.y;
         int button = e.button;
@@ -185,10 +182,8 @@ public:
             if (myJoints[jnt] -> getDragging()) {
                 jntBeingDragged = jnt;
                 
-//                cout << " -- myJoints[" << ofToString(jnt) << "] -> getDragging() = " << ofToString(myJoints[jnt] -> getDragging()) << endl;
             }
         }
-//        cout << " -- jntBeingDragged = " << ofToString(jntBeingDragged) << endl;
         
         // cycle through myJoints again to send mousePressed message so they all drag together
         if (jntBeingDragged != -1) {
@@ -203,36 +198,36 @@ public:
     void mouseReleased(ofMouseEventArgs &e) {
         if (dragging) {
             dragging = false;
-//            // update the anchor of image (as percentage) in data based on position of root joint relative to the center of the image
-//            float xPct = (myJoints[0]->x - (ofGetWidth()/2.0f)) /  * (float)myImgs[currentImgIndex]->width / (float)ofGetWidth();
-//            float yPct = 0.0f;
+            // update the anchor of image (as percentage) in data based on
+            // position of root joint relative to the center of the image
+            // float xPct = (myJoints[0]->x - (ofGetWidth()/2.0f)) /  * (float)myImgs[currentImgIndex]->width / (float)ofGetWidth();
+            // float yPct = 0.0f;
         }
     }
 
     void pushTrnData(vector< MSAjoint* > &tJoints_) {
-//        // if the number of pushed joints matches the expected number of joints
-//        if (tJoints_.size() != myJointsCount) {
-//            cout << "imgData::pushTrnData(vector<MSAjoint *> tJoints_) -- tJoints_.size() != myJointsCount " << endl;
-//            cout << " -- tJoints_.size() = " << ofToString(tJoints_.size()) << ", myJointsCount = " << myJointsCount << endl;
-//            return;
-//        }
-//        
-//        // create a vector of MSAjoint objects for each joint
-//        vector<MSAjoint*> tJoints;
-//        for (int jnt = 0; jnt < myJointsCount; ++jnt) {
-//            MSAjoint *obj = new MSAjoint();
-//            obj->setPosition3D(tJoints_[jnt]->x, tJoints_[jnt]->y, tJoints_[jnt]->z);
-//            obj->setSize(myTrainingDataJointSize, myTrainingDataJointSize);
-//            tJoints.push_back(obj);
-//        }
-//        // push the vector to the vector of training joint sets
-//        myTrnJointSets.push_back(tJoints);
+        // if the number of pushed joints matches the expected number of joints
+        if (tJoints_.size() != myJointsCount) {
+            cout << "imgData::pushTrnData(vector<MSAjoint *> tJoints_) -- tJoints_.size() != myJointsCount " << endl;
+            cout << " -- tJoints_.size() = " << ofToString(tJoints_.size()) << ", myJointsCount = " << myJointsCount << endl;
+            return;
+        }
+        
+        // create a vector of MSAjoint objects for each joint
+        vector<MSAjoint*> tJoints;
+        for (int jnt = 0; jnt < myJointsCount; ++jnt) {
+            MSAjoint *obj = new MSAjoint();
+            obj->setPosition3D(tJoints_[jnt]->x, tJoints_[jnt]->y, tJoints_[jnt]->z);
+            obj->setSize(myTrainingDataJointSize, myTrainingDataJointSize);
+            tJoints.push_back(obj);
+        }
+        // push the vector to the vector of training joint sets
+        myTrnJointSets.push_back(tJoints);
 
-        //        int myTrnJointSetsSize;
         myTrnJointSetsSize++;
         
-//        cout << "imgData::pushTrnData(vector<MSAjoint *> &tJoints_) -- executed" << endl;
-//        cout << " -- myTrnJointSetsSize = " << ofToString(myTrnJointSetsSize) << endl;
+        // cout << "imgData::pushTrnData(vector<MSAjoint *> &tJoints_) -- executed" << endl;
+        // cout << " -- myTrnJointSetsSize = " << ofToString(myTrnJointSetsSize) << endl;
     };
     
     int getTrnDataSize () {
