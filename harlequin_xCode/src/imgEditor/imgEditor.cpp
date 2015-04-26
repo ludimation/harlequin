@@ -32,7 +32,7 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string i
     //     - load metadata for an image if it already exists
     ///////////////////
     img = new ofImage();
-    imgData *imgDataObj = new imgData();
+    imgDataObj = new imgData();
     imgDataObj -> open(it, imageJointDataDirectory_, jointsScale);
     // MSA joints for displaying joint position data before capturing it
     jointsCount = 15;
@@ -412,12 +412,13 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
                 // store training joint positions imgDataObj
                 imgDataObj -> pushTrnData(joints);
                 // update "';' ''' captured data joints" gui to reflect an added data point
-                guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()] -> toggleVisible();
+                guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()-1] -> toggleVisible();
             } else {
                 cout << "imgEditor:: guiEvent(ofxUIEventArgs &e) -- already trained maximum training data sets = " << ofToString(guiJntDataTglMtxTgls.size()) << endl;
                 cout << " -- delete some training data sets for this image in order to create new ones." << endl ;
             }
         }
+        
         
     } else if (nameStr == "'s' save imgEditor settings") {
         if (buttonReleased) {

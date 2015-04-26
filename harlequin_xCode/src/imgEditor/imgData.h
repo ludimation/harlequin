@@ -11,7 +11,6 @@
 //#ifndef harlequin_imgData_h
 //#define harlequin_imgData_h
 
-#include "ofMain.h"
 #include "ofxXmlSettings.h"
 #include "MSAjoint.h"
 
@@ -232,12 +231,12 @@ public:
         //        int myTrnJointSetsSize;
         myTrnJointSetsSize++;
         
-        cout << "imgData::pushTrnData(vector<MSAjoint *> &tJoints_) -- executed" << endl;
+//        cout << "imgData::pushTrnData(vector<MSAjoint *> &tJoints_) -- executed" << endl;
+//        cout << " -- myTrnJointSetsSize = " << ofToString(myTrnJointSetsSize) << endl;
     };
     
     int getTrnDataSize () {
-        return 0;
-//        return myTrnJointSetsSize;
+        return myTrnJointSetsSize;
     }
     
     void setTrnDataVisibilty(int i_, bool visible_) {
