@@ -329,7 +329,9 @@ void imgEditor::setupGui() {
     // delete selected data points
     ofxUILabelButton *deleteSelJntSetsButton = gui -> addLabelButton("'r' remove selected data joints", false);
     deleteSelJntSetsButton -> bindToKey('r');
-    deleteSelJntSetsButton -> bindToKey('R');
+    // delete data points that are un-selected
+    ofxUILabelButton *deleteNonSelJntSetsButton = gui -> addLabelButton("'R' remove UN-selected data joints", false);
+    deleteNonSelJntSetsButton -> bindToKey('R');
     gui -> addSpacer();
     //
     // save image data button
@@ -370,6 +372,8 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
         buttonPressed = labelbutton -> getValue();
     } else if (kind == OFX_UI_WIDGET_TOGGLEMATRIX) {
         toggleMatrix = (ofxUIToggleMatrix*)e.widget;
+    } else if (kind == OFX_UI_WIDGET_TOGGLE) {
+        if (e.widget -> getParent() -> getName() == "trained data joints") upatedTrnDataVisibilty();
     }
     // register button release only when mouse buttons are not pressed and application is not initializing
     if (!buttonPressed && !initializing && !ofGetMousePressed()) buttonReleased = true;
@@ -422,24 +426,59 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
                 cout << "imgEditor:: guiEvent(ofxUIEventArgs &e) -- already trained maximum training data sets = " << ofToString(guiJntDataTglMtxTgls.size()) << endl;
                 cout << " -- delete some training data sets for this image in order to create new ones." << endl ;
             }
+            upatedTrnDataVisibilty();
         }
     } else if (nameStr == "'r' remove selected data joints") {
-        // cycle through toggles from end to start and erase data for those sets
-        for (int tgl = guiJntDataTglMtxTgls.size()-1; tgl >= 0; --tgl) {
-            if (guiJntDataTglMtxTgls[tgl] -> getValue()) {
-                imgDataObj -> eraseTrnData(tgl);
-                guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()] -> toggleVisible();
+        if (buttonReleased) {
+            // cycle through toggles from end to start and erase data for selected sets
+            for (int tgl = imgDataObj -> getTrnDataSize()-1; tgl >= 0; --tgl) {
+                if (guiJntDataTglMtxTgls[tgl] -> getValue()) {
+                    imgDataObj -> eraseTrnData(tgl);
+                    guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()] -> toggleVisible();
+                }
             }
+            // reset all toggles
+            guiJntDataTglMtx -> setAllToggles(false);
+            upatedTrnDataVisibilty();
+        }
+    } else if (nameStr == "'R' remove UN-selected data joints") {
+        if (buttonReleased) {
+            // cycle through toggles from end to start and erase data for unselected sets
+            for (int tgl = imgDataObj -> getTrnDataSize()-1; tgl >= 0; --tgl) {
+                if (!guiJntDataTglMtxTgls[tgl] -> getValue()) {
+                    imgDataObj -> eraseTrnData(tgl);
+                    guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()] -> toggleVisible();
+                }
+            }
+            // reset all toggles
+            guiJntDataTglMtx -> setAllToggles(false);
+            // re-select all visible toggles
+            for (int tgl = 0; tgl< imgDataObj -> getTrnDataSize(); ++tgl) {
+                guiJntDataTglMtxTgls[tgl] -> toggleValue();
+            }
+            
+            upatedTrnDataVisibilty();
         }
         
-        // reset all toggles
-        guiJntDataTglMtx -> setAllToggles(false);
         
     } else if (nameStr == "'s' save imgEditor settings") {
         if (buttonReleased) {
             gui->saveSettings(guiSettingsPath);
         }
     }else { // default
-        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
+        if(ofGetLogLevel() == OF_LOG_VERBOSE)
+            cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
+    }
+}
+
+//--------------------------------------------------------------
+void imgEditor::upatedTrnDataVisibilty() {
+    // cycle through toggles and show / hide training data based on values
+    for (int tgl = 0; tgl < imgDataObj->getTrnDataSize(); ++tgl) {
+        if (guiJntDataTglMtxTgls[tgl] -> getValue()) {
+            imgDataObj -> setTrnDataVisibilty(tgl, true);
+        } else {
+            imgDataObj -> setTrnDataVisibilty(tgl, false);
+        }
     }
 }

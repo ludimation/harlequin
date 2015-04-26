@@ -234,19 +234,19 @@ public:
         return myTrnJointSetsSize;
     }
     
-    void setTrnDataVisibilty(int i_, bool visible_) {
+    void setTrnDataVisibilty(int set_, bool visible_) {
         // if specified training set exists
-        if (myTrnJointSets.size() < i_) {
-            cout << "imgData::showTrnData(int i_) -- there is no training joint set i_ = " << ofToString(i_) << endl;
+        if (myTrnJointSets.size() < set_) {
+            cout << "imgData::showTrnData(int i_) -- there is no training joint set i_ = " << ofToString(set_) << endl;
             cout << " -- myTrnJointSets.size() = " << ofToString(myTrnJointSets.size()) << endl;
             return;
         }
         
         for (int jnt = 0; jnt < myJointsCount; ++jnt) {
             if (visible_) {
-                myTrnJointSets[i_][jnt]->enableAppEvents();
+                myTrnJointSets[set_][jnt]->enableAppEvents();
             } else {
-                myTrnJointSets[i_][jnt]->disableAppEvents();
+                myTrnJointSets[set_][jnt]->disableAppEvents();
             }
         }
     };
