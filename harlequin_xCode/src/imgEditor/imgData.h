@@ -49,7 +49,7 @@ public:
         myTrainingDataJointSize = 5;
         myAnchorInPercentages.set(0.5f, 0.5f);
         currentImgIndex = 0.0f;
-        myTrnJointSetsSize = 0;
+        myTrnJointSetsSize = myTrnJointSets.size();
         imgsMirrored = false;
         
         // populate gui joints vector
@@ -224,7 +224,7 @@ public:
         // push the vector to the vector of training joint sets
         myTrnJointSets.push_back(tJoints);
 
-        myTrnJointSetsSize++;
+        myTrnJointSetsSize = myTrnJointSets.size();
         
         // cout << "imgData::pushTrnData(vector<MSAjoint *> &tJoints_) -- executed" << endl;
         // cout << " -- myTrnJointSetsSize = " << ofToString(myTrnJointSetsSize) << endl;
@@ -262,7 +262,8 @@ public:
         for (int jnt = 0; jnt < myJointsCount; ++jnt) {
             delete myTrnJointSets[i_][jnt]; myTrnJointSets[i_][jnt] = NULL;
         }
-        myTrnJointSetsSize--;
+        myTrnJointSets.erase(myTrnJointSets.begin() + i_);
+        myTrnJointSetsSize = myTrnJointSets.size();
     };
     
     void setJointsFromTrainingJointSet(int i_) {

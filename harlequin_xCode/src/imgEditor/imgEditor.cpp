@@ -315,14 +315,14 @@ void imgEditor::setupGui() {
     //
     // select user data radio (add & remove embedded toggles)
     gui -> addLabel("';' ''' captured data joints");
-    ofxUIToggleMatrix *dataTglMtx = gui -> addToggleMatrix("trained data joints", 1, guiJntDataTglMtxSize);
-    dataTglMtx -> bindToKey(';');
-    dataTglMtx -> bindToKey(':');
-    dataTglMtx -> bindToKey('\'');
-    dataTglMtx -> bindToKey('"');
-    dataTglMtx -> bindToKey('A');
-    dataTglMtx -> setAllowMultiple(true);
-    guiJntDataTglMtxTgls = dataTglMtx -> getToggles();
+    guiJntDataTglMtx = gui -> addToggleMatrix("trained data joints", 1, guiJntDataTglMtxSize);
+    guiJntDataTglMtx -> bindToKey(';');
+    guiJntDataTglMtx -> bindToKey(':');
+    guiJntDataTglMtx -> bindToKey('\'');
+    guiJntDataTglMtx -> bindToKey('"');
+    guiJntDataTglMtx -> bindToKey('A');
+    guiJntDataTglMtx -> setAllowMultiple(true);
+    guiJntDataTglMtxTgls = guiJntDataTglMtx -> getToggles();
     for (int i = 0; i < guiJntDataTglMtxTgls.size(); ++i) {
         guiJntDataTglMtxTgls[i] -> setVisible(false);
     }
@@ -358,15 +358,18 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
     ofxUIButton         *button;
     ofxUILabelButton    *labelbutton;
     ofxUIRadio          *radio;
+    ofxUIToggleMatrix   *toggleMatrix;
     bool                buttonPressed = false;
     bool                buttonReleased = false;
     
-    if (kind == OFX_UI_WIDGET_BUTTON) {
+    /*  */ if (kind == OFX_UI_WIDGET_BUTTON) {
         button = (ofxUIButton*)e.widget;
         buttonPressed = button -> getValue();
     } else if (kind == OFX_UI_WIDGET_LABELBUTTON) {
         labelbutton = (ofxUILabelButton*)e.widget;
         buttonPressed = labelbutton -> getValue();
+    } else if (kind == OFX_UI_WIDGET_TOGGLEMATRIX) {
+        toggleMatrix = (ofxUIToggleMatrix*)e.widget;
     }
     // register button release only when mouse buttons are not pressed and application is not initializing
     if (!buttonPressed && !initializing && !ofGetMousePressed()) buttonReleased = true;
@@ -413,12 +416,24 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
                 imgDataObj -> pushTrnData(joints);
                 // update "';' ''' captured data joints" gui to reflect an added data point
                 guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()-1] -> toggleVisible();
+                guiJntDataTglMtx -> setAllToggles(false);
+                guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()-1] -> toggleValue();
             } else {
                 cout << "imgEditor:: guiEvent(ofxUIEventArgs &e) -- already trained maximum training data sets = " << ofToString(guiJntDataTglMtxTgls.size()) << endl;
                 cout << " -- delete some training data sets for this image in order to create new ones." << endl ;
             }
         }
+    } else if (nameStr == "'r' remove selected data joints") {
+        // cycle through toggles from end to start and erase data for those sets
+        for (int tgl = guiJntDataTglMtxTgls.size()-1; tgl >= 0; --tgl) {
+            if (guiJntDataTglMtxTgls[tgl] -> getValue()) {
+                imgDataObj -> eraseTrnData(tgl);
+                guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()] -> toggleVisible();
+            }
+        }
         
+        // reset all toggles
+        guiJntDataTglMtx -> setAllToggles(false);
         
     } else if (nameStr == "'s' save imgEditor settings") {
         if (buttonReleased) {

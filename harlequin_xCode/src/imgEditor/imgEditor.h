@@ -40,6 +40,7 @@ public:
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
     string                          guiSettingsPath, imagesDirectory, imageJointDataDirectory;
     int                             guiJntDataTglMtxSize;
+    ofxUIToggleMatrix               *guiJntDataTglMtx;
     vector<ofxUIToggle*>            guiJntDataTglMtxTgls;
     //
     // joint tracking
