@@ -45,7 +45,7 @@ public:
         myJointsCount = 15;
         myJointsEdited = false;
         dragging = false;
-        myJointSize = 10;
+        myJointSize = 15;
         myTrainingDataJointSize = 5;
         myAnchorInPercentages.set(0.5f, 0.5f);
         currentImgIndex = 0.0f;

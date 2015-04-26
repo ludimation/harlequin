@@ -326,6 +326,10 @@ void imgEditor::setupGui() {
     for (int i = 0; i < guiJntDataTglMtxTgls.size(); ++i) {
         guiJntDataTglMtxTgls[i] -> setVisible(false);
     }
+    // transfer data to joints from selected data set (grabs first one fornow, would be nice to do an axis-angle average at some point)
+    ofxUILabelButton *setJointsFromTrainingJointSetButton = gui -> addLabelButton("'g' set training joints from first selected data set", false);
+    setJointsFromTrainingJointSetButton -> bindToKey('g');
+    setJointsFromTrainingJointSetButton -> bindToKey('G');
     // delete selected data points
     ofxUILabelButton *deleteSelJntSetsButton = gui -> addLabelButton("'r' remove selected data joints", false);
     deleteSelJntSetsButton -> bindToKey('r');
@@ -428,6 +432,21 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
             }
             upatedTrnDataVisibilty();
         }
+    } else if (nameStr == "'g' set training joints from first selected data set") {
+        if (buttonReleased) {
+            // cycle through toggles from start and transfer data from first selected toggle set to imgData joints
+            int tgl;
+            for (tgl = 0; tgl < imgDataObj -> getTrnDataSize(); ++tgl) {
+                if (guiJntDataTglMtxTgls[tgl] -> getValue()) {
+                    imgDataObj -> setJointsFromTrainingJointSet(tgl);
+                    break;
+                }
+            }
+            // reset all toggles
+            guiJntDataTglMtx -> setAllToggles(false);
+            guiJntDataTglMtxTgls[tgl] -> toggleValue();
+            upatedTrnDataVisibilty();
+        }
     } else if (nameStr == "'r' remove selected data joints") {
         if (buttonReleased) {
             // cycle through toggles from end to start and erase data for selected sets
@@ -456,7 +475,6 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
             for (int tgl = 0; tgl< imgDataObj -> getTrnDataSize(); ++tgl) {
                 guiJntDataTglMtxTgls[tgl] -> toggleValue();
             }
-            
             upatedTrnDataVisibilty();
         }
         
