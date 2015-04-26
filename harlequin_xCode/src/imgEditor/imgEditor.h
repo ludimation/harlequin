@@ -38,10 +38,12 @@ public:
     ////////////////
     bool                            initializing;
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
-    string                          guiSettingsPath, imagesDirectory;
+    string                          guiSettingsPath, imagesDirectory, imageJointDataDirectory;
+    int                             guiJntDataTglMtxSize;
+    vector<ofxUIToggle*>            guiJntDataTglMtxTgls;
     //
     // joint tracking
-    int                             trackedUserIndex, trackedUsersCount;
+    int                             trackedUserIndex, trackedUsersCount, trackedUserJointsSize;
     vector<MSAjoint*>               joints;
     float                           jointsScale;
     int                             jointSetsCount, jointsCount;

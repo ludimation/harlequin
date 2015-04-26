@@ -13,9 +13,13 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string i
     
     initializing = true; // flag to check to make sure application is not running initialization operations twice
     currentImgBaseName = "";
-    
-    imagesDirectory = imagesDirectory_;
+    guiJntDataTglMtxSize = 16;
+    jointsScale = -0.5f;
+    trackedUserJointsSize = 10;
+
     guiSettingsPath = guiSettingsPath_;
+    imagesDirectory = imagesDirectory_;
+    imageJointDataDirectory = imageJointDataDirectory_;
     
     ///////////////////
     // 1) create a map of all unique image file names in the images directory
@@ -24,26 +28,31 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string i
     mapAllImages();
     
     ///////////////////
-    // 2) setup a gui & keybindings for displaying pathMap & selecting which image to load training
-    ///////////////////
-    setupGui();
-    
-    ///////////////////
-    // 3) setup interactive elements for training image metadata
+    // 2) setup objects and interactive elements for training image metadata
     //     - load metadata for an image if it already exists
     ///////////////////
-    imgData *imgDataObj = new imgData();
-    imgDataObj -> open(it, imageJointDataDirectory_);
     img = new ofImage();
-    jointsScale = -0.5f;
+    imgData *imgDataObj = new imgData();
+    imgDataObj -> open(it, imageJointDataDirectory_, jointsScale);
     // MSA joints for displaying joint position data before capturing it
     jointsCount = 15;
     for(int jnt = 0; jnt < jointsCount; ++jnt) {
         MSAjoint *obj = new MSAjoint();
-        obj->set(830 + (jnt*15), 15, 10, 10);
+        obj->set(
+                   830 + (jnt * (trackedUserJointsSize + 5))
+                 , trackedUserJointsSize + 5
+                 , trackedUserJointsSize
+                 , trackedUserJointsSize
+                 );
+
         obj->setColors(0x00FFFF, 0x0000FF, 0xFFFF00);
         joints.push_back(obj);
     }
+
+    ///////////////////
+    // 3) setup a gui & keybindings for displaying pathMap & selecting which image to load training
+    ///////////////////
+    setupGui();
     
     ///////////////////
     // 4) setup gui & functions that save image metadata
@@ -84,6 +93,7 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
 
         // increment the image path map iterator to the appropriate image
         reiterateIt();
+        imgDataObj -> open(it, imageJointDataDirectory, jointsScale);
         
         currentImgBaseName = "";
         imgMirrored = false;
@@ -305,16 +315,16 @@ void imgEditor::setupGui() {
     //
     // select user data radio (add & remove embedded toggles)
     gui -> addLabel("';' ''' captured data joints");
-    ofxUIToggleMatrix *dataTglMtx = gui -> addToggleMatrix("trained data joints", 1, 16);
+    ofxUIToggleMatrix *dataTglMtx = gui -> addToggleMatrix("trained data joints", 1, guiJntDataTglMtxSize);
     dataTglMtx -> bindToKey(';');
     dataTglMtx -> bindToKey(':');
     dataTglMtx -> bindToKey('\'');
     dataTglMtx -> bindToKey('"');
     dataTglMtx -> bindToKey('A');
     dataTglMtx -> setAllowMultiple(true);
-    vector<ofxUIToggle*> dataTglMtxTgls = dataTglMtx -> getToggles();
-    for (int i = 0; i < dataTglMtxTgls.size(); ++i) {
-        dataTglMtxTgls[i] -> setVisible(false);
+    guiJntDataTglMtxTgls = dataTglMtx -> getToggles();
+    for (int i = 0; i < guiJntDataTglMtxTgls.size(); ++i) {
+        guiJntDataTglMtxTgls[i] -> setVisible(false);
     }
     // delete selected data points
     ofxUILabelButton *deleteSelJntSetsButton = gui -> addLabelButton("'r' remove selected data joints", false);
@@ -349,6 +359,7 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
     ofxUILabelButton    *labelbutton;
     ofxUIRadio          *radio;
     bool                buttonPressed = false;
+    bool                buttonReleased = false;
     
     if (kind == OFX_UI_WIDGET_BUTTON) {
         button = (ofxUIButton*)e.widget;
@@ -357,6 +368,10 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
         labelbutton = (ofxUILabelButton*)e.widget;
         buttonPressed = labelbutton -> getValue();
     }
+    // register button release only when mouse buttons are not pressed and application is not initializing
+    if (!buttonPressed && !initializing && !ofGetMousePressed()) buttonReleased = true;
+    
+    
     
     /*  */ if(nameStr == "'-' previous image"){
         if (currentImgIndex > 1) {
@@ -367,8 +382,7 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
             if (buttonPressed) currentImgIndexFloat += 1.0f;
         }
     } else if(nameStr == "'u' update image list") {
-        if (!buttonPressed && !initializing && !ofGetMousePressed()) {
-            // when button is released, not when dragging out, or simply when gui is created during setup();
+        if (buttonReleased) {
             mapAllImages();
         }
         
@@ -391,11 +405,22 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
             ;
         //
         radio -> activateToggle(ofToString(trackedUserIndex));
-        
+    } else if (nameStr == "'b' capture user joints") {
+        if (buttonReleased) {
+            int trnDataSize = imgDataObj -> getTrnDataSize();
+            if (trnDataSize < guiJntDataTglMtxSize) {
+                // store training joint positions imgDataObj
+                imgDataObj -> pushTrnData(joints);
+                // update "';' ''' captured data joints" gui to reflect an added data point
+                guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()] -> toggleVisible();
+            } else {
+                cout << "imgEditor:: guiEvent(ofxUIEventArgs &e) -- already trained maximum training data sets = " << ofToString(guiJntDataTglMtxTgls.size()) << endl;
+                cout << " -- delete some training data sets for this image in order to create new ones." << endl ;
+            }
+        }
         
     } else if (nameStr == "'s' save imgEditor settings") {
-        if (!buttonPressed && !initializing && !ofGetMousePressed()) {
-            // when button is released, not when dragging out, or simply when gui is created during setup();
+        if (buttonReleased) {
             gui->saveSettings(guiSettingsPath);
         }
     }else { // default
