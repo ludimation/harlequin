@@ -15,7 +15,6 @@ class MSAjoint : public ofxMSAInteractiveObject {
 public:
     
     bool draggable, dragging;
-    int pMouseX, pMouseY;
     int colorIdle, colorOver, colorDown;
     float z;
     
@@ -23,8 +22,6 @@ public:
         setColors(IDLE_COLOR, OVER_COLOR, DOWN_COLOR);
         dragging = false;
         draggable = false;
-        pMouseX = ofGetMouseX();
-        pMouseY = ofGetMouseY();
         z = 0;
     }
     
