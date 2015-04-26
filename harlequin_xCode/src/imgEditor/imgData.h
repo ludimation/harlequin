@@ -28,7 +28,7 @@ public:
     vector< vector< MSAjoint* > >   myTrnJointSets;
     int                             myTrnJointSetsSize;
     bool                            myJointsEdited, dragging; // flag to check to see if the joints have been edited yet
-    int                             myJointSize, myTrainingDataJointsSize;
+    int                             myJointSize, myTrainingDataJointSize;
 
     // obj creator
     imgData() {
@@ -38,7 +38,7 @@ public:
         myJointsEdited = false;
         dragging = false;
         myJointSize = 10;
-        myTrainingDataJointsSize = 5;
+        myTrainingDataJointSize = 5;
         myTrnJointSetsSize = 0;
         
         // populate gui joints vector
@@ -149,7 +149,7 @@ public:
         for (int jnt = 0; jnt < myJointsCount; ++jnt) {
             MSAjoint *obj = new MSAjoint();
             obj->setPosition3D(tJoints_[jnt]->x, tJoints_[jnt]->y, tJoints_[jnt]->z);
-            obj->setSize(myTrainingDataJointsSize, myTrainingDataJointsSize);
+            obj->setSize(myTrainingDataJointSize, myTrainingDataJointSize);
             tJoints.push_back(obj);
         }
         // push the vector to the vector of training joint sets
