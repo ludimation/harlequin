@@ -117,70 +117,144 @@ public:
     bool open(map <string, vector<string> >::iterator it_, string imageJointDataDirectory_, float jointsScale_) {
         // store arguments
         it = it_;
-        mySavePath = imageJointDataDirectory_;
         myBaseName = it->first;
-        currentImgIndex = it->second.size() -1;
+        mySavePath = imageJointDataDirectory_ + "/" + myBaseName + ".xml";
         jointsScale = jointsScale_;
         
-        // TODO: open() -- load XML file functionality
-//        //This is how you would load that very same file
-//        ofxXmlSettings settings;
-//        if(settings.loadFile("positions.xml")){
-//            settings.pushTag("positions");
-//            int numberOfSavedPoints = settings.getNumTags("position");
-//            for(int i = 0; i < numberOfSavedPoints; i++){
-//                settings.pushTag("position", i);
-//                
-//                ofPoint p;
-//                p.x = settings.getValue("X", 0);
-//                p.y = settings.getValue("Y", 0);
-//                p.z = settings.getValue("Z", 0);
-//                
-//                points.push_back(p);
-//                settings.popTag();
-//            }
-//            
-//            settings.popTag(); //pop position
-//        }
-//        else{
-//            ofLogError("Position file did not load!");
-//        }
+        // try to load settings from XML file
+        ofxXmlSettings imgDataXML;
+        if(imgDataXML.loadFile(mySavePath)){
+            // if it exists, set imgData properties to match
 
-        // try to load the XML file
-        // if it exists, set imgData properties to match
-        
-        // load images and calculate scales
-        for (int imgPathIndex = 0; imgPathIndex <it->second.size(); ++imgPathIndex) {
-            ofImage *img = new ofImage();
-            string path = it->second[imgPathIndex];
-            if (img->loadImage(path)) {
-                img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
-                myImgs.push_back(img);
-                
-                // calculate imageScale
-                float imgRatioX;
-                float imgRatioY;
-                float imgScale;
-                if (img->width) {
-                    imgRatioX = float(ofGetWidth()) / float(img->width);
+            // common variables
+            int entriesCount;
+            
+            // core tag
+            imgDataXML.pushTag("harlequinImgData_0.0.0");
+            //
+            // basename loading is unnecessary since this is already set earlier
+            // myBaseName = imgDataXML.getValue("baseName", "");
+            //
+            // image anchor
+            imgDataXML.pushTag("anchorPct");
+            myAnchorInPercentages.x = imgDataXML.getValue("x", myAnchorInPercentages.x);
+            myAnchorInPercentages.y = imgDataXML.getValue("y", myAnchorInPercentages.y);
+            imgDataXML.popTag(); // pop "anchorPct"
+            //
+            // path scale map values
+            imgDataXML.pushTag("pathScales");
+            entriesCount = imgDataXML.getNumTags("entry");
+            for(int entryIndx = 0; entryIndx < entriesCount; ++entryIndx) {
+                // each entry tag represents one path
+                imgDataXML.pushTag("entry", entryIndx);
+                // get path and its corresponding scale
+                // try to load image
+                string imgPath = imgDataXML.getValue("path", "");
+                float imgScale = imgDataXML.getValue("scale", 0.0f);
+                ofImage *img = new ofImage();
+                if(img->loadImage(imgPath)) {
+                    img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
+                    myImgs.push_back(img);
+                    myImgsPathScaleMap[imgPath] = imgScale;
                 } else {
-                    imgRatioX = 1.0f;
+                    cout << "imgData::open() -- failed to load imgPath = " << imgPath << endl;
                 }
-                if (img->height) {
-                    imgRatioY = float(ofGetHeight()) / float(img->height);
-                } else {
-                    imgRatioY = 1.0f;
-                }
-                if (imgRatioX < imgRatioY) {
-                    imgScale = imgRatioX;
-                } else {
-                    imgScale = imgRatioY;
-                }
-
-                myImgsPathScaleMap[path]= imgScale;
-            } else {
-                cout << "imgData::open() -- could not load image at path = " << path << endl;
+                imgDataXML.popTag();//pop "entry"
             }
+            currentImgIndex = myImgs.size() -1;
+            imgDataXML.popTag(); //pop "pathScales"
+            //
+            // artist-specified joint positions (relative to the root joint)
+            imgDataXML.pushTag("joints");
+            entriesCount = imgDataXML.getNumTags("entry");
+            if (myJointsCount == entriesCount) {
+                myJointsEdited = true;
+                for (int jnt = 0; jnt < entriesCount; ++jnt) {
+                    // each joint entry contains x, y, and z values for one joint
+                    imgDataXML.pushTag("entry", jnt);
+                    // set path and its corresponding scale
+                    float jntX = imgDataXML.getValue("x", 0.0f) * jointsScale + x   ;
+                    float jntY = imgDataXML.getValue("y", 0.0f) * jointsScale + y   ;
+                    float jntZ = imgDataXML.getValue("z", 0.0f) * jointsScale       ;
+                    myJoints[jnt]->setPosition3D(jntX, jntY, jntZ);
+                    imgDataXML.popTag();//pop "entry"
+                }
+            } else {
+                cout << "imgData::open() -- number of joints in XML = " << entriesCount << ", but loader expects myJointsCount = " << myJointsCount << endl;
+            }
+            imgDataXML.popTag(); //pop "joints"
+            //
+            // training data joints
+            imgDataXML.pushTag("trainingJointSets");
+            int setsCount = imgDataXML.getNumTags("set");
+            if (setsCount) {
+                for(int set = 0; set < setsCount; ++set){
+                    //each set contains one complete set of joints
+                    imgDataXML.pushTag("set",set);
+                    entriesCount = imgDataXML.getNumTags("entry");
+                    if (myJointsCount == entriesCount) {
+                        vector<ofPoint> jntsOfPnts;
+                        for (int jnt = 0; jnt < entriesCount; ++jnt) {
+                            // each joint entry contains x, y, and z values for one joint
+                            imgDataXML.pushTag("entry",jnt);
+                            // set path and its corresponding scale
+                            float jntX = imgDataXML.getValue("x", 0.0f) * jointsScale + x   ;
+                            float jntY = imgDataXML.getValue("y", 0.0f) * jointsScale + y   ;
+                            float jntZ = imgDataXML.getValue("z", 0.0f) * jointsScale       ;
+                            ofPoint jntOfPnt(jntX, jntY, jntZ);
+                            jntsOfPnts.push_back(jntOfPnt);
+                            imgDataXML.popTag();//pop "entry"
+                        }
+                        pushTrnData(jntsOfPnts);
+                    } else {
+                        cout << "imgData::open() -- number of joints in XML trainingJointSets[" << set << "] = " << entriesCount << ", but loader expects myJointsCount = " << myJointsCount << endl;
+                    }
+                    imgDataXML.popTag();//pop "set"
+                }
+            } else {
+                cout << "imgData::open() -- XML file had 'trainingJointSets' tag, but it was empty" << endl;
+            }
+            imgDataXML.popTag(); // pop "trainingJointSets"
+            imgDataXML.popTag(); // pop "harlequinImgData_0.0.0"
+
+
+        } else {
+            // otherwise, load images from "it" and calculate scales, using default falues for everything else
+            for (int imgPathIndex = 0; imgPathIndex <it->second.size(); ++imgPathIndex) {
+                ofImage *img = new ofImage();
+                string path = it->second[imgPathIndex];
+                if (img->loadImage(path)) {
+                    img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
+                    myImgs.push_back(img);
+                    
+                    // calculate imageScale
+                    float imgRatioX;
+                    float imgRatioY;
+                    float imgScale;
+                    if (img->width) {
+                        imgRatioX = float(ofGetWidth()) / float(img->width);
+                    } else {
+                        imgRatioX = 1.0f;
+                    }
+                    if (img->height) {
+                        imgRatioY = float(ofGetHeight()) / float(img->height);
+                    } else {
+                        imgRatioY = 1.0f;
+                    }
+                    if (imgRatioX < imgRatioY) {
+                        imgScale = imgRatioX;
+                    } else {
+                        imgScale = imgRatioY;
+                    }
+                    
+                    myImgsPathScaleMap[path]= imgScale;
+                } else {
+                    cout << "imgData::open() -- could not load image at path = " << path << endl;
+                }
+            }
+            //
+            // set data loading-dependent properties
+            currentImgIndex = myImgs.size() -1;
         }
     };
     
@@ -233,22 +307,22 @@ public:
         imgDataXML.addTag("anchorPct");
         imgDataXML.pushTag("anchorPct");
         imgDataXML.addValue("x", myAnchorInPercentages.x);
-        imgDataXML.addValue("y", myAnchorInPercentages.x);
+        imgDataXML.addValue("y", myAnchorInPercentages.y);
         imgDataXML.popTag(); // pop "anchorPct"
         //
         // path scale map values
         imgDataXML.addTag("pathScales");
         imgDataXML.pushTag("pathScales");
-        int i = 0;
+        int entryIndx = 0;
         for(map<string, float>::iterator it = myImgsPathScaleMap.begin(); it != myImgsPathScaleMap.end(); ++it){
             // each entry tag represents one path
             imgDataXML.addTag("entry");
-            imgDataXML.pushTag("entry",i);
+            imgDataXML.pushTag("entry", entryIndx);
             // set path and its corresponding scale
             imgDataXML.addValue("path", it->first);
             imgDataXML.addValue("scale", it->second);
             imgDataXML.popTag();//pop "entry"
-            ++i;
+            ++entryIndx;
         }
         imgDataXML.popTag(); //pop "pathScales"
         //
@@ -261,7 +335,6 @@ public:
                 // each joint entry contains x, y, and z values for one joint
                 imgDataXML.addTag("entry");
                 imgDataXML.pushTag("entry",jnt);
-                // set path and its corresponding scale
                 // undo affect of jointsScale by dividing MSAjoint positions / jointsScale;
                 imgDataXML.addValue("x", (myJoints[jnt]->x - baseJoint.x) / jointsScale);
                 imgDataXML.addValue("y", (myJoints[jnt]->y - baseJoint.y) / jointsScale);
@@ -280,10 +353,9 @@ public:
             imgDataXML.pushTag("set",set);
             ofPoint baseJoint(myTrnJointSets[set][0]->x, myTrnJointSets[set][0]->y, myTrnJointSets[set][0]->z);
             for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
-                //each joint entry contains x, y, and z values for one joint
+                // each joint entry contains x, y, and z values for one joint
                 imgDataXML.addTag("entry");
                 imgDataXML.pushTag("entry",jnt);
-                //set path and its corresponding scale
                 // undo affect of jointsScale by dividing MSAjoint positions / jointsScale;
                 imgDataXML.addValue("x", (myTrnJointSets[set][jnt]->x - baseJoint.x) / jointsScale);
                 imgDataXML.addValue("y", (myTrnJointSets[set][jnt]->y - baseJoint.y) / jointsScale);
@@ -292,13 +364,13 @@ public:
             }
             imgDataXML.popTag();//pop "set"
         }
-        imgDataXML.popTag(); //pop "trainingJointSets"
+        imgDataXML.popTag(); // pop "trainingJointSets"
+        imgDataXML.popTag(); // pop "harlequinImgData_0.0.0"
         
         //////////////////
         // save it to the save directory with myBaseName + ".xml"
         //////////////////
-        imgDataXML.popTag(); // pop "harlequinImgData_0.0.0"
-        imgDataXML.saveFile(mySavePath + "/" + myBaseName + ".xml");
+        imgDataXML.saveFile(mySavePath);
         
     };
     
@@ -342,6 +414,35 @@ public:
             }
             myJointsEdited = true;
         }
+    }
+    
+    void pushTrnData(vector<ofPoint> jntsOfPnts_) {
+        // if the number of pushed joints matches the expected number of joints
+        if (jntsOfPnts_.size() != myJointsCount) {
+            cout << "imgData::pushTrnData(vector<ofPoint> jntsOfPnts_) -- jntsOfPnts_.size() != myJointsCount " << endl;
+            cout << " -- jntsOfPnts_.size() = " << ofToString(jntsOfPnts_.size()) << ", myJointsCount = " << myJointsCount << endl;
+            return;
+        }
+        
+        // create a vector of MSAjoint objects for each joint
+        vector<MSAjoint*> tJoints;
+        for (int jnt = 0; jnt < myJointsCount; ++jnt) {
+            MSAjoint *obj = new MSAjoint();
+            float jntX = jntsOfPnts_[jnt].x ;
+            float jntY = jntsOfPnts_[jnt].y ;
+            float jntZ = jntsOfPnts_[jnt].z ;
+            obj->setPosition3D(jntX, jntY, jntZ);
+            obj->setSize(myTrainingDataJointSize, myTrainingDataJointSize);
+            obj->setColors(TRNDATA_JNT_IDLE_COLOR, TRNDATA_JNT_OVER_COLOR, TRNDATA_JNT_DOWN_COLOR);
+            tJoints.push_back(obj);
+        }
+        // push the vector to the vector of training joint sets
+        myTrnJointSets.push_back(tJoints);
+        
+        myTrnJointSetsSize = myTrnJointSets.size();
+        
+        // cout << "imgData::pushTrnData(vector<ofPoint> &jntsOfPnts_) -- executed" << endl;
+        // cout << " -- myTrnJointSetsSize = " << ofToString(myTrnJointSetsSize) << endl;
     }
     
     void pushTrnData(vector< MSAjoint* > &tJoints_) {
