@@ -250,16 +250,12 @@ void imgEditor::setupGui() {
     // text field with currently displayed image baseName: includes a slider to navigate list quickly, as well as buttons & keybindings to navigate up and down one image at a time
     gui -> addTextArea("current image baseName", "current image: " + it->first);
     gui -> addSlider("imagePathMap index", 1.0f, imagePathMap.size(), &currentImgIndexFloat);
-    ofxUIButton *buttonPrevImg = gui -> addButton("'-' previous image", false);
+    ofxUIButton *buttonPrevImg = gui -> addButton("'[' previous image", false);
     buttonPrevImg -> bindToKey('[');
     buttonPrevImg -> bindToKey('{');
-    buttonPrevImg -> bindToKey('-');
-    buttonPrevImg -> bindToKey('_');
-    ofxUIButton *buttonNextImg = gui -> addButton("'+' next image", false);
+    ofxUIButton *buttonNextImg = gui -> addButton("']' next image", false);
     buttonNextImg -> bindToKey(']');
     buttonNextImg -> bindToKey('}');
-    buttonNextImg -> bindToKey('=');
-    buttonNextImg -> bindToKey('+');
     gui -> addSpacer();
     //
     // update list button
@@ -309,6 +305,15 @@ void imgEditor::setupGui() {
     deleteNonSelJntSetsButton -> bindToKey('R');
     gui -> addSpacer();
     //
+    // image scale update buttons
+    ofxUIButton *buttonScaleDown = gui -> addButton("'-' scale down image", false);
+    buttonScaleDown -> bindToKey('-');
+    buttonScaleDown -> bindToKey('_');
+    ofxUIButton *buttonScaleUp = gui -> addButton("'+' scale up image", false);
+    buttonScaleUp -> bindToKey('=');
+    buttonScaleUp -> bindToKey('+');
+    gui -> addSpacer();
+    //
     // save image data button
     ofxUILabelButton *saveImgDataButton = gui -> addLabelButton("'d' save image data", false);
     saveImgDataButton -> bindToKey('d');
@@ -355,11 +360,11 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
     
     
     
-    /*  */ if(nameStr == "'-' previous image"){
+    /*  */ if(nameStr == "'[' previous image"){
         if (currentImgIndex > 1) {
             if (buttonPressed) currentImgIndexFloat -= 1.0f;
         }
-    } else if(nameStr == "'+' next image") {
+    } else if(nameStr == "']' next image") {
         if (currentImgIndex < imagePathMap.size()) {
             if (buttonPressed) currentImgIndexFloat += 1.0f;
         }
@@ -449,6 +454,27 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
             upatedTrnDataVisibilty();
         }
         
+        
+    } else if (nameStr == "'-' scale down image" || nameStr == "'+' scale up image") {
+        if (buttonReleased) {
+            int sign = -1;
+            float scaleAmt = 0.05f; // five percent
+            if (nameStr == "'+' scale up image") sign *= sign;
+            // scale more when shift key is pressed
+            bool rightShft = ofGetKeyPressed(OF_KEY_RIGHT_SHIFT);
+            bool leftShft = ofGetKeyPressed(OF_KEY_LEFT_SHIFT);
+            bool shft = ofGetKeyPressed(OF_KEY_SHIFT);
+            bool keysPressed = ofGetKeyPressed();
+            cout << "imgEditor::guiEvent()  -- rightShftPressed = " << rightShft << endl;
+            cout << "                       -- leftShftPressed = " << leftShft << endl;
+            cout << "                       -- shftPressed = " << shft << endl;
+            cout << "                       -- keyPressed = " << keysPressed << endl;
+            if (rightShft || leftShft) { // TODO: guiEvent -- scale image -- debug SHIFT keypress checks which don't seem to be working.
+                scaleAmt *= 10.0f;
+            }
+            imgDataObj->scaleImages(1+ sign * scaleAmt);
+        }
+    
         
     } else if (nameStr == "'s' save imgEditor settings") {
         if (buttonReleased) {

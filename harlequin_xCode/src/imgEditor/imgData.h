@@ -196,14 +196,20 @@ public:
         // undo affect of jointsScale by dividing MSAjoint positions / jointsScale;
     };
     
-    // image drawing fucntions
+    // training data manipulation functions
+    
+    void scaleImages(float pct_) {
+        for(int img = 0; img < myImgs.size(); ++img) {
+            myImgsPathScaleMap[it->second[currentImgIndex]] *= pct_;
+        }
+    }
+    
     void setColors(int colorIdle_, int colorOver_, int colorDown_) {
         colorIdle = colorIdle_;
         colorOver = colorOver_;
         colorDown = colorDown_;
     }
-    
-    // training data manipulation functions
+
     void mousePressed(int x, int y, int button) {
 
         // cout << "imgData::mousePressed(x, y, button) -- executing" << endl;
