@@ -11,10 +11,24 @@
 //#ifndef harlequin_imgData_h
 //#define harlequin_imgData_h
 
+#include "ofxMSAInteractiveObject.h"
 #include "ofxXmlSettings.h"
 #include "MSAjoint.h"
 
-class imgData { // can I extend ": public ofImage {//" ?
+#define		IMG_IDLE_COLOR          0xFFFFFF // white
+#define		IMG_OVER_COLOR          0x888888 // grey
+#define		IMG_DOWN_COLOR          0x000088 // dark blue
+#define		MY_JNT_IDLE_COLOR       0xFFFF00 // yellow
+#define		MY_JNT_OVER_COLOR       0xFF00FF // magenta
+#define		MY_JNT_DOWN_COLOR       0xFFFF00 // cyan
+#define     MY_ROOT_JNT_COLOR       0xFF8800 // orange
+#define		TRNDATA_JNT_IDLE_COLOR  0x880088 // dark violet
+#define		TRNDATA_JNT_OVER_COLOR  0xFFFFFF // white
+#define		TRNDATA_JNT_DOWN_COLOR  0x00FF00 // dark green
+
+
+
+class imgData : public ofxMSAInteractiveObject { // can I extend ": public ofImage {//" ?
     
 public:
     
@@ -23,6 +37,7 @@ public:
     string                          myBaseName;
     string                          mySavePath;
     vector< ofImage* >              myImgs;
+    int                             colorIdle, colorDown, colorOver;
     bool                            imgsMirrored;
     int                             currentImgIndex;
     map< string, float >            myImgsPathScaleMap; // map of paths and their perspective scales relative to the joints skeleton
@@ -47,25 +62,32 @@ public:
         dragging = false;
         myJointSize = 15;
         myTrainingDataJointSize = 5;
-        myAnchorInPercentages.set(0.5f, 0.5f);
-        currentImgIndex = 0.0f;
+        myAnchorInPercentages.set(0.5f, 0.35f);
+        currentImgIndex = 0;
         myTrnJointSetsSize = myTrnJointSets.size();
         imgsMirrored = false;
+        
+        // handle interactive properties and functions
+        setColors(IMG_IDLE_COLOR, IMG_OVER_COLOR, IMG_DOWN_COLOR);
+        dragging = false;
+        enableMouseEvents();
+        setPosition(ofGetWidth()*myAnchorInPercentages.x, ofGetHeight()*myAnchorInPercentages.y);
         
         // populate gui joints vector
         for(int jnt = 0; jnt < myJointsCount; ++jnt) {
             MSAjoint *obj = new MSAjoint();
             obj->set(830 + (jnt * (myJointSize + 5)), myJointSize*3, myJointSize, myJointSize);
             // set user-specified joint color
-            obj->setColors(0xFFFF00, 0x00FF00, 0xFF00FF);
-            obj->enableMouseEvents();
-            obj->setDraggable(true);
+            if (jnt == 0) { // set special properties for root joint
+                obj->setSize(myJointSize*1.5f, myJointSize*1.5f);
+                obj->setColors(MY_ROOT_JNT_COLOR, MY_ROOT_JNT_COLOR, MY_ROOT_JNT_COLOR);
+            } else {
+                obj->setColors(MY_JNT_IDLE_COLOR, MY_JNT_OVER_COLOR, MY_JNT_DOWN_COLOR);
+                obj->enableMouseEvents();
+                obj->setDraggable(true);
+            }
             myJoints.push_back(obj);
         }
-        
-        // add mousepressed listener AFTER creating joints above so that it executes after one of them was pressed
-        ofAddListener(ofEvents().mousePressed, this, &imgData::mousePressed);
-        ofAddListener(ofEvents().mouseReleased, this, &imgData::mouseReleased);
     };
     // obj destructor
     ~imgData() {
@@ -93,15 +115,16 @@ public:
     
     // core functions
     bool open(map <string, vector<string> >::iterator it_, string imageJointDataDirectory_, float jointsScale_) {
-        // try to load the XML file
-        // if it exists, set imgData properties to match
-        // otherwise, use default data (should already be set up in constructor)
-        
+        // store arguments
         it = it_;
         mySavePath = imageJointDataDirectory_;
         myBaseName = it->first;
         currentImgIndex = it->second.size() -1;
         jointsScale = jointsScale_;
+        
+        // TODO: open() -- load XML file functionality
+        // try to load the XML file
+        // if it exists, set imgData properties to match
         
         // load images and calculate scales
         for (int imgPathIndex = 0; imgPathIndex <it->second.size(); ++imgPathIndex) {
@@ -140,7 +163,7 @@ public:
     
     void draw(bool drawMirrored_) {
         // store image scale for quick reference
-        float imgScale = myImgsPathScaleMap[it->second[currentImgIndex]];
+        float imgScale = myImgsPathScaleMap[it->second[currentImgIndex]]; // TODO: use ".at()" function instead? i.e.: myImgsPathScaleMap.at(it->second[currentImgIndex]);
         // mirror image if necessary // TODO: is there a way to do this with a transformation instead?
         if (imgsMirrored != drawMirrored_) {
             for (int imgIndx = 0; imgIndx < myImgs.size(); ++imgIndx) {
@@ -151,9 +174,14 @@ public:
         
         // draw image
         ofPushStyle();
+        
+        if(isMousePressed()) ofSetHexColor(colorDown);
+        else if(isMouseOver()) ofSetHexColor(colorOver);
+        else ofSetHexColor(colorIdle);
+
         myImgs[currentImgIndex]->draw(
-                                        ofGetWidth() / 2
-                                      , ofGetHeight() / 2
+                                        x
+                                      , y
                                       , myImgs[currentImgIndex]->width * imgScale
                                       , myImgs[currentImgIndex]->height * imgScale
                                       );
@@ -169,14 +197,20 @@ public:
         // undo affect of jointsScale by dividing MSAjoint positions / jointsScale;
     };
     
+    // image drawing fucntions
+    void setColors(int colorIdle_, int colorOver_, int colorDown_) {
+        colorIdle = colorIdle_;
+        colorOver = colorOver_;
+        colorDown = colorDown_;
+    }
+    
     // training data manipulation functions
-    void mousePressed(ofMouseEventArgs &e) {
+    void mousePressed(int x, int y, int button) {
 
-        int x = e.x;
-        int y = e.y;
-        int button = e.button;
+        // cout << "imgData::mousePressed(x, y, button) -- executing" << endl;
+
         int jntBeingDragged = -1;
-        
+
         // cycle through myJoints to see if any of them are being dragged
         for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
             if (myJoints[jnt] -> getDragging()) {
@@ -190,21 +224,10 @@ public:
             for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
                 if (jnt != jntBeingDragged) myJoints[jnt]->onPress(x, y, button);
             }
-            dragging = true;
             myJointsEdited = true;
         }
     }
     
-    void mouseReleased(ofMouseEventArgs &e) {
-        if (dragging) {
-            dragging = false;
-            // update the anchor of image (as percentage) in data based on
-            // position of root joint relative to the center of the image
-            // float xPct = (myJoints[0]->x - (ofGetWidth()/2.0f)) /  * (float)myImgs[currentImgIndex]->width / (float)ofGetWidth();
-            // float yPct = 0.0f;
-        }
-    }
-
     void pushTrnData(vector< MSAjoint* > &tJoints_) {
         // if the number of pushed joints matches the expected number of joints
         if (tJoints_.size() != myJointsCount) {
@@ -213,12 +236,18 @@ public:
             return;
         }
         
+        // capture position of root joint (all data will be relative to this joint's position)
+        ofPoint rootPos(tJoints_[0]->x, tJoints_[0]->y, tJoints_[0]->z);
         // create a vector of MSAjoint objects for each joint
         vector<MSAjoint*> tJoints;
         for (int jnt = 0; jnt < myJointsCount; ++jnt) {
             MSAjoint *obj = new MSAjoint();
-            obj->setPosition3D(tJoints_[jnt]->x, tJoints_[jnt]->y, tJoints_[jnt]->z);
+            float jntX = tJoints_[jnt]->x - rootPos.x   + this->x   ;
+            float jntY = tJoints_[jnt]->y - rootPos.y   + this->y   ;
+            float jntZ = tJoints_[jnt]->z - rootPos.z               ;
+            obj->setPosition3D(jntX, jntY, jntZ);
             obj->setSize(myTrainingDataJointSize, myTrainingDataJointSize);
+            obj->setColors(TRNDATA_JNT_IDLE_COLOR, TRNDATA_JNT_OVER_COLOR, TRNDATA_JNT_DOWN_COLOR);
             tJoints.push_back(obj);
         }
         // push the vector to the vector of training joint sets
@@ -314,6 +343,71 @@ public:
     //        JOINT_UNKOWN
     //    };
 
+    // mouse interaction
+    bool hitTest(int tx, int ty) const { // redefines hitTest function of ofxMSAInteractiveObject
+        float imgScale = myImgsPathScaleMap.at(it->second[currentImgIndex]);
+        int imgWidth   = myImgs[currentImgIndex]->getWidth();
+        int imgHeight  = myImgs[currentImgIndex]->getHeight();
+        tx += myAnchorInPercentages.x * imgWidth * imgScale;
+        ty += myAnchorInPercentages.y * imgHeight * imgScale;
+        return ((tx > x) && (tx < x + imgWidth * imgScale) && (ty > y) && (ty < y + imgHeight * imgScale));
+    }
+    
+    void startDragging() {
+        dragging = true;
+    }
+    
+    void stopDragging() {
+        if (dragging) dragging = false;
+    }
+    
+    bool getDragging() {
+        return dragging;
+    }
+    
+    void updatePosition(int x, int y) {
+        float imgWidth = myImgs[currentImgIndex]->width;
+        float imgHeight = myImgs[currentImgIndex]->height;
+        float dx = (x - ofGetPreviousMouseX()) / imgWidth;
+        float dy = (y - ofGetPreviousMouseY()) / imgHeight;
+        this->myAnchorInPercentages.x -= dx;
+        this->myAnchorInPercentages.y -= dy;
+        for(int imgIndx = 0; imgIndx < myImgs.size(); imgIndx++) {
+            myImgs[imgIndx]->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
+        }
+        
+        // TODO: make sure images cannnot get dragged off the edge of the screen
+        //        this->x -= (float)((int)this->x % ofGetWidth());
+        //        this->y -= (float)((int)this->y % ofGetHeight());
+        //        this->x = fmod(this->x, ofGetWidth());
+        //        this->y = fmod(this->y, ofGetHeight());
+        //
+        //        if this-> >= ofGetWidth();
+        
+        
+    }
+    
+    void mouseDragged(int x, int y, int button) {
+        //        printf("MSAjoint::mouseDragged(x: %i, y: %i, button: %i)\n", x, y, button);
+        if (dragging) updatePosition(x, y);
+    }
+    
+    virtual void onPress(int x, int y, int button) {
+        //		printf("MSAjoint::onPress(x: %i, y: %i, button: %i)\n", x, y, button);
+        startDragging();
+    }
+    
+    virtual void onRelease(int x, int y, int button) {
+        //		printf("MSAjoint::onRelease(x: %i, y: %i, button: %i)\n", x, y, button);
+        stopDragging();
+    }
+    
+    virtual void onReleaseOutside(int x, int y, int button) {
+        //		printf("MSAjoint::onReleaseOutside(x: %i, y: %i, button: %i)\n", x, y, button);
+        stopDragging();
+    }
+
+    
     
 private:
 

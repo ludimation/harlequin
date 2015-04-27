@@ -26,13 +26,14 @@ public:
     void draw(bool drawMirrored_);
     
     // specialized functions
-    void setupGui();
-    void guiEvent(ofxUIEventArgs &e);
-    void upatedTrnDataVisibilty();
     void mapAllImages();
     void scanDirectory(ofDirectory dir, string ext);// TODO: make "imgEditor::scanDirectory()" more generic and move it to its own class so it returns an array of file paths with a given extension, or an array of directory paths for any object that needs it
     void addImgToPathMap(string baseName, string path);
     void reiterateIt();
+    void loadImgData();
+    void setupGui();
+    void guiEvent(ofxUIEventArgs &e);
+    void upatedTrnDataVisibilty();
     
     ////////////////
     // properties //
@@ -47,6 +48,7 @@ public:
     // joint tracking
     int                             trackedUserIndex, trackedUsersCount, trackedUserJointsSize;
     vector<MSAjoint*>               joints;
+    ofVec2f                         jointsAnchorInPercentages;
     float                           jointsScale;
     int                             jointSetsCount, jointsCount;
     //

@@ -32,10 +32,9 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string i
     //     - load metadata for an image if it already exists
     ///////////////////
     img = new ofImage();
-    imgDataObj = new imgData();
-    imgDataObj -> open(it, imageJointDataDirectory_, jointsScale);
     // MSA joints for displaying joint position data before capturing it
     jointsCount = 15;
+    jointsAnchorInPercentages.set(0.5f, 0.5f);
     for(int jnt = 0; jnt < jointsCount; ++jnt) {
         MSAjoint *obj = new MSAjoint();
         obj->set(
@@ -93,7 +92,7 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
 
         // increment the image path map iterator to the appropriate image
         reiterateIt();
-        imgDataObj -> open(it, imageJointDataDirectory, jointsScale);
+        loadImgData();
         
         currentImgBaseName = "";
         imgMirrored = false;
@@ -126,14 +125,15 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
     }
     
     // update MSAjoints positions to match trackedUserJoints
+    // create a vector of an MSAjoint object per joint
     for(int jnt = 0; jnt < jointsCount; ++jnt) {
         MSAjoint *obj = joints[jnt];
         if (trackedUserIndex < trackedUsersCount) {
             ofPoint j = trackedUserJoints_[trackedUserIndex][jnt];
             obj->setPosition3D(
-                                 ofGetWidth() / 2   + j.x * jointsScale
-                               , ofGetHeight() / 2  + j.y * jointsScale
-                               ,                    + j.z * jointsScale
+                                 ofGetWidth()  * jointsAnchorInPercentages.x    + j.x * jointsScale
+                               , ofGetHeight() * jointsAnchorInPercentages.y    + j.y * jointsScale
+                               ,                                                + j.z * jointsScale
                              );
         } else {
             obj->set(830 + (jnt*15), 15, 10, 10);
@@ -145,42 +145,44 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
 void imgEditor::draw(bool drawMirrored_) {
     if (currentImgBaseName != "") {
         
-        // calculate imageRatio
-        float imgRatioX;
-        float imgRatioY;
-        float imgScale;
-        if (img->width) {
-            imgRatioX = float(ofGetWidth()) / float(img->width);
-        } else {
-            imgRatioX = 1.0f;
-        }
-        if (img->height) {
-            imgRatioY = float(ofGetHeight()) / float(img->height);
-        } else {
-            imgRatioY = 1.0f;
-        }
-        if (imgRatioX < imgRatioY) {
-            imgScale = imgRatioX;
-        } else {
-            imgScale = imgRatioY;
-        }
+        imgDataObj -> draw(drawMirrored_);
         
-        // mirror image if necessary // TODO: is there a way to do this with a transformation instead?
-        if (imgMirrored != drawMirrored_) {
-            img->mirror(0, true);
-            imgMirrored = drawMirrored_;
-        }
-        img->setAnchorPercent(0.5f, 0.5f);
-        
-        ofPushStyle();
-        img->draw(
-                    ofGetWidth() / 2
-                  , ofGetHeight() / 2
-                  , img->width * imgScale
-                  , img->height * imgScale
-                  );
-        
-        ofPopStyle();
+//        // calculate imageRatio
+//        float imgRatioX;
+//        float imgRatioY;
+//        float imgScale;
+//        if (img->width) {
+//            imgRatioX = float(ofGetWidth()) / float(img->width);
+//        } else {
+//            imgRatioX = 1.0f;
+//        }
+//        if (img->height) {
+//            imgRatioY = float(ofGetHeight()) / float(img->height);
+//        } else {
+//            imgRatioY = 1.0f;
+//        }
+//        if (imgRatioX < imgRatioY) {
+//            imgScale = imgRatioX;
+//        } else {
+//            imgScale = imgRatioY;
+//        }
+//        
+//        // mirror image if necessary // TODO: is there a way to do this with a transformation instead?
+//        if (imgMirrored != drawMirrored_) {
+//            img->mirror(0, true);
+//            imgMirrored = drawMirrored_;
+//        }
+//        img->setAnchorPercent(0.5f, 0.5f);
+//        
+//        ofPushStyle();
+//        img->draw(
+//                    ofGetWidth() / 2
+//                  , ofGetHeight() / 2
+//                  , img->width * imgScale
+//                  , img->height * imgScale
+//                  );
+//        
+//        ofPopStyle();
     }
 }
 
@@ -260,6 +262,25 @@ void imgEditor::reiterateIt() {
     it = imagePathMap.begin();
     for(int i=1; i<currentImgIndex; ++i) {
         ++it;
+    }
+}
+
+//--------------------------------------------------------------
+void imgEditor::loadImgData() {
+    delete imgDataObj; imgDataObj = NULL;
+    imgDataObj = new imgData();
+    imgDataObj -> open(it, imageJointDataDirectory, jointsScale);
+    
+    if(gui) {
+        // reset imgDataObj dependent gui elements
+        guiJntDataTglMtx ->setAllToggles(false);
+        for (int tgl = 0; tgl < guiJntDataTglMtxSize; ++tgl){
+            if (tgl < imgDataObj->getTrnDataSize()) {
+                guiJntDataTglMtxTgls[tgl]->setVisible(true);
+            } else {
+                guiJntDataTglMtxTgls[tgl]->setVisible(false);
+            }
+        }
     }
 }
 
@@ -491,12 +512,14 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
 
 //--------------------------------------------------------------
 void imgEditor::upatedTrnDataVisibilty() {
-    // cycle through toggles and show / hide training data based on values
-    for (int tgl = 0; tgl < imgDataObj->getTrnDataSize(); ++tgl) {
-        if (guiJntDataTglMtxTgls[tgl] -> getValue()) {
-            imgDataObj -> setTrnDataVisibilty(tgl, true);
-        } else {
-            imgDataObj -> setTrnDataVisibilty(tgl, false);
+    if(imgDataObj) {
+        // cycle through toggles and show / hide training data based on values
+        for (int tgl = 0; tgl < imgDataObj->getTrnDataSize(); ++tgl) {
+            if (guiJntDataTglMtxTgls[tgl] -> getValue()) {
+                imgDataObj -> setTrnDataVisibilty(tgl, true);
+            } else {
+                imgDataObj -> setTrnDataVisibilty(tgl, false);
+            }
         }
     }
 }
