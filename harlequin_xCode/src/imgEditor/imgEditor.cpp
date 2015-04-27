@@ -191,9 +191,9 @@ void imgEditor::scanDirectory(ofDirectory dir, string ext) {
             addImgToPathMap(fileBaseName, filePath);
             
             // debug
-            //            cout << "imgEditor::scanDirectory() -- fileBaseName = " << fileBaseName << endl;
-            //            cout << "-- fileAbsPath = " << fileAbsPath << endl;
-            //            cout << "-- filePath = " << filePath << endl;
+            // cout << "imgEditor::scanDirectory() -- fileBaseName = " << fileBaseName << endl;
+            // cout << "-- fileAbsPath = " << fileAbsPath << endl;
+            // cout << "-- filePath = " << filePath << endl;
         }
     }
 }
