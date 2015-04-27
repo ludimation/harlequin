@@ -476,6 +476,12 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
         }
     
         
+    } else if (nameStr == "'d' save image data") {
+        if (buttonReleased) {
+            imgDataObj->save();
+        }
+    
+        
     } else if (nameStr == "'s' save imgEditor settings") {
         if (buttonReleased) {
             gui->saveSettings(guiSettingsPath);

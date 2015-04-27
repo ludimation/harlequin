@@ -67,12 +67,6 @@ public:
         myTrnJointSetsSize = myTrnJointSets.size();
         imgsMirrored = false;
         
-        // handle interactive properties and functions
-        setColors(IMG_IDLE_COLOR, IMG_OVER_COLOR, IMG_DOWN_COLOR);
-        dragging = false;
-        enableMouseEvents();
-        setPosition(ofGetWidth()*myAnchorInPercentages.x, ofGetHeight()*myAnchorInPercentages.y);
-        
         // populate gui joints vector
         for(int jnt = 0; jnt < myJointsCount; ++jnt) {
             MSAjoint *obj = new MSAjoint();
@@ -81,6 +75,7 @@ public:
             if (jnt == 0) { // set special properties for root joint
                 obj->setSize(myJointSize*1.5f, myJointSize*1.5f);
                 obj->setColors(MY_ROOT_JNT_COLOR, MY_ROOT_JNT_COLOR, MY_ROOT_JNT_COLOR);
+                // obj->enableMouseEvents(); NOTE: this is ommitted so that the root joint cannot be moved
             } else {
                 obj->setColors(MY_JNT_IDLE_COLOR, MY_JNT_OVER_COLOR, MY_JNT_DOWN_COLOR);
                 obj->enableMouseEvents();
@@ -88,6 +83,12 @@ public:
             }
             myJoints.push_back(obj);
         }
+        
+        // handle interactive properties and functions
+        setColors(IMG_IDLE_COLOR, IMG_OVER_COLOR, IMG_DOWN_COLOR);
+        dragging = false;
+        enableMouseEvents(); // needs to appear AFTER MSAjoint declarations so that mousePressed event catches updates to MSAjoints based on their mouse events
+        setPosition(ofGetWidth()*myAnchorInPercentages.x, ofGetHeight()*myAnchorInPercentages.y);
     };
     // obj destructor
     ~imgData() {
@@ -122,6 +123,29 @@ public:
         jointsScale = jointsScale_;
         
         // TODO: open() -- load XML file functionality
+//        //This is how you would load that very same file
+//        ofxXmlSettings settings;
+//        if(settings.loadFile("positions.xml")){
+//            settings.pushTag("positions");
+//            int numberOfSavedPoints = settings.getNumTags("position");
+//            for(int i = 0; i < numberOfSavedPoints; i++){
+//                settings.pushTag("position", i);
+//                
+//                ofPoint p;
+//                p.x = settings.getValue("X", 0);
+//                p.y = settings.getValue("Y", 0);
+//                p.z = settings.getValue("Z", 0);
+//                
+//                points.push_back(p);
+//                settings.popTag();
+//            }
+//            
+//            settings.popTag(); //pop position
+//        }
+//        else{
+//            ofLogError("Position file did not load!");
+//        }
+
         // try to load the XML file
         // if it exists, set imgData properties to match
         
@@ -189,18 +213,100 @@ public:
     };
     
     bool save() {
+
+        //////////////////
         // create XML object
-        // populate it with imgData property values
-        // save it to the save directory with myBaseName + ".xml"
+        //////////////////
+        ofxXmlSettings imgDataXML;
+
+        //////////////////
+        // populate it with imgData properties
+        //////////////////
+        // core tag
+        imgDataXML.addTag("harlequinImgData_0.0.0");
+        imgDataXML.pushTag("harlequinImgData_0.0.0");
+        //
+        // basename
+        imgDataXML.addValue("baseName", myBaseName);
+        //
+        // image anchor
+        imgDataXML.addTag("anchorPct");
+        imgDataXML.pushTag("anchorPct");
+        imgDataXML.addValue("x", myAnchorInPercentages.x);
+        imgDataXML.addValue("y", myAnchorInPercentages.x);
+        imgDataXML.popTag(); // pop "anchorPct"
+        //
+        // path scale map values
+        imgDataXML.addTag("pathScales");
+        imgDataXML.pushTag("pathScales");
+        int i = 0;
+        for(map<string, float>::iterator it = myImgsPathScaleMap.begin(); it != myImgsPathScaleMap.end(); ++it){
+            // each entry tag represents one path
+            imgDataXML.addTag("entry");
+            imgDataXML.pushTag("entry",i);
+            // set path and its corresponding scale
+            imgDataXML.addValue("path", it->first);
+            imgDataXML.addValue("scale", it->second);
+            imgDataXML.popTag();//pop "entry"
+            ++i;
+        }
+        imgDataXML.popTag(); //pop "pathScales"
+        //
+        // artist-specified joint positions (relative to the root joint)
+        if (myJointsEdited) {
+            imgDataXML.addTag("joints");
+            imgDataXML.pushTag("joints");
+            ofPoint baseJoint(myJoints[0]->x, myJoints[0]->y, myJoints[0]->z);
+            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
+                // each joint entry contains x, y, and z values for one joint
+                imgDataXML.addTag("entry");
+                imgDataXML.pushTag("entry",jnt);
+                // set path and its corresponding scale
+                // undo affect of jointsScale by dividing MSAjoint positions / jointsScale;
+                imgDataXML.addValue("x", (myJoints[jnt]->x - baseJoint.x) / jointsScale);
+                imgDataXML.addValue("y", (myJoints[jnt]->y - baseJoint.y) / jointsScale);
+                imgDataXML.addValue("z", (myJoints[jnt]->z - baseJoint.z) / jointsScale);
+                imgDataXML.popTag();//pop "entry"
+            }
+            imgDataXML.popTag(); //pop "joints"
+        }
+        //
+        // training data joints
+        imgDataXML.addTag("trainingJointSets");
+        imgDataXML.pushTag("trainingJointSets");
+        for(int set = 0; set < myTrnJointSets.size(); ++set){
+            //each set contains one complete set of joints
+            imgDataXML.addTag("set");
+            imgDataXML.pushTag("set",set);
+            ofPoint baseJoint(myTrnJointSets[set][0]->x, myTrnJointSets[set][0]->y, myTrnJointSets[set][0]->z);
+            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
+                //each joint entry contains x, y, and z values for one joint
+                imgDataXML.addTag("entry");
+                imgDataXML.pushTag("entry",jnt);
+                //set path and its corresponding scale
+                // undo affect of jointsScale by dividing MSAjoint positions / jointsScale;
+                imgDataXML.addValue("x", (myTrnJointSets[set][jnt]->x - baseJoint.x) / jointsScale);
+                imgDataXML.addValue("y", (myTrnJointSets[set][jnt]->y - baseJoint.y) / jointsScale);
+                imgDataXML.addValue("z", (myTrnJointSets[set][jnt]->z - baseJoint.z) / jointsScale);
+                imgDataXML.popTag();//pop "entry"
+            }
+            imgDataXML.popTag();//pop "set"
+        }
+        imgDataXML.popTag(); //pop "trainingJointSets"
         
-        // undo affect of jointsScale by dividing MSAjoint positions / jointsScale;
+        //////////////////
+        // save it to the save directory with myBaseName + ".xml"
+        //////////////////
+        imgDataXML.popTag(); // pop "harlequinImgData_0.0.0"
+        imgDataXML.saveFile(mySavePath + "/" + myBaseName + ".xml");
+        
     };
     
     // training data manipulation functions
     
     void scaleImages(float pct_) {
         for(int img = 0; img < myImgs.size(); ++img) {
-            myImgsPathScaleMap[it->second[currentImgIndex]] *= pct_;
+            myImgsPathScaleMap[it->second[img]] *= pct_;
         }
     }
     
@@ -220,14 +326,19 @@ public:
         for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
             if (myJoints[jnt] -> getDragging()) {
                 jntBeingDragged = jnt;
-                
             }
         }
         
         // cycle through myJoints again to send mousePressed message so they all drag together
+        // TODO: update joints dragging functionality so that only children of the selected joint get dragged with it
+        //    - include a list of parent joints and children joints in each MSA joint
+        //    - call "onPress" for all children
+        //    - affect movement on the z-axis to preserve length of limb relative to parent
+        //    - restrict x-y axis movement as well
+        //    - switch from fwd to behind with modifier key
         if (jntBeingDragged != -1) {
             for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
-                if (jnt != jntBeingDragged) myJoints[jnt]->onPress(x, y, button);
+                // if (jnt != jntBeingDragged) myJoints[jnt]->onPress(x, y, button);
             }
             myJointsEdited = true;
         }
