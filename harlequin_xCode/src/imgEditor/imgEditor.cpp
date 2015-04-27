@@ -31,7 +31,6 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string i
     // 2) setup objects and interactive elements for training image metadata
     //     - load metadata for an image if it already exists
     ///////////////////
-    img = new ofImage();
     // MSA joints for displaying joint position data before capturing it
     jointsCount = 15;
     jointsAnchorInPercentages.set(0.5f, 0.5f);
@@ -67,7 +66,6 @@ void imgEditor::exit() {
     
     // clean up objects
     delete gui; gui = NULL;
-    delete img; img = NULL;
     delete imgDataObj; imgDataObj = NULL;
     
     // MSAjoints list
@@ -94,15 +92,7 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
         reiterateIt();
         loadImgData();
         
-        currentImgBaseName = "";
-        imgMirrored = false;
-        bool imgLoaded = img->loadImage(it->second[it->second.size()-1]);
-        if (imgLoaded) {
-            currentImgBaseName = it->first;
-        } else {
-            cout << "imgEditor::update() -- could not load image at it->second[it->second.size()-1] = "
-            << it->second[it->second.size()-1] << endl;
-        }
+        currentImgBaseName = it->first;
         
         // update the gui text field for current image being displayed to match the updated iterator
         ofxUIWidget *widget = gui -> getWidget("current image baseName");
@@ -143,47 +133,7 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
 
 //--------------------------------------------------------------
 void imgEditor::draw(bool drawMirrored_) {
-    if (currentImgBaseName != "") {
-        
-        imgDataObj -> draw(drawMirrored_);
-        
-//        // calculate imageRatio
-//        float imgRatioX;
-//        float imgRatioY;
-//        float imgScale;
-//        if (img->width) {
-//            imgRatioX = float(ofGetWidth()) / float(img->width);
-//        } else {
-//            imgRatioX = 1.0f;
-//        }
-//        if (img->height) {
-//            imgRatioY = float(ofGetHeight()) / float(img->height);
-//        } else {
-//            imgRatioY = 1.0f;
-//        }
-//        if (imgRatioX < imgRatioY) {
-//            imgScale = imgRatioX;
-//        } else {
-//            imgScale = imgRatioY;
-//        }
-//        
-//        // mirror image if necessary // TODO: is there a way to do this with a transformation instead?
-//        if (imgMirrored != drawMirrored_) {
-//            img->mirror(0, true);
-//            imgMirrored = drawMirrored_;
-//        }
-//        img->setAnchorPercent(0.5f, 0.5f);
-//        
-//        ofPushStyle();
-//        img->draw(
-//                    ofGetWidth() / 2
-//                  , ofGetHeight() / 2
-//                  , img->width * imgScale
-//                  , img->height * imgScale
-//                  );
-//        
-//        ofPopStyle();
-    }
+    if (imgDataObj) imgDataObj -> draw(drawMirrored_);
 }
 
 //==============================================================

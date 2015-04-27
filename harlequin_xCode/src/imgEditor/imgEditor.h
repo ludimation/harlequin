@@ -59,10 +59,6 @@ public:
     float                           currentImgIndexFloat;
     string                          currentImgBaseName;
     imgData                         *imgDataObj;
-    // move to imgData
-    ofImage                         *img;
-    float                           imgScale;
-    bool                            imgMirrored;
     
 private:
     

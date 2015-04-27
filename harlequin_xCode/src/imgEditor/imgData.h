@@ -94,8 +94,7 @@ public:
         
         // clean up images
         for (int i = 0; i < myImgs.size(); ++i) {
-            delete myImgs[i];
-            myImgs[i] = NULL;
+            delete myImgs[i]; myImgs[i] = NULL;
         }
         vector<ofImage*>().swap(myImgs);
 
