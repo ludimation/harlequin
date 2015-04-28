@@ -13,21 +13,26 @@ DEPENDENCIES
 =========
 * [openFrameworks v0.8.4] (http://openframeworks.cc/download/) » clone HARLEQUIN repository into 'of_v0.8.4_osx_release\apps\'
 * addons » clone the following repostories into 'of_v0.8.4_osx_release\addons\'
-   * [ludimation/ofxOpenNI] (https://github.com/ludimation/ofxOpenNI)
-   * [ofxUI] (https://github.com/rezaali/ofxUI)
+   * [ludimation/ofxOpenNI] (https://github.com/ludimation/ofxOpenNI.git)
+   * [ofxUI] (https://github.com/rezaali/ofxUI.git)
+   * [ludimation/ofxMSAInteractiveObject] (https://github.com/ludimation/ofxMSAInteractiveObject.git)
 
 CREDITS
 =========
-**development**
-* david allen — artist + developer
-* Nick Platt — developer
+* david allen — creative director
+* Dane Bush — audio designer + voice actor
+* Ronald Sardarian — audio designer
+* Jeremy Stewart — artist + developer
+* Diana Alvarez — voice actor
+* Laura Teeter — model
+* Paul Cronin — model
+* Natalie Pitcher — business development
+* Nicholas Platt — developer
 * Emily Xie — developer + writer
 * Tae Kim — developer
-
-**visual arts**
 * Rose Maison — visual artist
 
-**performing arts**
+**in divine dance company**
 * Pampi — dancer + choreographer
 * Loreto Paz Ansaldo — producer
 * Eduardo Restrepo — dancer
@@ -40,3 +45,8 @@ CREDITS
 * Shawn Lawson
 * Tomie Hahn
 * Richard J Radke
+
+**special thanks**
+* Kevin Cunningham
+* Vladislav Voroninski
+* Emperor CJ
