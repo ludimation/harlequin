@@ -236,6 +236,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3F6401E11AEFC1DA00672BCD /* ofDirUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofDirUtils.h; sourceTree = "<group>"; };
 		5C8F760019FC166700A8AC13 /* ofxUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUI.h; sourceTree = "<group>"; };
 		5C8F760119FC166700A8AC13 /* ofxUI2DGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxUI2DGraph.cpp; sourceTree = "<group>"; };
 		5C8F760219FC166700A8AC13 /* ofxUI2DGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUI2DGraph.h; sourceTree = "<group>"; };
@@ -2045,6 +2046,7 @@
 				7704EC2514C7066A001AF021 /* main.cpp */,
 				7704EC2114C70657001AF021 /* ofApp.cpp */,
 				7704EC2214C70657001AF021 /* ofApp.h */,
+				3F6401E11AEFC1DA00672BCD /* ofDirUtils.h */,
 				6A0383901AE6AE9C00E6C259 /* imgEditor */,
 				6A0383941AE6AE9C00E6C259 /* imgLoader */,
 				6AF65D651AE7337C0008E00D /* GRTMngr */,
