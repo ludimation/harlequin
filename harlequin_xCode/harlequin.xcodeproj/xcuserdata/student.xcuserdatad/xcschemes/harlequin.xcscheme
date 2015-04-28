@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-               BuildableName = "openNISample007.app"
-               BlueprintName = "openNISample007"
-               ReferencedContainer = "container:openNiSample007.xcodeproj">
+               BuildableName = "harlequin.app"
+               BlueprintName = "harlequin"
+               ReferencedContainer = "container:harlequin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,15 +33,15 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-            BuildableName = "openNISample007.app"
-            BlueprintName = "openNISample007"
-            ReferencedContainer = "container:openNiSample007.xcodeproj">
+            BuildableName = "harlequin.app"
+            BlueprintName = "harlequin"
+            ReferencedContainer = "container:harlequin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
    <LaunchAction
-      selectedDebuggerIdentifier = ""
-      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Debug"
@@ -53,9 +53,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-            BuildableName = "openNISample007.app"
-            BlueprintName = "openNISample007"
-            ReferencedContainer = "container:openNiSample007.xcodeproj">
+            BuildableName = "harlequin.app"
+            BlueprintName = "harlequin"
+            ReferencedContainer = "container:harlequin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-            BuildableName = "openNISample007.app"
-            BlueprintName = "openNISample007"
-            ReferencedContainer = "container:openNiSample007.xcodeproj">
+            BuildableName = "harlequin.app"
+            BlueprintName = "harlequin"
+            ReferencedContainer = "container:harlequin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
