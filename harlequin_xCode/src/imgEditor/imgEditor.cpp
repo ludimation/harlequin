@@ -156,6 +156,8 @@ void imgEditor::mapAllImages() {
     string ext = "jpg";
     ofDirectory dir(path);
     scanDirectory(dir, ext);
+//    ofDirUtils dirUtils;
+//    vector<string> fileListing = dirUtils.listFilesOfType(dir, ext);
     
     // update editor variables based on map dimensions
     if (imagePathMap.size()){
