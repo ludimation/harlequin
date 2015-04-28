@@ -28,7 +28,7 @@ public:
     
     // specialized functions
     void mapAllImages();
-    void scanDirectory(ofDirectory dir, string ext);// TODO: make "imgEditor::scanDirectory()" more generic and move it to its own class so it returns an array of file paths with a given extension, or an array of directory paths for any object that needs it
+    vector<string> listFilesOfType(ofDirectory dir, string ext, vector<string> fileList = vector<string>()); // TODO: move this to a "dir helper" or something"
     void addImgToPathMap(string baseName, string path);
     void reiterateIt();
     void loadImgData();

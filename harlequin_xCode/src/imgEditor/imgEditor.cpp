@@ -151,13 +151,29 @@ void imgEditor::mapAllImages() {
     // clear the map it if has already been populated
     if (imagePathMap.size()) imagePathMap.clear();
     
-    // pupulate map
+    // get recursive list of jpg files in images directory
     string path = ofToDataPath(imagesDirectory);
     string ext = "jpg";
     ofDirectory dir(path);
-    scanDirectory(dir, ext);
 //    ofDirUtils dirUtils;
 //    vector<string> fileListing = dirUtils.listFilesOfType(dir, ext);
+    vector<string> fileListing = listFilesOfType(dir, ext);
+    
+    // pupulate map
+    if (fileListing.size()) {
+        for (int i = 0; i < fileListing.size(); ++i) {
+            string filePath = fileListing[i];
+            string fileBaseName = ofFile(filePath).getBaseName();
+
+            addImgToPathMap(fileBaseName, filePath);
+            
+            // debug
+            // cout << "imgEditor::mapAllImages() -- fileBaseName = " << fileBaseName << endl;
+            // cout << "                          -- filePath = " << filePath << endl;
+
+        }
+    }
+
     
     // update editor variables based on map dimensions
     if (imagePathMap.size()){
@@ -173,31 +189,31 @@ void imgEditor::mapAllImages() {
 }
 
 //--------------------------------------------------------------
-void imgEditor::scanDirectory(ofDirectory dir, string ext) {
+vector<string> imgEditor::listFilesOfType(ofDirectory dir_, string ext_, vector<string> fileList_) {
     int i, size;
-    size = dir.listDir();
-    dir.sort();
-    
+    size = dir_.listDir();
+    dir_.sort();
+    vector<string> fileList;
+
     for (int i = 0; i < size; i++) {
-        ofFile  fileObj         = dir.getFile(i);
+        ofFile  fileObj         = dir_.getFile(i);
         bool    fileIsDir       = fileObj.isDirectory();
-        string  fileBaseName    = fileObj.getBaseName();
-        string  fileAbsPath     = fileObj.getAbsolutePath();
         string  filePath        = fileObj.path();
         string  fileExt         = fileObj.getExtension();
         if (fileIsDir) {
-            ofDirectory newDir(fileAbsPath);
-            scanDirectory(newDir, ext);
-        }else if (fileExt == ext) {
-            
-            addImgToPathMap(fileBaseName, filePath);
-            
+            ofDirectory newDir(filePath);
+            fileList = listFilesOfType(newDir, ext_);
+            for (int j = 0; j < fileList.size(); ++j) {
+                fileList_.push_back(fileList[j]);
+            }
+        }else if (fileExt == ext_) {
+            fileList_.push_back(filePath);
             // debug
-            // cout << "imgEditor::scanDirectory() -- fileBaseName = " << fileBaseName << endl;
-            // cout << "-- fileAbsPath = " << fileAbsPath << endl;
-            // cout << "-- filePath = " << filePath << endl;
+            // cout << "imgEditor::listFilesOfType() -- filePath = " << filePath << endl;
         }
     }
+    
+    return fileList_;
 }
 
 //--------------------------------------------------------------
