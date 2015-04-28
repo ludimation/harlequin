@@ -17,24 +17,26 @@ class GRTManager {
 
 public:
     
-//    // core fuctions
-//    void setup();
-//    void update();
-//    void draw();
-//    void keyPressed(int key);
-//    
-//    // gui
-//    void guiEvent(ofxUIEventArgs &e);
-//    // properties
-//    ofxUISuperCanvas* gui;
-//    bool loadImagesNow;
-//    
-//    // file handling functions
-//    bool loadData();
-//    bool saveData();
-//    bool loadModel();
-//    bool trainModel();
-//    bool saveModel();
+    // core fuctions
+    void setup();
+    void update();
+    void draw();
+    void keyPressed(int key);
+    
+    // specialized functions
+    void guiEvent(ofxUIEventArgs &e);
+    // file handling functions
+    bool loadData();
+    bool saveData();
+    bool loadModel();
+    bool trainModel();
+    bool saveModel();
+    vector<string> listFilesOfType(ofDirectory dir, string ext, vector<string> fileList = vector<string>()); // TODO: move this to a "dir helper" or something"
+
+    // properties
+    ofxUISuperCanvas* gui;
+    bool loadImagesNow;
+    
     
 private:
     // internal data

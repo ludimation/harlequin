@@ -8,28 +8,28 @@
 
 #include "GRTManager.h"
 
-////--------------------------------------------------------------
-//void GRTManager::setup() {
-//    
-//    gui = new ofxUISuperCanvas("GRTManager");
-//    
-//    // creator
-//    // compile a list of directories that have harlequin image data in them
-//    // create gui for selecting which ones should be made into a single GRT file
-//    // speficify filename and path for GRT & XML files
-//    
-//}
-//
-////--------------------------------------------------------------
-//void GRTManager::update() {
-//    
-//}
-//
-////--------------------------------------------------------------
-//void GRTManager::draw() {
-//    
-//}
-//
+//--------------------------------------------------------------
+void GRTManager::setup() {
+    
+    gui = new ofxUISuperCanvas("GRTManager");
+    
+    // creator
+    // compile a list of directories that have harlequin image data in them
+    // create gui for selecting which ones should be made into a single GRT file
+    // speficify filename and path for GRT & XML files
+    
+}
+
+//--------------------------------------------------------------
+void GRTManager::update() {
+    
+}
+
+//--------------------------------------------------------------
+void GRTManager::draw() {
+    
+}
+
 ////--------------------------------------------------------------
 //void GRTManager::keyPressed(int key){
 //    
@@ -177,106 +177,132 @@
 ////        setDisplayState(key);
 ////    }
 //}
+
+//--------------------------------------------------------------
+void GRTManager::guiEvent(ofxUIEventArgs &e) {
+    string nameStr = e.widget->getName();
+    int kind = e.widget->getKind();
+    
+    /*  */ if(nameStr == "load model"){
+        // do something
+    } else { // default
+        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
+    }
+}
+
+
+//--------------------------------------------------------------
+bool GRTManager::loadData() {
+    //    /////////////////////////////////////////
+    //    // load training data and setup models //
+    //    /////////////////////////////////////////
+    //    trainingDataJointsPosABSfileName    = trainedImagesDirectory + "JointsPosABSdata.txt"; // TODO: make these relative to selected directories
+    //    trainingModelJointsPosABSfileName   = trainedImagesDirectory + "JointsPosABSmodel.txt";
+    //    trainingDataJointsPosRelfileName    = trainedImagesDirectory + "JointsPosReldata.txt";
+    //    trainingModelJointsPosRelfileName   = trainedImagesDirectory + "JointsPosRelmodel.txt";
+    //    trainingDataJointsRotAxisAfileName  = trainedImagesDirectory + "JointsRotAxisAdata.txt";
+    //    trainingModelJointsRotAxisAfileName = trainedImagesDirectory + "JointsRotAxisAmodel.txt";
+    //    //
+    //    trainingDataJointsPosABS.setDatasetName("harlequinPosABS");
+    //    trainingDataJointsPosABS.setNumDimensions(45);
+    //    trainingDataJointsPosRel.setDatasetName("harlequinPosRel");
+    //    trainingDataJointsPosRel.setNumDimensions(45);
+    //    trainingDataJointsRotAxisA.setDatasetName("harlequinRotAxisA");
+    //    trainingDataJointsRotAxisA.setNumDimensions(45);
+    //    //
+    //    //
+    //    trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
+    //    trainingDataJointsPosRel.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosRelfileName));
+    //    trainingDataJointsRotAxisA.loadDatasetFromFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
+    //
+    //    trainModelsNow = true;
+    //
+    //    // TODO: implement the suggested pipeline setup
+    //    GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
+    //    GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
+    //    GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
+    
+    cout << "GRTEditor::loadData() -- loaded training data" << endl;
+    return true;
+}
+
+//--------------------------------------------------------------
+bool GRTManager::saveData(){
+    //    trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
+    //    trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
+    //    trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
+    
+    cout << "GRTEditor::saveData() -- saved training data" << endl;
+    return true;
+}
+
+
+//--------------------------------------------------------------
+bool GRTManager::loadModel() {
+    
+//    // TODO: loading models only works when called outside startup()——could be fixed by implementing the suggested pipeline setup?
+//    trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName));
+//    trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
+//    trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
 //
-////--------------------------------------------------------------
-//void GRTManager::guiEvent(ofxUIEventArgs &e) {
-//    string nameStr = e.widget->getName();
-//    int kind = e.widget->getKind();
-//    
-//    /*  */ if(nameStr == "load model"){
-//        // do something
-//    } else { // default
-//        if(ofGetLogLevel() == OF_LOG_VERBOSE) cout << "[verbose] imgLoader::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
-//    }
-//}
-//
-//
-////--------------------------------------------------------------
-//bool GRTManager::loadData() {
-//    //    /////////////////////////////////////////
-//    //    // load training data and setup models //
-//    //    /////////////////////////////////////////
-//    //    trainingDataJointsPosABSfileName    = trainedImagesDirectory + "JointsPosABSdata.txt"; // TODO: make these relative to selected directories
-//    //    trainingModelJointsPosABSfileName   = trainedImagesDirectory + "JointsPosABSmodel.txt";
-//    //    trainingDataJointsPosRelfileName    = trainedImagesDirectory + "JointsPosReldata.txt";
-//    //    trainingModelJointsPosRelfileName   = trainedImagesDirectory + "JointsPosRelmodel.txt";
-//    //    trainingDataJointsRotAxisAfileName  = trainedImagesDirectory + "JointsRotAxisAdata.txt";
-//    //    trainingModelJointsRotAxisAfileName = trainedImagesDirectory + "JointsRotAxisAmodel.txt";
-//    //    //
-//    //    trainingDataJointsPosABS.setDatasetName("harlequinPosABS");
-//    //    trainingDataJointsPosABS.setNumDimensions(45);
-//    //    trainingDataJointsPosRel.setDatasetName("harlequinPosRel");
-//    //    trainingDataJointsPosRel.setNumDimensions(45);
-//    //    trainingDataJointsRotAxisA.setDatasetName("harlequinRotAxisA");
-//    //    trainingDataJointsRotAxisA.setNumDimensions(45);
-//    //    //
-//    //    //
-//    //    trainingDataJointsPosABS.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosABSfileName));
-//    //    trainingDataJointsPosRel.loadDatasetFromFile(ofToDataPath(trainingDataJointsPosRelfileName));
-//    //    trainingDataJointsRotAxisA.loadDatasetFromFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
-//    //
-//    //    trainModelsNow = true;
-//    //
-//    //    // TODO: implement the suggested pipeline setup
-//    //    GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
-//    //    GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
-//    //    GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
-//    
-//    cout << "GRTEditor::loadData() -- loaded training data" << endl;
-//    return true;
-//}
-//
-////--------------------------------------------------------------
-//bool GRTManager::saveData(){
-//    //    trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
-//    //    trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
-//    //    trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
-//    
-//    cout << "GRTEditor::saveData() -- saved training data" << endl;
-//    return true;
-//}
-//
-//
-////--------------------------------------------------------------
-//bool GRTManager::loadModel() {
-//    
-////    // TODO: loading models only works when called outside startup()——could be fixed by implementing the suggested pipeline setup?
-////    trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName));
-////    trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
-////    trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
-////
-////    trainModelsNow = false;
-//    
-//    cout << "GRTEditor::loadModel() -- loaded training model" << endl;
-//    return true;
-//}
-//
-////--------------------------------------------------------------
-//bool GRTManager::trainModel() {
-//    
-//    // TODO: training model data only works when called outside startup()——could this also be fixed by implementing the suggested pipeline setup?
-//    //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
-//    //    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
-//    //    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
-//    //
-//    //    trainModelsNow = false;
-//
-//    cout << "GRTEditor::trainModel() -- trained model" << endl;
-//    return true;
-//}
-//
-////--------------------------------------------------------------
-//bool GRTManager::saveModel() {
-//    //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
-//    //    trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
-//    //
-//    //    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
-//    //    trainingModelJointsPosRel.saveModelToFile(ofToDataPath(trainingModelJointsPosRelfileName));
-//    //
-//    //    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
-//    //    trainingModelJointsRotAxisA.saveModelToFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
-//    cout << "GRTEditor::saveModel() -- saved training model" << endl;
-//    return true;
-//}
-//
-//
+//    trainModelsNow = false;
+    
+    cout << "GRTEditor::loadModel() -- loaded training model" << endl;
+    return true;
+}
+
+//--------------------------------------------------------------
+bool GRTManager::trainModel() {
+    
+    // TODO: training model data only works when called outside startup()——could this also be fixed by implementing the suggested pipeline setup?
+    //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
+    //    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
+    //    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+    //
+    //    trainModelsNow = false;
+
+    cout << "GRTEditor::trainModel() -- trained model" << endl;
+    return true;
+}
+
+//--------------------------------------------------------------
+bool GRTManager::saveModel() {
+    //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
+    //    trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
+    //
+    //    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
+    //    trainingModelJointsPosRel.saveModelToFile(ofToDataPath(trainingModelJointsPosRelfileName));
+    //
+    //    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+    //    trainingModelJointsRotAxisA.saveModelToFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
+    cout << "GRTEditor::saveModel() -- saved training model" << endl;
+    return true;
+}
+
+//--------------------------------------------------------------
+vector<string> listFilesOfType(ofDirectory dir_, string ext_ = "", vector<string> fileList_ = vector<string>()) {
+    int i, size;
+    size = dir_.listDir();
+    dir_.sort();
+    vector<string> fileList;
+    
+    for (int i = 0; i < size; i++) {
+        ofFile  fileObj         = dir_.getFile(i);
+        bool    fileIsDir       = fileObj.isDirectory();
+        string  filePath        = fileObj.path();
+        string  fileExt         = fileObj.getExtension();
+        if (fileIsDir) {
+            ofDirectory newDir(filePath);
+            fileList = listFilesOfType(newDir, ext_);
+            for (int j = 0; j < fileList.size(); ++j) {
+                fileList_.push_back(fileList[j]);
+            }
+        }else if (fileExt == ext_ || ext_ == "") {
+            fileList_.push_back(filePath);
+            // debug
+            cout << "dirUtils » listFilesOfType() -- filePath = " << filePath << endl;
+        }
+    }
+    
+    return fileList_;
+}
