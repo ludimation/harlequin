@@ -7,7 +7,7 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>1D4AE7E5-C85C-45A7-956F-089FE17DBD64</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>harlequin</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>328B2D9D97956D43F1C477558678A6865720047A</key>
@@ -20,7 +20,7 @@
 		<string>https://github.com/ludimation/ofxOpenNI.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>harlequin_xCode/harlequin.xcodeproj/project.xcworkspace</string>
+	<string>harlequin_xCode/harlequin.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>328B2D9D97956D43F1C477558678A6865720047A</key>

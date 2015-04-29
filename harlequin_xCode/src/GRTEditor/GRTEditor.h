@@ -12,6 +12,7 @@
 
 #include "ofxUI.h"
 #include "imgData.h"
+#include "imgGRTData.h"
 //#include "ofDirUtils.h"
 
 class GRTEditor {
@@ -19,7 +20,8 @@ class GRTEditor {
 public:
     
     // core fuctions
-    void setup(string guiSettingsPath_, string imgsDir_, string imageJointDataDir_, string imageTagDataDir_, string imageGRTDataDir_);
+    void setup(string guiSettingsPath_, string imgsDir_, string imgJntDataDir_, string imgTagDataDir_, string imgGRTDataDir_);
+    void exit();
     void update();
     void draw();
     void keyPressed(int key);
@@ -27,7 +29,7 @@ public:
     // specialized functions
     void guiEvent(ofxUIEventArgs &e);
     // file handling functions
-    void mapAllImageData();
+    void mapAllGRTData(string imageJntDataDir_, string imgsDir_);
     vector<string> listFilesOfType(ofDirectory dir_ = ofDirectory(), string ext_ = "", vector<string> fileList_ = vector<string>()); // TODO: move this to a "dir helper" or something"
     bool loadData();
     bool saveData();
@@ -36,9 +38,14 @@ public:
     bool saveModel();
 
     // properties
-    ofxUISuperCanvas* gui;
-    bool loadImagesNow;
-    
+    bool                            initializing;
+    string                          guiSettingsPath, imgsDirPath, imgJntDataDirPath, imgTagDataDirPath, imgGRTDataDirPath;
+    map< string, imgData* >         imgPathDataMap; // <imgPath, imgDataObject pointer>
+    int                             currentGRTObjIndx;
+    map< string, vector< string > > tagImgPathMap; // map< tagName, map<on/off, vector< imgPaths > > >
+    imgGRTData                      *imgGRTDataObj;
+    ofxUISuperCanvas                *gui;
+    bool                            loadImagesNow;
     
 private:
     // internal data
