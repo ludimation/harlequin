@@ -335,7 +335,6 @@ void ofApp::update(){
     imgEdtr->update(testUserJoints);
     
     
-//    //    openNIRecorder.update();
 //    openNIPlayer.update();
 //    if (trainModelsNow) trainModelsNow = GRTEdtr->trainModel();
 //

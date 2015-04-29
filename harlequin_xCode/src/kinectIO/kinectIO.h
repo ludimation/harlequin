@@ -30,8 +30,9 @@ public:
     vector< vector<ofPoint> > setupTestUserJoints();
 
     // properties
-    ofxOpenNI*  openNIdevice;
-    bool        initialized;
+    ofxOpenNI*      openNIdevice;
+    ofxOpenNIUser   nTrackedUser;
+    bool            initialized;
     
 private:
     // internal data
