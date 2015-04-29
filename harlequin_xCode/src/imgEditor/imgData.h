@@ -14,6 +14,9 @@
 #include "ofxMSAInteractiveObject.h"
 #include "ofxXmlSettings.h"
 #include "MSAjoint.h"
+#include "GRT.h"
+
+using namespace GRT;
 
 #define		IMG_IDLE_COLOR          0xFFFFFF // white
 #define		IMG_OVER_COLOR          0x888888 // grey
@@ -121,7 +124,7 @@ public:
         // store arguments
         myBaseName = it_->first;
         myImgPaths = it_->second;
-        mySavePath = imageJointDataDirectory_ + "/" + myBaseName + ".xml";
+        mySavePath = ofToDataPath( imageJointDataDirectory_ + "/" + myBaseName + ".xml" );
         jointsScale = jointsScale_;
         
         open(mySavePath, false);
@@ -506,21 +509,31 @@ public:
         return myTrnJointSetsSize;
     }
     
-    vector< vector< double > > getJntDataDoubles() {
-        // TODO: write getJntDataDoubles();
+    vector< double > getJntDataDoubles() {
         // return a vector of user-trained joints in double format;
-        
-        vector< vector< double > > jointsDoubles;
-        
+        vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(myJoints);
         return jointsDoubles;
     }
     
-    vector< vector< vector< double > > > getTrnDataDoubles() {
-        // TODO: write getTrnDataDoubles();
+    vector< vector< double > > getTrnDataDoubles() {
         // return a vector of training data joint vectors in double format;
-        vector< vector< vector< double > > > trnDataJointsDoubles;
-        
+        vector< vector< double > > trnDataJointsDoubles;
+        for( int set=0; set<myTrnJointSets.size(); ++set ) {
+            vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(myTrnJointSets[set]);
+            trnDataJointsDoubles.push_back( jointsDoubles );
+        }
         return trnDataJointsDoubles;
+    }
+    
+    vector< double > convertMSAJointstoDoubleJoints (vector< MSAjoint* > MSAjnts_) {
+        // convert a vector from MSAjoints format to a flat vector of doubles for each axis
+        vector <double> jointsDoubles;
+        for( int jnt=0; jnt<MSAjnts_.size(); ++jnt ) {
+            jointsDoubles.push_back( MSAjnts_[jnt]->x );
+            jointsDoubles.push_back( MSAjnts_[jnt]->y );
+            jointsDoubles.push_back( MSAjnts_[jnt]->z );
+        }
+       return jointsDoubles;
     }
     
     void setTrnDataVisibilty(int set_, bool visible_) {
@@ -531,6 +544,7 @@ public:
             return;
         }
         
+        // iterate through joints and set visibility
         for (int jnt = 0; jnt < myJointsCount; ++jnt) {
             if (visible_) {
                 myTrnJointSets[set_][jnt]->enableAppEvents();

@@ -15,6 +15,8 @@ void GRTEditor::setup(string guiSettingsPath_, string imgsDir_, string imgJntDat
     guiSettingsPath = guiSettingsPath_;
     imgsDirPath = imgsDir_;
     imgJntDataDirPath = imgJntDataDir_;
+    imgTagDataDirPath = imgTagDataDir_;
+    imgGRTDataDirPath = imgGRTDataDir_;
     
     //////////////
     // initialize vectors and maps with all necessary data
@@ -24,7 +26,7 @@ void GRTEditor::setup(string guiSettingsPath_, string imgsDir_, string imgJntDat
     //////////////////
     // create an imgGRTData object to store, open, and save GRT data
     //////////////////
-    imgGRTDataObj = new imgGRTData("test", imgGRTDataDir_);
+    imgGRTDataObj = new imgGRTData("test", imgGRTDataDirPath);
     
     //////////////////
     // create gui for loading and modifying GRT data files
@@ -35,7 +37,7 @@ void GRTEditor::setup(string guiSettingsPath_, string imgsDir_, string imgJntDat
     //
     // select GRT image set to modify from list of GRT XML files
     // text field with currently displayed XML baseName: includes a slider to navigate list quickly, as well as buttons & keybindings to navigate up and down one image at a time
-    gui -> addTextArea("current image set baseName:", "TBU");
+    gui -> addTextArea("current image set baseName:", "current image set: test");
     //    - slider like image editor
     //    - update list button
     //    - string input to specify baseName for a new set of GRT & XML files
@@ -157,6 +159,7 @@ void GRTEditor::guiEvent(ofxUIEventArgs &e) {
     ofxUILabelButton    *labelbutton;
     ofxUIRadio          *radio;
     ofxUIToggleMatrix   *toggleMatrix;
+    ofxUIToggle         *toggle;
     bool                buttonPressed = false;
     bool                buttonReleased = false;
     
@@ -169,10 +172,12 @@ void GRTEditor::guiEvent(ofxUIEventArgs &e) {
     } else if (kind == OFX_UI_WIDGET_TOGGLEMATRIX) {
         toggleMatrix = (ofxUIToggleMatrix*)e.widget;
     } else if (kind == OFX_UI_WIDGET_TOGGLE) {
+        toggle = (ofxUIToggle*)e.widget;
+        buttonPressed = toggle->getValue();
         //        if (e.widget -> getParent() -> getName() == "trained data joints") upatedTrnDataVisibilty();
     }
     // register button release only when mouse buttons are not pressed and application is not initializing
-    //    if (!buttonPressed && !initializing && !ofGetMousePressed()) buttonReleased = true;
+    if (!buttonPressed && !initializing && !ofGetMousePressed()) buttonReleased = true;
     
     
     
@@ -294,6 +299,13 @@ void GRTEditor::guiEvent(ofxUIEventArgs &e) {
         
     } else if (nameStr == "'d' save image set data") {
         if (buttonReleased) {
+            //////////////
+            // TODO: set joint data
+            //     - map unique fileNames in tags lists to their joint data
+            //     - push that list to imgGRTDataObj
+            //////////////
+            //
+            // Save GRT data
             imgGRTDataObj->save();
         }
         

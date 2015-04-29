@@ -28,25 +28,28 @@ public:
     string                      GRTFileSavePath;
     string                      XMLFileSavePath;
     vector< string >            tags;
-    map< vector < vector < double > >, string > imgGRTDataPathMap; // index is GRT label number
+    map< vector < vector < double > >, string > imgJntDataPathMap; // index is GRT label number
     vector< jointDataTypes >    jntDataformat;
     
     // functions
     imgGRTData(string baseName_ = "", string savePath_ = "") {
         baseName = baseName_;
-        GRTFileSavePath = savePath_ + baseName + ".txt";
-        XMLFileSavePath = savePath_ + baseName + ".xml";
+        GRTFileSavePath = ofToDataPath( savePath_ + "/" + baseName + ".txt" );
+        XMLFileSavePath = ofToDataPath( savePath_ + "/" + baseName + ".xml" );
+        cout << "imgGRTData::imgGRTData() -- baseName = " << baseName << endl;
+        cout << "                         -- GRTFileSavePath = " << GRTFileSavePath << endl;
+        cout << "                         -- XMLFileSavePath = " << XMLFileSavePath << endl;
         open();
-    }
+    };
     
     ~imgGRTData() {
         
-    }
+    };
     
     void open() {
         // try to load XML settings if they exist
         // otherwise, use default values
-    }
+    };
     
     void save() {
         ///////////////////////
@@ -66,26 +69,23 @@ public:
         ClassificationData trainingData;
         //
         // Set training data object properties
-        int jointSets = 2;
-        int jointsPerSet = 15;
-        int dimensionsPerJoint = 3;
-        int numDimensions = jointSets * jointsPerSet * dimensionsPerJoint;
-        trainingData.setNumDimensions(numDimensions);
-        trainingData.setDatasetName(baseName);
-        trainingData.setInfoText("This GRT classification data file contains joint data for images with tags:" + ofJoinString(tags, ", ") + ".");
-        //
-        // TODO: add joint data for each entry in imgGRTDataPathMap
-        for(map< vector < vector < double > >, string >::iterator it=imgGRTDataPathMap.begin(); it != imgGRTDataPathMap.end(); ++it) {
-            UINT gestureLabel = distance(imgGRTDataPathMap.begin(), it);
-            vector<double> sample(numDimensions);
-            // For now we will just add some random data
-            Random random;
-            for(UINT i=0; i<100; i++){
-                for(int j=0; j<numDimensions; ++j) {
-                    sample[j] = random.getRandomNumberUniform(-1.0,1.0);
+        if (imgJntDataPathMap.size()) {
+            int jointSets = imgJntDataPathMap.begin()->first.size();
+            int jointsPerSet = imgJntDataPathMap.begin()->first[0].size();
+            int numDimensions = jointSets * jointsPerSet;
+            trainingData.setNumDimensions(numDimensions);
+            trainingData.setDatasetName(baseName);
+            trainingData.setInfoText("This GRT classification data file contains joint data for images with tags:" + ofJoinString(tags, ", ") + "."); // TODO: try putting XML data into GRT setInfoText() so that all data can be in one file
+            //
+            // TODO: add joint data for each entry in imgGRTDataPathMap
+            for( map< vector < vector < double > >, string >::iterator it=imgJntDataPathMap.begin(); it!=imgJntDataPathMap.end(); ++it ) {
+                UINT gestureLabel = distance(imgJntDataPathMap.begin(), it);
+                vector<double> sample(numDimensions);
+                for(int set=0; set<jointSets; ++set ) {
+                    for(int jnt=0; jnt<jointsPerSet; ++jnt ) {
+                        sample.push_back(it->first[set][jnt]);
+                    }
                 }
-                
-                //Add the sample to the training data
                 trainingData.addSample( gestureLabel, sample );
             }
         }
@@ -101,43 +101,47 @@ public:
             cout << "ERROR: Failed to load dataset from file!\n";
             return EXIT_FAILURE;
         }
-    }
+    };
     
     string getBaseName () {
         return baseName;
-    }
+    };
     
     void setBaseName (string baseName_ = "") {
         baseName = baseName_;
-    }
+    };
     
     void setTagsList(vector< string > tags_ = vector< string >()) {
         tags = tags_;
-    }
+    };
     
     vector< string > getTagsList() {
         return tags;
-    }
+    };
     
     void addTags(vector< string > tags_ = vector< string >()) {
         
-    }
+    };
     
     void addTag(string tag_ = "") {
         
-    }
+    };
     
     void removeTag(string tag_ = "") {
         
-    }
+    };
     
     void setJntDataFormat(vector< jointDataTypes > jntDataFormat_) {
         jntDataformat = jntDataFormat_;
-    }
+    };
     
     vector< jointDataTypes > getJointDataFormat() {
         return jntDataformat;
-    }
+    };
+    
+    void addJntData( vector< vector < double > > jntSet_, string path_) {
+        imgJntDataPathMap[jntSet_] = path_;
+    };
     
 };
 
