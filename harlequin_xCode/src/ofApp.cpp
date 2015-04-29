@@ -16,7 +16,8 @@ void ofApp::setup() {
     ////////////////////
     imgEdtr = new imgEditor();
     imgEdtr->setup("settings/imgEditorGuiSettings.xml", "images", "imageJointData");
-    //    GRTMngr = new GRTManager();
+    GRTEdtr = new GRTEditor();
+    GRTEdtr->setup("settings/GRTEditorGuiSettings.xml", "images", "imageJointData", "imageTagData", "imageGRTData");
     //    // move to image handler
     //    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
 
@@ -337,7 +338,7 @@ void ofApp::update(){
     
 //    //    openNIRecorder.update();
 //    openNIPlayer.update();
-//    if (trainModelsNow) trainModelsNow = GRTMngr->trainModel();
+//    if (trainModelsNow) trainModelsNow = GRTEdtr->trainModel();
 //
 //    // clear joint data for next iteration
 //    trackedUserJointsPosABS.clear();
@@ -720,8 +721,8 @@ void ofApp::setDisplayState(char newState) {
         case 'i':
 
 //            // save & train model before switching modes?
-//            GRTMngr->saveData();
-//            GRTMngr->saveModel();
+//            GRTEdtr->saveData();
+//            GRTEdtr->saveModel();
             
             break;
 
@@ -758,7 +759,7 @@ void ofApp::keyPressed(int key){
 //    bool displayStateKeyed;
 //    
 //    // hand key pressed to editors
-//    GRTMngr -> keyPressed(key);
+//    GRTEdtr -> keyPressed(key);
 //    
 //    // process key pressed
 //    switch (key) {
@@ -766,7 +767,7 @@ void ofApp::keyPressed(int key){
 //        case 'h':
 //            gui->toggleVisible();
 //            guiColor->toggleVisible();
-//            GRTMngr;
+//            GRTEdtr;
 //            break;
 //            
 //        case 'b': // NOTE: updated to 'b' for BUILD DATA
@@ -790,7 +791,7 @@ void ofApp::keyPressed(int key){
 //        case '[':
 //        case 'p': // previous
 //           
-//            GRTMngr->saveData();
+//            GRTEdtr->saveData();
 //            
 //            if (displayState == 'i') break; // do not train data during installation mode
 //            
@@ -804,7 +805,7 @@ void ofApp::keyPressed(int key){
 //        case ']':
 //        case 'n': // next
 //            
-//            GRTMngr->saveData();
+//            GRTEdtr->saveData();
 //            
 //            if (displayState == 'i') break; // do not train data during installation mode
 //
@@ -816,7 +817,7 @@ void ofApp::keyPressed(int key){
 //        
 //        case 'r': // random image
 //            
-//            GRTMngr->saveData();
+//            GRTEdtr->saveData();
 //
 //            if (displayState == 'i') break; // do not train data during installation mode
 //            
@@ -829,8 +830,8 @@ void ofApp::keyPressed(int key){
 //        case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
 //            if (displayState == 'i') break; // do not train data during installation mode
 //            
-//            GRTMngr->saveData();
-//            GRTMngr->saveModel();
+//            GRTEdtr->saveData();
+//            GRTEdtr->saveModel();
 //            
 //            break;
 //            

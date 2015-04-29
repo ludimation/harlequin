@@ -6,33 +6,112 @@
 //
 //
 
-#include "GRTManager.h"
+#include "GRTEditor.h"
 
 //--------------------------------------------------------------
-void GRTManager::setup() {
+void GRTEditor::setup(string guiSettingsPath_, string imgsDir_, string imageJntDataDir_, string imageTagDataDir_, string imageGRTDataDir_) {
     
-    gui = new ofxUISuperCanvas("GRTManager");
+    gui = new ofxUISuperCanvas("GRTEditor");
     
+    //////////////
     // creator
-    // compile a list of directories that have harlequin image data in them
-    // create gui for selecting which ones should be made into a single GRT file
-    // speficify filename and path for GRT & XML files
+    //////////////
+    // compile a list of image data XMLs
+    ofDirectory imgJntDataDir(imageJntDataDir_);
+    vector<string> imgJntDataXMLPaths;
+    imgJntDataXMLPaths = listFilesOfType(imgJntDataDir, "xml");
+    // create a map of image paths to their respective imgDataObj
+    map< string, imgData* > imgPathDataMap; // <imgPath, imgDataObject pointer>
+    for(int pathIndx = 0; pathIndx < imgJntDataXMLPaths.size(); ++pathIndx) {
+        // create imgdData object
+        imgData* imgDataObj = new imgData();
+        // load its img XML data
+        imgDataObj->open(imgJntDataXMLPaths[pathIndx]);
+        // geat a list of its image paths
+        vector< string > imgPaths = imgDataObj -> getImgPaths();
+        // map each image path to its corresponding imgData object
+        for(int i = 0; i < imgPaths.size(); ++i) {
+            imgPathDataMap[imgPaths[i]] = imgDataObj;
+        }
+    }
+
+    // split all image path strings and compile tags maps
+    map< string, vector< string > > tagImgPathMap; // map< tagName, map<on/off, vector< imgPaths > > >
+    string imgsDirPath = ofToDataPath(imgsDir_);
+    for(map< string, imgData* >::iterator it = imgPathDataMap.begin(); it!= imgPathDataMap.end(); ++it) {
+        // truncate path name
+        string imgPath = ofToDataPath(it->first);
+        ofFile imgFile(imgPath);
+        string imgParentPath = ofToDataPath(imgFile.getEnclosingDirectory());
+        cout << "GRTEditor::setup() -- imgParentPath = " << imgParentPath << endl;
+        cout << "                   -- imgsDirPath = " << imgsDirPath << endl;
+        ofStringReplace(imgParentPath, imgsDirPath, "");
+        cout << "                   -- truncated imgPath = " << imgParentPath << endl;
+        // split trunkated directory into tags
+        vector< string > imgPathSplit = ofSplitString(imgParentPath, "/");
+        if (imgPathSplit.size() == 1) { // try backslash delimiter
+            imgPathSplit = ofSplitString(imgPathSplit[0], "\\");
+            cout << "GRTEditor::setup() -- forward slash '/' didn't work as split delimiter. Trying backslash '\\'" << endl;
+        }
+        // add each enclosing directory to the tagImgPathMap
+        for(int i = 0; i < imgPathSplit.size(); ++i) {
+            string pathTag = imgPathSplit[i];
+            cout << "GRTEditor::setup() -- pathTag = " << pathTag << endl;
+            if (pathTag != "") tagImgPathMap[pathTag].push_back(imgPath);
+        }
+        // split file's baseName
+        string imgBaseName = imgFile.getBaseName();
+        cout << "                   -- imgBaseName = " << imgBaseName << endl;
+        vector< string > imgBaseNameSplit = ofSplitString(imgBaseName, "_");
+        // add a subselection of fileName tags to tags map
+        for(int i = 0; i < imgBaseNameSplit.size(); ++i) {
+            string imgNameTag = imgBaseNameSplit[i];
+            cout << "GRTEditor::setup() -- imgNameTag = " << imgNameTag << endl;
+            int imgNmTgInt = ofToInt(imgNameTag);
+            // cout << "                   -- imgNmTgInt = " << imgNmTgInt << endl;
+            if ((imgNameTag != "" && imgNameTag.length() != 4 && imgNameTag.length() != 8) || !imgNmTgInt) {
+                tagImgPathMap[imgPath].push_back(imgNameTag);
+            } else {
+                // do nothing - ignore tages with dates and sequence numbers (i.e.: "00000000" through "99999999" and "0000" through "9999")
+                cout << "                   -- ignoring this tag because it is a date or series number" << endl;
+            }
+        }
+        
+    }
+    
+    // create an imgGRTData object
+    //    - string baseName
+    //    - string GRTfileSavePath
+    //    - string XMLFileSavePath
+    //    - map< string, bool > tagSettings
+    //    - vector< string > imgPaths // index is GRT label number
+    //    - vector< jointDataTypes > jntDataformat
+    
+    // gui for selecting tags for images that should be made into a single GRT file
+    // gui for selecting data type for each joint (abs, rel, axis angle)
+    // string to specify baseName for both GRT & XML files (could be auto-generated based on tags as well——ssave directory should be specified on an application level)
+    // save imgGRTData XML file
+    //    - GRTfileSavePath
+    //    - imgPaths
+    //    - tagSettings
+    //    - jointDataFormat
+    // build and save imgGRTData GRT file
+    //    — unique entries for each training data point for each image, including a copy of the same user-specified joints in each entry
+}
+
+//--------------------------------------------------------------
+void GRTEditor::update() {
     
 }
 
 //--------------------------------------------------------------
-void GRTManager::update() {
+void GRTEditor::draw() {
     
 }
 
 //--------------------------------------------------------------
-void GRTManager::draw() {
+void GRTEditor::keyPressed(int key){
     
-}
-
-////--------------------------------------------------------------
-//void GRTManager::keyPressed(int key){
-//    
 ////    // process key pressed
 ////    switch (key) {
 ////            
@@ -176,10 +255,10 @@ void GRTManager::draw() {
 ////        
 ////        setDisplayState(key);
 ////    }
-//}
+}
 
 //--------------------------------------------------------------
-void GRTManager::guiEvent(ofxUIEventArgs &e) {
+void GRTEditor::guiEvent(ofxUIEventArgs &e) {
     string nameStr = e.widget->getName();
     int kind = e.widget->getKind();
     
@@ -192,7 +271,7 @@ void GRTManager::guiEvent(ofxUIEventArgs &e) {
 
 
 //--------------------------------------------------------------
-bool GRTManager::loadData() {
+bool GRTEditor::loadData() {
     //    /////////////////////////////////////////
     //    // load training data and setup models //
     //    /////////////////////////////////////////
@@ -227,7 +306,7 @@ bool GRTManager::loadData() {
 }
 
 //--------------------------------------------------------------
-bool GRTManager::saveData(){
+bool GRTEditor::saveData(){
     //    trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
     //    trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
     //    trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
@@ -238,7 +317,7 @@ bool GRTManager::saveData(){
 
 
 //--------------------------------------------------------------
-bool GRTManager::loadModel() {
+bool GRTEditor::loadModel() {
     
 //    // TODO: loading models only works when called outside startup()——could be fixed by implementing the suggested pipeline setup?
 //    trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName));
@@ -252,7 +331,7 @@ bool GRTManager::loadModel() {
 }
 
 //--------------------------------------------------------------
-bool GRTManager::trainModel() {
+bool GRTEditor::trainModel() {
     
     // TODO: training model data only works when called outside startup()——could this also be fixed by implementing the suggested pipeline setup?
     //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
@@ -266,7 +345,7 @@ bool GRTManager::trainModel() {
 }
 
 //--------------------------------------------------------------
-bool GRTManager::saveModel() {
+bool GRTEditor::saveModel() {
     //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
     //    trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
     //
@@ -279,8 +358,53 @@ bool GRTManager::saveModel() {
     return true;
 }
 
+void GRTEditor::mapAllImageData() {
+    
+//    // debug
+//    cout << "imgEditor::mapAllImages() -- called" << endl;
+//    
+//    // clear the map it if has already been populated
+//    if (imagePathMap.size()) imagePathMap.clear();
+//    
+//    // get recursive list of jpg files in images directory
+//    string path = ofToDataPath(imagesDirectory);
+//    string ext = "jpg";
+//    ofDirectory dir(path);
+//    //    ofDirUtils dirUtils;
+//    //    vector<string> fileListing = dirUtils.listFilesOfType(dir, ext);
+//    vector<string> fileListing = listFilesOfType(dir, ext);
+//    
+//    // pupulate map
+//    if (fileListing.size()) {
+//        for (int i = 0; i < fileListing.size(); ++i) {
+//            string filePath = fileListing[i];
+//            string fileBaseName = ofFile(filePath).getBaseName();
+//            
+//            addImgToPathMap(fileBaseName, filePath);
+//            
+//            // debug
+//            // cout << "imgEditor::mapAllImages() -- fileBaseName = " << fileBaseName << endl;
+//            // cout << "                          -- filePath = " << filePath << endl;
+//            
+//        }
+//    }
+//    
+//    
+//    // update editor variables based on map dimensions
+//    if (imagePathMap.size()){
+//        it = imagePathMap.begin();
+//        currentImgIndex = 0;
+//    } else {
+//        it = imagePathMap.end();
+//        currentImgIndex = 0;
+//        currentImgIndexFloat = 0.0f;
+//        currentImgBaseName = "";
+//        cout << "imgEditor::mapAllImages() -- no images found in the 'data/images' directory" << endl;
+//    }
+}
+
 //--------------------------------------------------------------
-vector<string> listFilesOfType(ofDirectory dir_, string ext_ = "", vector<string> fileList_ = vector<string>()) {
+vector<string> GRTEditor::listFilesOfType(ofDirectory dir_, string ext_, vector<string> fileList_) {
     int i, size;
     size = dir_.listDir();
     dir_.sort();
@@ -300,7 +424,7 @@ vector<string> listFilesOfType(ofDirectory dir_, string ext_ = "", vector<string
         }else if (fileExt == ext_ || ext_ == "") {
             fileList_.push_back(filePath);
             // debug
-            cout << "dirUtils » listFilesOfType() -- filePath = " << filePath << endl;
+            // cout << "GRTEditor::listFilesOfType() -- filePath = " << filePath << endl;
         }
     }
     

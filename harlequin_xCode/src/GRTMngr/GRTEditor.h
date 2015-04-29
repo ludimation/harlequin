@@ -11,14 +11,15 @@
 #pragma once
 
 #include "ofxUI.h"
+#include "imgData.h"
 //#include "ofDirUtils.h"
 
-class GRTManager {
+class GRTEditor {
 
 public:
     
     // core fuctions
-    void setup();
+    void setup(string guiSettingsPath_, string imgsDir_, string imageJointDataDir_, string imageTagDataDir_, string imageGRTDataDir_);
     void update();
     void draw();
     void keyPressed(int key);
@@ -26,12 +27,13 @@ public:
     // specialized functions
     void guiEvent(ofxUIEventArgs &e);
     // file handling functions
+    void mapAllImageData();
+    vector<string> listFilesOfType(ofDirectory dir_ = ofDirectory(), string ext_ = "", vector<string> fileList_ = vector<string>()); // TODO: move this to a "dir helper" or something"
     bool loadData();
     bool saveData();
     bool loadModel();
     bool trainModel();
     bool saveModel();
-    vector<string> listFilesOfType(ofDirectory dir, string ext, vector<string> fileList = vector<string>()); // TODO: move this to a "dir helper" or something"
 
     // properties
     ofxUISuperCanvas* gui;

@@ -33,9 +33,10 @@ class imgData : public ofxMSAInteractiveObject { // can I extend ": public ofIma
 public:
     
     // properties
-    map <string, vector<string> >::iterator it;
     string                          myBaseName;
+    vector< string >                myImgPaths;
     string                          mySavePath;
+    bool                            readOnly;
     vector< ofImage* >              myImgs;
     int                             colorIdle, colorDown, colorOver;
     bool                            imgsMirrored;
@@ -57,6 +58,8 @@ public:
         // declare variables
         myBaseName = "";
         mySavePath = "";
+        jointsScale = 1.0f;
+        readOnly = false;
         myJointsCount = 15;
         myJointsEdited = false;
         dragging = false;
@@ -116,24 +119,35 @@ public:
     // core functions
     bool open(map <string, vector<string> >::iterator it_, string imageJointDataDirectory_, float jointsScale_) {
         // store arguments
-        it = it_;
-        myBaseName = it->first;
+        myBaseName = it_->first;
+        myImgPaths = it_->second;
         mySavePath = imageJointDataDirectory_ + "/" + myBaseName + ".xml";
         jointsScale = jointsScale_;
+        
+        open(mySavePath, false);
+    };
+    
+    bool open(string path_, bool readOnly_ = true) {
+        mySavePath = path_;
+        readOnly = readOnly_;
+        
+        if (readOnly) {
+            disableAllEvents(); // disable all inherited ofxMSAInteractiveObject events
+            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
+                myJoints[jnt]->disableAllEvents();
+            }
+        }
         
         // try to load settings from XML file
         ofxXmlSettings imgDataXML;
         if(imgDataXML.loadFile(mySavePath)){
             // if it exists, set imgData properties to match
-
+            
             // common variables
             int entriesCount;
             
             // core tag
             imgDataXML.pushTag("harlequinImgData_0.0.0");
-            //
-            // basename loading is unnecessary since this is already set earlier
-            // myBaseName = imgDataXML.getValue("baseName", "");
             //
             // image anchor
             imgDataXML.pushTag("anchorPct");
@@ -151,13 +165,15 @@ public:
                 // try to load image
                 string imgPath = imgDataXML.getValue("path", "");
                 float imgScale = imgDataXML.getValue("scale", 0.0f);
-                ofImage *img = new ofImage();
-                if(img->loadImage(imgPath)) {
-                    img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
-                    myImgs.push_back(img);
-                    myImgsPathScaleMap[imgPath] = imgScale;
-                } else {
-                    cout << "imgData::open() -- failed to load imgPath = " << imgPath << endl;
+                myImgsPathScaleMap[imgPath] = imgScale;
+                if (!readOnly) { // don't load images in read-only mode
+                    ofImage *img = new ofImage();
+                    if(img->loadImage(imgPath)) {
+                        img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
+                        myImgs.push_back(img);
+                    } else {
+                        cout << "imgData::open() -- failed to load imgPath = " << imgPath << endl;
+                    }
                 }
                 imgDataXML.popTag();//pop "entry"
             }
@@ -220,9 +236,9 @@ public:
 
         } else {
             // otherwise, load images from "it" and calculate scales, using default falues for everything else
-            for (int imgPathIndex = 0; imgPathIndex <it->second.size(); ++imgPathIndex) {
+            for (int imgPathIndex = 0; imgPathIndex < myImgPaths.size(); ++imgPathIndex) {
                 ofImage *img = new ofImage();
-                string path = it->second[imgPathIndex];
+                string path = myImgPaths[imgPathIndex];
                 if (img->loadImage(path)) {
                     img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
                     myImgs.push_back(img);
@@ -260,7 +276,7 @@ public:
     
     void draw(bool drawMirrored_) {
         // store image scale for quick reference
-        float imgScale = myImgsPathScaleMap[it->second[currentImgIndex]]; // TODO: use ".at()" function instead? i.e.: myImgsPathScaleMap.at(it->second[currentImgIndex]);
+        float imgScale = myImgsPathScaleMap[myImgPaths[currentImgIndex]]; // TODO: use ".at()" function instead? i.e.: myImgsPathScaleMap.at(it->second[currentImgIndex]);
         // mirror image if necessary // TODO: is there a way to do this with a transformation instead?
         if (imgsMirrored != drawMirrored_) {
             for (int imgIndx = 0; imgIndx < myImgs.size(); ++imgIndx) {
@@ -287,6 +303,7 @@ public:
     };
     
     bool save() {
+        if (readOnly) return; // no matter what happens in readOnly mode, don't save any data
 
         //////////////////
         // create XML object
@@ -299,9 +316,6 @@ public:
         // core tag
         imgDataXML.addTag("harlequinImgData_0.0.0");
         imgDataXML.pushTag("harlequinImgData_0.0.0");
-        //
-        // basename
-        imgDataXML.addValue("baseName", myBaseName);
         //
         // image anchor
         imgDataXML.addTag("anchorPct");
@@ -374,11 +388,20 @@ public:
         
     };
     
-    // training data manipulation functions
+    // get training data functions
+    vector<string> getImgPaths() {
+        vector<string> imgPaths;
+        for(map<string, float>::iterator imgIT = myImgsPathScaleMap.begin(); imgIT != myImgsPathScaleMap.end(); ++imgIT) {
+            imgPaths.push_back(imgIT->first);
+        }
+        
+        return imgPaths;
+    }
     
+    // training data manipulation functions
     void scaleImages(float pct_) {
-        for(int img = 0; img < myImgs.size(); ++img) {
-            myImgsPathScaleMap[it->second[img]] *= pct_;
+        for(map<string, float>::iterator imgIT = myImgsPathScaleMap.begin(); imgIT != myImgsPathScaleMap.end(); ++imgIT) {
+            imgIT->second *= pct_;
         }
     }
     
@@ -416,7 +439,7 @@ public:
         }
     }
     
-    void pushTrnData(vector<ofPoint> jntsOfPnts_) {
+    void pushTrnData(vector< ofPoint > jntsOfPnts_) {
         // if the number of pushed joints matches the expected number of joints
         if (jntsOfPnts_.size() != myJointsCount) {
             cout << "imgData::pushTrnData(vector<ofPoint> jntsOfPnts_) -- jntsOfPnts_.size() != myJointsCount " << endl;
@@ -432,8 +455,11 @@ public:
             float jntY = jntsOfPnts_[jnt].y ;
             float jntZ = jntsOfPnts_[jnt].z ;
             obj->setPosition3D(jntX, jntY, jntZ);
-            obj->setSize(myTrainingDataJointSize, myTrainingDataJointSize);
-            obj->setColors(TRNDATA_JNT_IDLE_COLOR, TRNDATA_JNT_OVER_COLOR, TRNDATA_JNT_DOWN_COLOR);
+            if (readOnly) obj->disableAllEvents(); // joints should not draw or update in read-only mode
+            else {
+                obj->setSize(myTrainingDataJointSize, myTrainingDataJointSize);
+                obj->setColors(TRNDATA_JNT_IDLE_COLOR, TRNDATA_JNT_OVER_COLOR, TRNDATA_JNT_DOWN_COLOR);
+            }
             tJoints.push_back(obj);
         }
         // push the vector to the vector of training joint sets
@@ -478,6 +504,23 @@ public:
     
     int getTrnDataSize () {
         return myTrnJointSetsSize;
+    }
+    
+    vector< vector< double > > getJntDataDoubles() {
+        // TODO: write getJntDataDoubles();
+        // return a vector of user-trained joints in double format;
+        
+        vector< vector< double > > jointsDoubles;
+        
+        return jointsDoubles;
+    }
+    
+    vector< vector< vector< double > > > getTrnDataDoubles() {
+        // TODO: write getTrnDataDoubles();
+        // return a vector of training data joint vectors in double format;
+        vector< vector< vector< double > > > trnDataJointsDoubles;
+        
+        return trnDataJointsDoubles;
     }
     
     void setTrnDataVisibilty(int set_, bool visible_) {
@@ -562,7 +605,7 @@ public:
 
     // mouse interaction
     bool hitTest(int tx, int ty) const { // redefines hitTest function of ofxMSAInteractiveObject
-        float imgScale = myImgsPathScaleMap.at(it->second[currentImgIndex]);
+        float imgScale = myImgsPathScaleMap.at(myImgPaths[currentImgIndex]);
         int imgWidth   = myImgs[currentImgIndex]->getWidth();
         int imgHeight  = myImgs[currentImgIndex]->getHeight();
         tx += myAnchorInPercentages.x * imgWidth * imgScale;

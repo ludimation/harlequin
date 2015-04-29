@@ -17,7 +17,7 @@
 #include "imgEditor.h"
 #include "body.h"
 #include "GRT.h"
-#include "GRTManager.h"
+#include "GRTEditor.h"
 
 // OSC
 #define HOST "localhost"
@@ -72,7 +72,7 @@ public:
     //
     // properties
     body                    *bodyClass;
-    GRTManager              *GRTMngr;
+    GRTEditor               *GRTEdtr;
     string                  trainedImagesDirectory;
     float                   imageScale;
     GRT::SVM                trainingModelJointsPosABS;
