@@ -414,34 +414,9 @@ public:
         colorDown = colorDown_;
     }
 
-    void mousePressed(int x, int y, int button) {
-
-        // cout << "imgData::mousePressed(x, y, button) -- executing" << endl;
-
-        int jntBeingDragged = -1;
-
-        // cycle through myJoints to see if any of them are being dragged
-        for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
-            if (myJoints[jnt] -> getDragging()) {
-                jntBeingDragged = jnt;
-            }
-        }
-        
-        // cycle through myJoints again to send mousePressed message so they all drag together
-        // TODO: update joints dragging functionality so that only children of the selected joint get dragged with it
-        //    - include a list of parent joints and children joints in each MSA joint
-        //    - call "onPress" for all children
-        //    - affect movement on the z-axis to preserve length of limb relative to parent
-        //    - restrict x-y axis movement as well
-        //    - switch from fwd to behind with modifier key
-        if (jntBeingDragged != -1) {
-            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
-                // if (jnt != jntBeingDragged) myJoints[jnt]->onPress(x, y, button);
-            }
-            myJointsEdited = true;
-        }
-    }
-    
+    //////////////
+    // training data handling
+    //////////////
     void pushTrnData(vector< ofPoint > jntsOfPnts_) {
         // if the number of pushed joints matches the expected number of joints
         if (jntsOfPnts_.size() != myJointsCount) {
@@ -473,7 +448,7 @@ public:
         // cout << "imgData::pushTrnData(vector<ofPoint> &jntsOfPnts_) -- executed" << endl;
         // cout << " -- myTrnJointSetsSize = " << ofToString(myTrnJointSetsSize) << endl;
     }
-    
+    //
     void pushTrnData(vector< MSAjoint* > &tJoints_) {
         // if the number of pushed joints matches the expected number of joints
         if (tJoints_.size() != myJointsCount) {
@@ -504,56 +479,7 @@ public:
         // cout << "imgData::pushTrnData(vector<MSAjoint *> &tJoints_) -- executed" << endl;
         // cout << " -- myTrnJointSetsSize = " << ofToString(myTrnJointSetsSize) << endl;
     };
-    
-    int getTrnDataSize () {
-        return myTrnJointSetsSize;
-    }
-    
-    vector< double > getJntDataDoubles() {
-        // return a vector of user-trained joints in double format;
-        vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(myJoints);
-        return jointsDoubles;
-    }
-    
-    vector< vector< double > > getTrnDataDoubles() {
-        // return a vector of training data joint vectors in double format;
-        vector< vector< double > > trnDataJointsDoubles;
-        for( int set=0; set<myTrnJointSets.size(); ++set ) {
-            vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(myTrnJointSets[set]);
-            trnDataJointsDoubles.push_back( jointsDoubles );
-        }
-        return trnDataJointsDoubles;
-    }
-    
-    vector< double > convertMSAJointstoDoubleJoints (vector< MSAjoint* > MSAjnts_) {
-        // convert a vector from MSAjoints format to a flat vector of doubles for each axis
-        vector <double> jointsDoubles;
-        for( int jnt=0; jnt<MSAjnts_.size(); ++jnt ) {
-            jointsDoubles.push_back( MSAjnts_[jnt]->x );
-            jointsDoubles.push_back( MSAjnts_[jnt]->y );
-            jointsDoubles.push_back( MSAjnts_[jnt]->z );
-        }
-       return jointsDoubles;
-    }
-    
-    void setTrnDataVisibilty(int set_, bool visible_) {
-        // if specified training set exists
-        if (myTrnJointSets.size() < set_) {
-            cout << "imgData::showTrnData(int i_) -- there is no training joint set i_ = " << ofToString(set_) << endl;
-            cout << " -- myTrnJointSets.size() = " << ofToString(myTrnJointSets.size()) << endl;
-            return;
-        }
-        
-        // iterate through joints and set visibility
-        for (int jnt = 0; jnt < myJointsCount; ++jnt) {
-            if (visible_) {
-                myTrnJointSets[set_][jnt]->enableAppEvents();
-            } else {
-                myTrnJointSets[set_][jnt]->disableAppEvents();
-            }
-        }
-    };
-    
+    //
     void eraseTrnData(int i_) {
         // if specified training set exists
         if (myTrnJointSets.size() < i_) {
@@ -568,7 +494,7 @@ public:
         myTrnJointSets.erase(myTrnJointSets.begin() + i_);
         myTrnJointSetsSize = myTrnJointSets.size();
     };
-    
+    //
     void setJointsFromTrainingJointSet(int i_) {
         // if specified training set exists
         if (myTrnJointSets.size() < i_) {
@@ -585,7 +511,7 @@ public:
         // set a flag to make sure user-specified skeleton gets saved
         myJointsEdited = true;
     };
-    
+    //
     //    enum Joint { // joint reference from OpenNI code
     //
     //        // start at root joint
@@ -616,8 +542,83 @@ public:
     //        JOINT_COUNT,
     //        JOINT_UNKOWN
     //    };
-
+    //
+    int getTrnDataSize () {
+        return myTrnJointSetsSize;
+    }
+    //
+    vector< double > getJntDataDoubles() {
+        // return a vector of user-trained joints in double format;
+        vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(myJoints);
+        return jointsDoubles;
+    }
+    //
+    vector< vector< double > > getTrnDataDoubles() {
+        // return a vector of training data joint vectors in double format;
+        vector< vector< double > > trnDataJointsDoubles;
+        for( int set=0; set<myTrnJointSets.size(); ++set ) {
+            vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(myTrnJointSets[set]);
+            trnDataJointsDoubles.push_back( jointsDoubles );
+        }
+        return trnDataJointsDoubles;
+    }
+    //
+    vector< double > convertMSAJointstoDoubleJoints (vector< MSAjoint* > MSAjnts_) {
+        // convert a vector from MSAjoints format to a flat vector of doubles for each axis
+        vector <double> jointsDoubles;
+        for( int jnt=0; jnt<MSAjnts_.size(); ++jnt ) {
+            jointsDoubles.push_back( MSAjnts_[jnt]->x );
+            jointsDoubles.push_back( MSAjnts_[jnt]->y );
+            jointsDoubles.push_back( MSAjnts_[jnt]->z );
+        }
+       return jointsDoubles;
+    }
+    
+    //////////////
+    // MSA joint visibility
+    //////////////
+    void setMSAJntVisibility(vector< MSAjoint* > joints_, bool visible_) {
+        // iterate through joints and set visibility
+        for (int jnt = 0; jnt < joints_.size(); ++jnt) {
+            if (visible_) joints_[jnt]->enableAppEvents();
+            else joints_[jnt]->disableAppEvents();
+        }
+    }
+    //
+    void setMSAJntVisibility(bool visible_) {
+        // all joints
+        setUsrJntVisibility(visible_);
+        setTrnDataVisibility(visible_);
+    }
+    //
+    void setUsrJntVisibility(bool visible_) {
+        // user-specified joints
+        if(myJoints.size()) setMSAJntVisibility(myJoints, visible_);
+    }
+    //
+    void setTrnDataVisibility(bool visible_) {
+        // all training data
+        for(int set=0; set<myTrnJointSets.size(); ++set ) {
+            setTrnDataVisibilty(set, visible_);
+        }
+    }
+    //
+    void setTrnDataVisibilty(int set_, bool visible_) {
+        // a specific training data set
+        
+        // if specified training set exists
+        if (myTrnJointSets.size() < set_) {
+            cout << "imgData::setTrnDataVisibilty(int i_) -- there is no training joint set i_ = " << ofToString(set_) << endl;
+            cout << " -- myTrnJointSets.size() = " << ofToString(myTrnJointSets.size()) << endl;
+            return;
+        }
+        // set its MSAjoints visibility
+        setMSAJntVisibility(myTrnJointSets[set_], visible_);
+    };
+    
+    ///////////////
     // mouse interaction
+    ///////////////
     bool hitTest(int tx, int ty) const { // redefines hitTest function of ofxMSAInteractiveObject
         float imgScale = myImgsPathScaleMap.at(myImgPaths[currentImgIndex]);
         int imgWidth   = myImgs[currentImgIndex]->getWidth();
@@ -626,19 +627,47 @@ public:
         ty += myAnchorInPercentages.y * imgHeight * imgScale;
         return ((tx > x) && (tx < x + imgWidth * imgScale) && (ty > y) && (ty < y + imgHeight * imgScale));
     }
-    
+    //
+    void mousePressed(int x, int y, int button) {
+        
+        // cout << "imgData::mousePressed(x, y, button) -- executing" << endl;
+        
+        int jntBeingDragged = -1;
+        
+        // cycle through myJoints to see if any of them are being dragged
+        for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
+            if (myJoints[jnt] -> getDragging()) {
+                jntBeingDragged = jnt;
+            }
+        }
+        
+        // cycle through myJoints again to send mousePressed message so they all drag together
+        // TODO: update joints dragging functionality so that only children of the selected joint get dragged with it
+        //    - include a list of parent joints and children joints in each MSA joint
+        //    - call "onPress" for all children
+        //    - affect movement on the z-axis to preserve length of limb relative to parent
+        //    - restrict x-y axis movement as well
+        //    - switch from fwd to behind with modifier key
+        if (jntBeingDragged != -1) {
+            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
+                // if (jnt != jntBeingDragged) myJoints[jnt]->onPress(x, y, button);
+            }
+            myJointsEdited = true;
+        }
+    }
+    //
     void startDragging() {
         dragging = true;
     }
-    
+    //
     void stopDragging() {
         if (dragging) dragging = false;
     }
-    
+    //
     bool getDragging() {
         return dragging;
     }
-    
+    //
     void updatePosition(int x, int y) {
         float imgWidth = myImgs[currentImgIndex]->width;
         float imgHeight = myImgs[currentImgIndex]->height;
@@ -660,28 +689,26 @@ public:
         
         
     }
-    
+    //
     void mouseDragged(int x, int y, int button) {
         //        printf("MSAjoint::mouseDragged(x: %i, y: %i, button: %i)\n", x, y, button);
         if (dragging) updatePosition(x, y);
     }
-    
+    //
     virtual void onPress(int x, int y, int button) {
         //		printf("MSAjoint::onPress(x: %i, y: %i, button: %i)\n", x, y, button);
         startDragging();
     }
-    
+    //
     virtual void onRelease(int x, int y, int button) {
         //		printf("MSAjoint::onRelease(x: %i, y: %i, button: %i)\n", x, y, button);
         stopDragging();
     }
-    
+    //
     virtual void onReleaseOutside(int x, int y, int button) {
         //		printf("MSAjoint::onReleaseOutside(x: %i, y: %i, button: %i)\n", x, y, button);
         stopDragging();
     }
-
-    
     
 private:
 

@@ -32,7 +32,7 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string i
     //     - load metadata for an image if it already exists
     ///////////////////
     // MSA joints for displaying joint position data before capturing it
-    jointsCount = 15;
+    jointsCount = 15; // TODO: move these into imgData object to clean up this editor
     jointsAnchorInPercentages.set(0.5f, 0.5f);
     for(int jnt = 0; jnt < jointsCount; ++jnt) {
         MSAjoint *obj = new MSAjoint();
@@ -77,16 +77,35 @@ void imgEditor::exit() {
 
 //--------------------------------------------------------------
 void imgEditor::enable() {
-    gui->enable();
+    enabled = true;
+    if (gui) gui->enable();
+    if (imgDataObj) imgDataObj->setMSAJntVisibility(true);
+    setMSAJntVisibility(true);
 }
 
 //--------------------------------------------------------------
 void imgEditor::disable() {
-    gui->disable();
+    enabled = false;
+    if (gui) gui->disable();
+    if (imgDataObj) imgDataObj->setMSAJntVisibility(false);
+    setMSAJntVisibility(false);
+}
+
+//--------------------------------------------------------------
+void imgEditor::setMSAJntVisibility(bool visible_) {
+    setMSAJntVisibility(joints, visible_);
+}
+void imgEditor::setMSAJntVisibility(vector< MSAjoint* > joints_, bool visible_) {
+    // iterate through joints and set visibility
+    for (int jnt = 0; jnt < joints_.size(); ++jnt) {
+        if (visible_) joints_[jnt]->enableAppEvents();
+        else joints_[jnt]->disableAppEvents();
+    }
 }
 
 //--------------------------------------------------------------
 void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
+    if (!enabled) return;
     
     // load a new image if currentImgIndexFloat has been changed
     if ((int)currentImgIndexFloat != currentImgIndex) {
@@ -143,7 +162,7 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
 
 //--------------------------------------------------------------
 void imgEditor::draw(bool drawMirrored_) {
-    if (imgDataObj) imgDataObj -> draw(drawMirrored_);
+    if (imgDataObj && enabled) imgDataObj -> draw(drawMirrored_);
 }
 
 //==============================================================

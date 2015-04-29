@@ -25,6 +25,8 @@ public:
     void exit();
     void enable();
     void disable();
+    void setMSAJntVisibility(bool visible_);
+    void setMSAJntVisibility(vector< MSAjoint* > joints_, bool visible_);
     void update(vector< vector<ofPoint> > trackedUserJoints_);
     void draw(bool drawMirrored_);
     
@@ -41,7 +43,7 @@ public:
     ////////////////
     // properties //
     ////////////////
-    bool                            initializing;
+    bool                            initializing, enabled;
     ofxUISuperCanvas*               gui; // gui = new ofxUISuperCanvas("harlequin");
     string                          guiSettingsPath, imagesDirectory, imageJointDataDirectory;
     int                             guiJntDataTglMtxSize;

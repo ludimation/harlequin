@@ -158,12 +158,11 @@ void ofApp::setup() {
     guiColor -> addLabelButton("save color settings", false);
     guiColor -> autoSizeToFitWidgets();
 
-    
-//
-//    ///////////////////////////
-//    // initial display state //
-//    ///////////////////////////
-//    setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
+
+    ///////////////////////////
+    // initial display state //
+    ///////////////////////////
+    setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
 }
 
 //--------------------------------------------------------------
@@ -201,12 +200,12 @@ void ofApp::guiEvent(ofxUIEventArgs &e) {
     } else if (nameStr == "kinected") {
         if (kinected ) // || ofGetKeyPressed('k')?
         {
-//            kinectsInitialized = kinectInterface->setupKinects(drawMirrored);
-//            kinected = kinectsInitialized;
+            kinectsInitialized = kinectInterface->setupKinects(drawMirrored);
+            kinected = kinectsInitialized;
         }
         else
         {
-//            kinected = !kinectInterface->stopKinects();
+            kinected = !kinectInterface->stopKinects();
         }
         
         
@@ -258,11 +257,11 @@ void ofApp::guiEvent(ofxUIEventArgs &e) {
             default:
                 break;
         }
-//    } else if (nameStr == "save main settings") {
-//        gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
-//    } else if (nameStr == "save color settings") {
-//        guiColor -> saveSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
-//        
+    } else if (nameStr == "save main settings") {
+        gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
+    } else if (nameStr == "save color settings") {
+        guiColor -> saveSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
+        
         
     } else if (nameStr == "image blend mode") {
         ofxUIRadio *radio = (ofxUIRadio *) e.widget;
@@ -439,46 +438,45 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-    imgEdtr->draw(drawMirrored);
     
-//    ofBackground(bgRed, bgGreen, bgBlue);
-//    
-//
-//    // idle until it's time to draw the next frame
-//    while (ofGetElapsedTimeMillis() < drawNextFrameMilliseconds) {
-//        // TODO: put streaming events here
-//        //  - should this be moved to the "update()" function?
-//    }
-//    // calculate new time to wait until drawing next frame
-//    if (drawFrameRate != 0) {
-//        drawNextFrameMilliseconds = ofGetElapsedTimeMillis() + 1000 / drawFrameRate;
-//    }
-//    
-//    // draw depth
-//    if (drawDepth and drawDepthBehind){
-//        ofPushStyle();
-//
-//        ofEnableBlendMode((ofBlendMode)depthBlendMode);
-//        ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
-//        openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
-//        
-//        ofPopStyle();
-//    }
-//
-//    
-//    ofPoint jointsCenterProjective;
-//    ofPoint imgRefPoint;
-//    ofPoint imgPTRRefPoint;
-//    ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
-//    
-//    // Build debug message string
-//    string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
-//    
-//    // draw images
-//    switch (displayState) {
-//        case 'i':
-//        case 'd': // debug
-//           
+    ofBackground(bgRed, bgGreen, bgBlue);
+    
+
+    // idle until it's time to draw the next frame
+    while (ofGetElapsedTimeMillis() < drawNextFrameMilliseconds) {
+        // TODO: put streaming events here
+        //  - should this be moved to the "update()" function?
+    }
+    // calculate new time to wait until drawing next frame
+    if (drawFrameRate != 0) {
+        drawNextFrameMilliseconds = ofGetElapsedTimeMillis() + 1000 / drawFrameRate;
+    }
+    
+    // draw depth
+    if (drawDepth and drawDepthBehind){
+        ofPushStyle();
+
+        ofEnableBlendMode((ofBlendMode)depthBlendMode);
+        ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
+        openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+        
+        ofPopStyle();
+    }
+
+    
+    ofPoint jointsCenterProjective;
+    ofPoint imgRefPoint;
+    ofPoint imgPTRRefPoint;
+    ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
+    
+    // Build debug message string
+    string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
+    
+    // draw images
+    switch (displayState) {
+        case 'i':
+        case 'd': // debug
+           
 //            // manage style and drawing matrix
 //            ofPushStyle();
 //            ofPushMatrix();
@@ -585,103 +583,93 @@ void ofApp::draw() {
 //            ofPopStyle();
 //            
 //            break;
-//            
-//        case 't': // training // move these to an "if (flag) statement" so that flags can be set in GUI, and get wrid of this complicated switch statement
-//        default:
-//
-//            // manage style and drawing matrix
-//            ofPushStyle();
-//            ofPushMatrix();
-//            
-//            // set colors
-//            ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
-//            ofEnableBlendMode((ofBlendMode)imgBlendMode);
-//
-//            // draw image(s)
-//            // if (img->loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; }
-//            if (images.size())
-//            {
-//
-//                if (imgInvertColors) {
-//                    invertImage(img);
-//                    invertImage(imgPTR);
-//                }
-//
-//                
-//            }
-//            
-//            // reset drawing matrix and style
-//            ofPopMatrix();
-//            ofPopStyle();
-//
-//            break;
-//    }
-//    
-//    if (drawSkeletons or drawDepth){
-//        ofPushStyle();
-//        //  openNIRecorder.drawDebug(0, 0);
-//        if (drawDepth and !drawDepthBehind)
-//        {
-//            ofEnableBlendMode((ofBlendMode)depthBlendMode);
-//            ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
-//            openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
-//        }
-//        if (drawSkeletons)
-//        {
-//            ofSetColor(skelRed, skelGreen, skelBlue, skelAlpha);
-//            ofEnableBlendMode((ofBlendMode)skelBlendMode);
-//            openNIPlayer.drawSkeletons(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
-//        }
-//        
-//        ofPopStyle();
-//    }
-//    
-//    if (drawJoints2MSG) {
-//        // add bone data for tracked user to display message
-//        if (trackedUserJointsPosABS.size() > 0) {
-//            // display joint data
-//            for (int j=0; j < trackedUserJointsPosABS.size(); ++j) {
-//                msg = msg + "\n====\n== User[" + ofToString(j) + "]\n----";
-//                for (int i=0; i < trackedUserJointsPosABS[j].size(); ++i) {
-//                    msg = msg + "\n    joint[" + ofToString(i) + "] = " + ofToString(trackedUserJointsPosABS[j][i]);
-//                }
-//                msg = msg + "\n====";
-//            }
-//        }
-//        // if (trackedUserJointsPosABS.size()) msg = msg + "\n" + ofToString(trackedUserJointsPosABS);
-//    }
-//
-//    if (drawMSG) {
-//        // draw debug message
-//        verdana.drawString(msg, 20, 20);
-//        //        cout << msg << endl;
-//    }
-//    
-//    if(setupOSC){
-//        sender.setup(myHost, ofToInt(myPort));
-//        ofxOscMessage m;
-//        m.setAddress("/test" );
-//        sender.sendMessage(m);
-//        setupOSC = false;
-//    }
-//    
-//    if (sendOSC){
-//        if (trackedUserCentersProjective.size() > 0) {
-//            for (int i=0; i < trackedUserCentersProjective.size(); ++i) {
-//                ofxOscMessage m;
-//                m.setAddress("/POS" + ofToString(i) );
-//                m.addFloatArg( trackedUserCentersProjective[i].x );
-//                m.addFloatArg( trackedUserCentersProjective[i].y );
-//                m.addFloatArg( trackedUserCentersProjective[i].z );
-//                sender.sendMessage(m);
-//            }
-//        }
-//        
-//        
-//    }
-//    
-//    
-//    ofPopStyle();
+            
+        case 't': // training // move these to an "if (flag) statement" so that flags can be set in GUI, and get wrid of this complicated switch statement
+        default:
+
+            // manage style and drawing matrix
+            ofPushStyle();
+            ofPushMatrix();
+            
+            // set colors
+            ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
+            ofEnableBlendMode((ofBlendMode)imgBlendMode);
+            
+            // draw image editor image
+            imgEdtr->draw(drawMirrored);
+
+            // reset drawing matrix and style
+            ofPopMatrix();
+            ofPopStyle();
+
+            break;
+    }
+    
+    if (drawSkeletons or drawDepth){
+        ofPushStyle();
+        //  openNIRecorder.drawDebug(0, 0);
+        if (drawDepth and !drawDepthBehind)
+        {
+            ofEnableBlendMode((ofBlendMode)depthBlendMode);
+            ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
+            openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+        }
+        if (drawSkeletons)
+        {
+            ofSetColor(skelRed, skelGreen, skelBlue, skelAlpha);
+            ofEnableBlendMode((ofBlendMode)skelBlendMode);
+            openNIPlayer.drawSkeletons(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+        }
+        
+        ofPopStyle();
+    }
+    
+    if (drawJoints2MSG) {
+        // add bone data for tracked user to display message
+        if (trackedUserJointsPosABS.size() > 0) {
+            // display joint data
+            for (int j=0; j < trackedUserJointsPosABS.size(); ++j) {
+                msg = msg + "\n====\n== User[" + ofToString(j) + "]\n----";
+                for (int i=0; i < trackedUserJointsPosABS[j].size(); ++i) {
+                    msg = msg + "\n    joint[" + ofToString(i) + "] = " + ofToString(trackedUserJointsPosABS[j][i]);
+                }
+                msg = msg + "\n====";
+            }
+        }
+        // if (trackedUserJointsPosABS.size()) msg = msg + "\n" + ofToString(trackedUserJointsPosABS);
+    }
+
+    if (drawMSG) {
+        // draw debug message
+        verdana.drawString(msg, 20, 20);
+        //        cout << msg << endl;
+    }
+    
+    if(setupOSC){
+        sender.setup(myHost, ofToInt(myPort));
+        ofxOscMessage m;
+        m.setAddress("/test" );
+        sender.sendMessage(m);
+        setupOSC = false;
+    }
+    
+    if (sendOSC){
+        if (trackedUserCentersProjective.size() > 0) {
+            for (int i=0; i < trackedUserCentersProjective.size(); ++i) {
+                ofxOscMessage m;
+                m.setAddress("/POS" + ofToString(i) );
+                m.addFloatArg( trackedUserCentersProjective[i].x );
+                m.addFloatArg( trackedUserCentersProjective[i].y );
+                m.addFloatArg( trackedUserCentersProjective[i].z );
+                sender.sendMessage(m);
+            }
+        }
+        
+        
+    }
+    
+    
+    ofPopStyle();
 }
 
 
@@ -713,16 +701,25 @@ void ofApp::invertImage(ofPixels &imgPX, ofTexture &imgTEX) {
 void ofApp::setDisplayState(char newState) {
     bool undefinedState = false;
     
+    imgEdtr->disable();
+    GRTEdtr->disable();
+    //            // save & train model before switching modes?
+    //            GRTEdtr->saveData();
+    //            GRTEdtr->saveModel();
+    
     switch (newState) {
         case 't': // training
-            // fall through (intentional)
-        case 'd': // debug
-            // fall through (intentional)
-        case 'i':
-
-//            // save & train model before switching modes?
-//            GRTEdtr->saveData();
-//            GRTEdtr->saveModel();
+            
+            imgEdtr->enable();
+            GRTEdtr->enable();
+            
+            break;
+            
+        case 'd': // debug // male
+            
+            break;
+            
+        case 'i': // interactive // female
             
             break;
 

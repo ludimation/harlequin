@@ -35,15 +35,15 @@ bool kinectIO::setupKinects(bool drawMirrored) {
     ofSetLogLevel(OF_LOG_VERBOSE);
 
     
-    openNIdevice->setup();
-    openNIdevice->addDepthGenerator();
-    openNIdevice->addImageGenerator();
-    openNIdevice->setRegister(true);
-    openNIdevice->setMirror(drawMirrored);
-    openNIdevice->addUserGenerator();
-    openNIdevice->setMaxNumUsers(4); // was 2
-    openNIdevice->setDepthColoring(COLORING_BLUES_INV);
-    openNIdevice->start();
+//    openNIdevice->setup();
+//    openNIdevice->addDepthGenerator();
+//    openNIdevice->addImageGenerator();
+//    openNIdevice->setRegister(true);
+//    openNIdevice->setMirror(drawMirrored);
+//    openNIdevice->addUserGenerator();
+//    openNIdevice->setMaxNumUsers(4); // was 2
+//    openNIdevice->setDepthColoring(COLORING_BLUES_INV);
+//    openNIdevice->start();
     
     ofSetLogLevel(OF_LOG_WARNING);
     
@@ -55,11 +55,11 @@ bool kinectIO::setupKinects(bool drawMirrored) {
 bool kinectIO::stopKinects() {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-    //    openNIPlayer.removeDepthGenerator();
-    //    openNIPlayer.removeImageGenerator();
-    //    openNIPlayer.setRegister(false);
-    //    openNIPlayer.removeUserGenerator();
-    openNIdevice->stop();
+//    //    openNIPlayer.removeDepthGenerator();
+//    //    openNIPlayer.removeImageGenerator();
+//    //    openNIPlayer.setRegister(false);
+//    //    openNIPlayer.removeUserGenerator();
+//    openNIdevice->stop();
     ofSetLogLevel(OF_LOG_WARNING);
     
     return true;
