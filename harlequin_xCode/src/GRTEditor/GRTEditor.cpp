@@ -82,6 +82,17 @@ void GRTEditor::exit() {
     delete imgGRTDataObj; imgGRTDataObj = NULL;
 }
 
+//--------------------------------------------------------------
+void GRTEditor::enable() {
+    gui->enable();
+}
+
+//--------------------------------------------------------------
+void GRTEditor::disable() {
+    gui->disable();
+}
+
+
 
 //// text field with currently displayed image baseName: includes a slider to navigate list quickly, as well as buttons & keybindings to navigate up and down one image at a time
 //gui -> addTextArea("current image baseName", "current image: " + it->first);

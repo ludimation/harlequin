@@ -22,6 +22,8 @@ public:
     // core fuctions
     void setup(string guiSettingsPath_, string imgsDir_, string imgJntDataDir_, string imgTagDataDir_, string imgGRTDataDir_);
     void exit();
+    void enable();
+    void disable();
     void update();
     void draw();
     void keyPressed(int key);

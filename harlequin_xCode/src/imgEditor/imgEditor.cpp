@@ -76,6 +76,16 @@ void imgEditor::exit() {
 }
 
 //--------------------------------------------------------------
+void imgEditor::enable() {
+    gui->enable();
+}
+
+//--------------------------------------------------------------
+void imgEditor::disable() {
+    gui->disable();
+}
+
+//--------------------------------------------------------------
 void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
     
     // load a new image if currentImgIndexFloat has been changed

@@ -23,6 +23,8 @@ public:
     // core functions
     void setup(string guiSettingsPath_, string imagesDirectory_, string imageJointDataDirectory_);
     void exit();
+    void enable();
+    void disable();
     void update(vector< vector<ofPoint> > trackedUserJoints_);
     void draw(bool drawMirrored_);
     
