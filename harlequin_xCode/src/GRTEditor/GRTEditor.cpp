@@ -87,9 +87,17 @@ void GRTEditor::setup(string guiSettingsPath_, string imgsDir_, string imageJntD
     //    - vector< string > imgPaths // index is GRT label number
     //    - vector< jointDataTypes > jntDataformat
     
+    // gui for selecting which GRT XML data to modify from list of GRT XML files
+    //    - slider like image editor
+    //    - update list button
+    //    - string input to specify baseName for both GRT & XML files
+    //        - default could be auto-generated based on tags as well——ssave directory should be specified on an application level
+    //        - create new GRT button
+    //            - gets file name from name entry field
+    //            - updates GRT XML file list
     // gui for selecting tags for images that should be made into a single GRT file
+    //    - update tags list button
     // gui for selecting data type for each joint (abs, rel, axis angle)
-    // string to specify baseName for both GRT & XML files (could be auto-generated based on tags as well——ssave directory should be specified on an application level)
     // save imgGRTData XML file
     //    - GRTfileSavePath
     //    - imgPaths
