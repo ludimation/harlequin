@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3F1CD7771AF0234600FC6B2E /* GRTEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6AF65D661AE7337C0008E00D /* GRTEditor.cpp */; };
+		3F1CD77D1AF08FF100FC6B2E /* GRTEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F1CD77A1AF08FF100FC6B2E /* GRTEditor.cpp */; };
 		5C8F765E19FC166700A8AC13 /* ofxUI2DGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C8F760119FC166700A8AC13 /* ofxUI2DGraph.cpp */; };
 		5C8F766019FC166700A8AC13 /* ofxUI2DPad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C8F760319FC166700A8AC13 /* ofxUI2DPad.cpp */; };
 		5C8F766219FC166700A8AC13 /* ofxUIBaseDraws.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C8F760519FC166700A8AC13 /* ofxUIBaseDraws.cpp */; };
@@ -237,7 +237,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3F295F571AEFDB27002B5726 /* imgGRTData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgGRTData.h; sourceTree = "<group>"; };
+		3F1CD77A1AF08FF100FC6B2E /* GRTEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GRTEditor.cpp; sourceTree = "<group>"; };
+		3F1CD77B1AF08FF100FC6B2E /* GRTEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRTEditor.h; sourceTree = "<group>"; };
+		3F1CD77C1AF08FF100FC6B2E /* imgGRTData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgGRTData.h; sourceTree = "<group>"; };
 		3F6401E11AEFC1DA00672BCD /* ofDirUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofDirUtils.h; sourceTree = "<group>"; };
 		5C8F760019FC166700A8AC13 /* ofxUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUI.h; sourceTree = "<group>"; };
 		5C8F760119FC166700A8AC13 /* ofxUI2DGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxUI2DGraph.cpp; sourceTree = "<group>"; };
@@ -583,8 +585,6 @@
 		6A6F221319FBEB4F00C4C803 /* openFrameworksDebug.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = openFrameworksDebug.a; path = ../../../libs/openFrameworksCompiled/lib/osx/openFrameworksDebug.a; sourceTree = "<group>"; };
 		6A9A569A1ADECC2900722AF0 /* ofxMSAInteractiveObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMSAInteractiveObject.cpp; sourceTree = "<group>"; };
 		6A9A569B1ADECC2900722AF0 /* ofxMSAInteractiveObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMSAInteractiveObject.h; sourceTree = "<group>"; };
-		6AF65D661AE7337C0008E00D /* GRTEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GRTEditor.cpp; sourceTree = "<group>"; };
-		6AF65D671AE7337C0008E00D /* GRTEditor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GRTEditor.h; sourceTree = "<group>"; };
 		7704EC2114C70657001AF021 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofApp.cpp; sourceTree = "<group>"; };
 		7704EC2214C70657001AF021 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
 		7704EC2514C7066A001AF021 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -828,6 +828,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3F1CD7791AF08FF100FC6B2E /* GRTEditor */ = {
+			isa = PBXGroup;
+			children = (
+				3F1CD77A1AF08FF100FC6B2E /* GRTEditor.cpp */,
+				3F1CD77B1AF08FF100FC6B2E /* GRTEditor.h */,
+				3F1CD77C1AF08FF100FC6B2E /* imgGRTData.h */,
+			);
+			path = GRTEditor;
+			sourceTree = "<group>";
+		};
 		5C8F75FD19FC164900A8AC13 /* ofxUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -1721,16 +1731,6 @@
 			path = ../../../addons/ofxOpenNI/src;
 			sourceTree = "<group>";
 		};
-		6AF65D651AE7337C0008E00D /* GRTMngr */ = {
-			isa = PBXGroup;
-			children = (
-				6AF65D661AE7337C0008E00D /* GRTEditor.cpp */,
-				6AF65D671AE7337C0008E00D /* GRTEditor.h */,
-				3F295F571AEFDB27002B5726 /* imgGRTData.h */,
-			);
-			path = GRTMngr;
-			sourceTree = "<group>";
-		};
 		770F031514B9969E003CCE99 /* lib */ = {
 			isa = PBXGroup;
 			children = (
@@ -2051,8 +2051,8 @@
 				7704EC2214C70657001AF021 /* ofApp.h */,
 				3F6401E11AEFC1DA00672BCD /* ofDirUtils.h */,
 				6A0383901AE6AE9C00E6C259 /* imgEditor */,
+				3F1CD7791AF08FF100FC6B2E /* GRTEditor */,
 				6A0383941AE6AE9C00E6C259 /* imgLoader */,
-				6AF65D651AE7337C0008E00D /* GRTMngr */,
 				6A0382701AE6AE9B00E6C259 /* body */,
 				6A0382711AE6AE9B00E6C259 /* GRT */,
 				6A0383951AE6AE9C00E6C259 /* kinectIO */,
@@ -2393,7 +2393,7 @@
 				6A0383961AE6AE9C00E6C259 /* AdaBoost.cpp in Sources */,
 				5C8F768E19FC166700A8AC13 /* ofxUINumberDialer.cpp in Sources */,
 				5C8F766219FC166700A8AC13 /* ofxUIBaseDraws.cpp in Sources */,
-				3F1CD7771AF0234600FC6B2E /* GRTEditor.cpp in Sources */,
+				3F1CD77D1AF08FF100FC6B2E /* GRTEditor.cpp in Sources */,
 				6A03839E1AE6AE9C00E6C259 /* DTW.cpp in Sources */,
 				6A0383EE1AE6AE9C00E6C259 /* RangeTracker.cpp in Sources */,
 				6A0383DA1AE6AE9C00E6C259 /* FIRFilter.cpp in Sources */,

@@ -21,16 +21,17 @@ class imgGRTData {
 public:
 
     // properties
-    string                  baseName;
-    string                  GRTFilePath;
-    vector<string>          imgPaths;
-    map<string, bool>       tags;
-    vector<jointDataTypes>  jointDataTypesAssignment;
+    string                      baseName;
+    string                      GRTfileSavePath;
+    string                      XMLFileSavePath;
+    map< string, bool >         tagSettings;
+    vector< string >            imgPaths; // index is GRT label number
+    vector< jointDataTypes >    jntDataformat;
     
     // functions
     imgGRTData(string baseName_ = "", string GRTFilePath_ = "") {
         baseName = baseName_;
-        GRTFilePath = GRTFilePath_;
+        GRTfileSavePath = GRTFilePath_;
         open();
     }
     
@@ -55,7 +56,7 @@ public:
     }
     
     vector< string > getTagsList() {
-        
+        return tagSettings;
     }
     
     void addTags(vector< string > tags_ = vector< string >()) {
@@ -75,7 +76,7 @@ public:
     }
     
     vector< jointDataTypes > getJointDataTypes() {
-        
+        return jntDataformat;
     }
     
 };
