@@ -9,14 +9,141 @@
 #include "kinectIO.h"
 
 //--------------------------------------------------------------
+kinectIO::kinectIO () {
+    
+}
+
+//--------------------------------------------------------------
+kinectIO::~kinectIO () {
+    delete openNIdevice; openNIdevice = NULL;
+}
+
+//--------------------------------------------------------------
 void kinectIO::setup() {
     initialized = false;
+    
+    openNIdevice = new ofxOpenNI();
+    testUserJoints = setupTestUserJoints();
+    testUserJointsDouble = convertUserJointToDouble(testUserJoints);
 }
 
 //--------------------------------------------------------------
 void kinectIO::exit() {
     if (initialized) stopKinects();
     delete openNIdevice;
+}
+
+void kinectIO::update() {
+    if (!initialized) return;
+    
+    openNIdevice->update();
+    
+    // clear joint data for next iteration
+    trackedUserJointsPosABS.clear();
+    trackedUserJointsPosABSDouble.clear();
+    trackedUserJointsPosRel.clear();
+    trackedUserJointsPosRelDouble.clear();
+    trackedUserJointsRotAxisA.clear();
+    trackedUserJointsRotAxisADouble.clear();
+    trackedUserCentersProjective.clear();
+    
+    // create some local vectors for user position storage
+    vector< ofPoint >   singleUserJointsPosABS;
+    vector< double >    singleUserJointsPosABSDoubles;
+    vector< ofPoint >   singleUserJointsPosRel;
+    vector< double >    singleUserJointsPosRelDoubles;
+    vector< ofPoint >   singleUserJointsRotAxisA;
+    vector< double >    singleUserJointsRotAxisADoubles;
+    
+    // local variables for looping
+    int numUsers;
+    int numJoints;
+    if (initialized) {
+        numUsers = openNIdevice->getNumTrackedUsers();
+        if (numUsers) numJoints = openNIdevice->getTrackedUser(0).joints.size();
+    } else {
+        numUsers = 3;
+        numJoints = 15;
+    }
+    
+    // build joint position vectors
+    for (int j = 0; j < numUsers; j++) {
+        singleUserJointsPosABS.clear();
+        singleUserJointsPosRel.clear();
+        singleUserJointsRotAxisA.clear();
+        
+        if (initialized) {
+            // store center positions in both world space and projective space
+            ofPoint userJCenter = openNIdevice->getTrackedUser(j).getCenter();
+            ofPoint userJcenterProjective = openNIdevice->worldToProjective(userJCenter);
+            //            ofPoint userJcenterProjective = openNIdevice->getTrackedUser(j).joints[0].getProjectivePosition(); // TODO: use the root position of the hips for relative joint data instead?
+            trackedUserCentersProjective.push_back(
+                                                   userJcenterProjective *
+                                                   ofPoint(
+                                                           float( ofGetWidth() ) / 640.0f,
+                                                           float( ofGetHeight()  ) / 480.0f,
+                                                           1
+                                                           )
+                                                   );
+            for (int i = 0; i < numJoints; ++i) {
+                ofPoint jointIworldPos = openNIdevice->getTrackedUser(j).joints[i].getWorldPosition();
+                singleUserJointsPosABS.push_back(jointIworldPos);
+                singleUserJointsPosRel.push_back(jointIworldPos - userJCenter);
+                singleUserJointsRotAxisA.push_back(jointIworldPos);
+                // TODO: calculate axis angles properly and store with something like singleUserJointsAxisA.push_back(findAxisAngle(userJCenter, jointIworldPos));
+            }
+        } else {
+            for (int j = 0; j < numUsers; j++)
+                trackedUserCentersProjective.push_back(ofPoint(
+                                                               float( ofGetWidth() ) * (j+1.0f) / (numUsers+1.0f),
+                                                               float( ofGetHeight()  ) / 2.0f,
+                                                               2500.0f
+                                                               )
+                                                       );
+            
+            singleUserJointsPosABS = testUserJoints[j];
+            singleUserJointsPosRel = testUserJoints[j];
+            singleUserJointsRotAxisA = testUserJoints[j];
+        }
+        trackedUserJointsPosABS.push_back(singleUserJointsPosABS);
+        trackedUserJointsPosRel.push_back(singleUserJointsPosRel);
+        trackedUserJointsRotAxisA.push_back(singleUserJointsRotAxisA);
+    }
+    
+    // build training vectors based on joint positions
+    if (trackedUserJointsPosABS.size())
+    {
+        for (int j = 0; j < trackedUserJointsPosABS.size(); ++j) {
+            singleUserJointsPosABSDoubles.clear();
+            singleUserJointsPosRelDoubles.clear();
+            singleUserJointsRotAxisADoubles.clear();
+            for (int i = 0; i < trackedUserJointsPosABS[j].size(); ++i) {
+                for (int axis = 0; axis < 3; ++axis)
+                {
+                    // axis = should be {0,1,2} which correlates to ofPoint {x, y, z}
+                    singleUserJointsPosABSDoubles.push_back(trackedUserJointsPosABS[j][i][axis]);
+                    singleUserJointsPosRelDoubles.push_back(trackedUserJointsPosRel[j][i][axis]);
+                    singleUserJointsRotAxisADoubles.push_back(trackedUserJointsRotAxisA[j][i][axis]);
+                }
+            }
+            trackedUserJointsPosABSDouble.push_back(singleUserJointsPosABSDoubles);
+            trackedUserJointsPosRelDouble.push_back(singleUserJointsPosRelDoubles);
+            trackedUserJointsRotAxisADouble.push_back(singleUserJointsRotAxisADoubles);
+            
+        }
+    }
+}
+
+//--------------------------------------------------------------
+void kinectIO::drawDepth(int x_, int y_, int w_, int h_) {
+    if (!initialized) return;
+    openNIdevice->drawDepth(x_, y_, w_, h_);
+}
+
+//--------------------------------------------------------------
+void kinectIO::drawSkeletons(int x_, int y_, int w_, int h_) {
+    if (!initialized) return;
+    openNIdevice->drawSkeletons(x_, y_, w_, h_);
 }
 
 //--------------------------------------------------------------
@@ -29,21 +156,32 @@ void kinectIO::gestureEvent(ofxOpenNIGestureEvent & event){
     ofLogNotice() << event.gestureName << getGestureStatusAsString(event.gestureStatus) << "from device" << event.deviceID << "at" << event.timestampMillis;
 }
 
+//--------------------------------------------------------------
+void kinectIO::setMirror(bool drawMirrored_) {
+    if (!initialized) return;
+    openNIdevice->setMirror(drawMirrored_);
+}
 
 //--------------------------------------------------------------
-bool kinectIO::setupKinects(bool drawMirrored) {
+void kinectIO::setDepthColoring(DepthColoring depthColorMode_) {
+    if (!initialized) return;
+    openNIdevice->setDepthColoring(depthColorMode_);
+}
+
+//--------------------------------------------------------------
+bool kinectIO::setupKinects(bool drawMirrored_) {
     ofSetLogLevel(OF_LOG_VERBOSE);
 
     
-//    openNIdevice->setup();
-//    openNIdevice->addDepthGenerator();
+    openNIdevice->setup();
+    openNIdevice->addDepthGenerator();
 //    openNIdevice->addImageGenerator();
-//    openNIdevice->setRegister(true);
-//    openNIdevice->setMirror(drawMirrored);
-//    openNIdevice->addUserGenerator();
-//    openNIdevice->setMaxNumUsers(4); // was 2
-//    openNIdevice->setDepthColoring(COLORING_BLUES_INV);
-//    openNIdevice->start();
+    openNIdevice->setRegister(true);
+    openNIdevice->setMirror(drawMirrored_);
+    openNIdevice->addUserGenerator();
+    openNIdevice->setMaxNumUsers(4); // was 2
+    openNIdevice->setDepthColoring(COLORING_BLUES_INV);
+    openNIdevice->start();
     
     ofSetLogLevel(OF_LOG_WARNING);
     
@@ -52,19 +190,43 @@ bool kinectIO::setupKinects(bool drawMirrored) {
     return true;
 }
 
+//--------------------------------------------------------------
 bool kinectIO::stopKinects() {
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-//    //    openNIPlayer.removeDepthGenerator();
-//    //    openNIPlayer.removeImageGenerator();
-//    //    openNIPlayer.setRegister(false);
-//    //    openNIPlayer.removeUserGenerator();
-//    openNIdevice->stop();
+    openNIdevice->removeDepthGenerator();
+//    openNIdevice->removeImageGenerator();
+    openNIdevice->setRegister(false);
+    openNIdevice->removeUserGenerator();
+    openNIdevice->stop();
     ofSetLogLevel(OF_LOG_WARNING);
+    
+    initialized = false;
     
     return true;
 }
 
+//--------------------------------------------------------------
+vector< vector< ofPoint > > kinectIO::getUserJoints() {
+    if (initialized) {
+        return trackedUserJointsPosRel;
+    } else return testUserJoints;
+}
+
+//--------------------------------------------------------------
+vector< vector< double > >  kinectIO::getUserJointsDoubles() {
+    if (initialized) {
+        return trackedUserJointsPosRelDouble;
+    } else return testUserJointsDouble;
+}
+
+//--------------------------------------------------------------
+vector< ofPoint > kinectIO::getTrackedUserCentersProjective() {
+    return trackedUserCentersProjective;
+}
+
+
+//--------------------------------------------------------------
 vector< vector<ofPoint> > kinectIO::setupTestUserJoints() { //TODO: make setting test user joints data more data-driven––load an external XML file or atual positions from a GRT joint data file
     vector< ofPoint > joints;
     vector< vector <ofPoint> > jointSets;
@@ -126,4 +288,20 @@ vector< vector<ofPoint> > kinectIO::setupTestUserJoints() { //TODO: make setting
     jointSets.push_back(joints);
     
     return jointSets;
+}
+
+//--------------------------------------------------------------
+vector< vector<double> > kinectIO::convertUserJointToDouble(vector< vector < ofPoint > > ofPointJoints_) {
+    vector< vector<double> > doubleJointsSets;
+    for(int set=0; set<ofPointJoints_.size(); ++set ) {
+        vector<double> doubleJoints;
+        for(int jnt=0; jnt<ofPointJoints_[set].size(); ++jnt) {
+            doubleJoints.push_back(ofPointJoints_[set][jnt].x);
+            doubleJoints.push_back(ofPointJoints_[set][jnt].y);
+            doubleJoints.push_back(ofPointJoints_[set][jnt].z);
+        }
+        doubleJointsSets.push_back(doubleJoints);
+    }
+    
+    return doubleJointsSets;
 }

@@ -20,7 +20,7 @@ void ofApp::setup() {
     GRTEdtr->setup("settings/GRTEditorGuiSettings.xml", "images", "imageJointData", "imageTagData", "imageGRTData");
     //    // move to image handler
     //    imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
-
+    
     
     //////////////////////
     // kinect interface //
@@ -35,12 +35,11 @@ void ofApp::setup() {
     // gui settings
     drawFrameRate   = 30;
     drawMirrored    = false;
-    imgInvertColors = false;
-    imgColorsAreInverted = false;
+    imgInvertColors = false; // TODO: move imgInvertColors to imgEditor
+    imgColorsAreInverted = false; // TODO: move imgColorsAreInverted to imgEditor
     // debug
-    testUserJoints = kinectInterface->setupTestUserJoints(); // test joints used if Kinect is offline
     verdana.loadFont(ofToDataPath("verdana.ttf"), 10);
-
+    
     
     //////////////
     // OSC INIT //
@@ -50,6 +49,46 @@ void ofApp::setup() {
     myPort = ofToString(PORT);
     
     
+    /////////////////////
+    // Initialize GUIS //
+    /////////////////////
+    setupGuis();
+    
+    
+    
+    ///////////////////////////
+    // initial display state //
+    ///////////////////////////
+    setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+    
+    // kinects
+    kinectInterface->exit();
+    delete kinectInterface;
+    
+    // clean up image editor
+    imgEdtr->exit();
+    delete imgEdtr;
+    
+    // gui
+    delete gui;
+}
+
+//--------------------------------------------------------------
+void ofApp::update(){
+    
+    //    if (trainModelsNow) trainModelsNow = GRTEdtr->trainModel();
+    
+    kinectInterface->update();
+    
+    imgEdtr->update(kinectInterface->getUserJoints());
+}
+
+//--------------------------------------------------------------
+void ofApp::setupGuis() {
     /////////////////////
     // Initialize GUIS //
     /////////////////////
@@ -65,9 +104,16 @@ void ofApp::setup() {
     gui -> addSpacer();
     //
     // Switch display modes
-    gui -> addLabel("application mode: ");
+    gui -> addLabel("application mode: "); // TODO: Make this more like the editors where there's a "displayModeEditor", "levelEditor", or "roomEditor" that handles larger settings files which can be changed between
     vector<string> appModes; appModes.push_back("i"); appModes.push_back("d"); appModes.push_back("t");
     ofxUIRadio *radioAppMode = gui -> addRadio("application mode", appModes, OFX_UI_ORIENTATION_HORIZONTAL);
+    vector< ofxUIToggle*> toggles = radioAppMode -> getToggles();
+    toggles[0]->bindToKey('i');
+    toggles[0]->bindToKey('I');
+    toggles[1]->bindToKey('d');
+    toggles[1]->bindToKey('D');
+    toggles[2]->bindToKey('t');
+    toggles[2]->bindToKey('T');
     gui -> addTextArea("text", "'i', 'd' or 't' to switch between 'interactive', 'debug' and 'training' modes", OFX_UI_FONT_SMALL);
     gui -> addSpacer();
     //
@@ -157,27 +203,6 @@ void ofApp::setup() {
     // Save Settings
     guiColor -> addLabelButton("save color settings", false);
     guiColor -> autoSizeToFitWidgets();
-
-
-    ///////////////////////////
-    // initial display state //
-    ///////////////////////////
-    setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
-}
-
-//--------------------------------------------------------------
-void ofApp::exit(){
-    
-    // kinects
-    kinectInterface->exit();
-    delete kinectInterface;
-    
-    // clean up image editor
-    imgEdtr->exit();
-    delete imgEdtr;
-    
-    // gui
-    delete gui;
 }
 
 //--------------------------------------------------------------
@@ -187,25 +212,27 @@ void ofApp::guiEvent(ofxUIEventArgs &e) {
     int kind = e.widget->getKind();
     /*  */ if(nameStr == "invert image") {
         // TODO: debug "invert images" only when toggle is updated.
-//        if (imgColorsAreInverted != imgInvertColors) {
-//            for (int imgI=0; imgI < images.size(); ++imgI){
-//                ofImage* imgTMP = &images[imgI];
-//                invertImage(imgTMP);
-//            }
-//            imgColorsAreInverted = imgInvertColors;
-//        }
+        //        if (imgColorsAreInverted != imgInvertColors) {
+        //            for (int imgI=0; imgI < images.size(); ++imgI){
+        //                ofImage* imgTMP = &images[imgI];
+        //                invertImage(imgTMP);
+        //            }
+        //            imgColorsAreInverted = imgInvertColors;
+        //        }
     } else if (nameStr == "mirror image") {
-        //            openNIPlayer.setMirror(drawMirrored);
+        kinectInterface->setMirror(drawMirrored);
         
     } else if (nameStr == "kinected") {
-        if (kinected ) // || ofGetKeyPressed('k')?
+        if (kinected && !kinectsInitialized) // || ofGetKeyPressed('k')?
         {
             kinectsInitialized = kinectInterface->setupKinects(drawMirrored);
             kinected = kinectsInitialized;
         }
-        else
+        else if (!kinected)
         {
             kinected = !kinectInterface->stopKinects();
+//            delete kinectInterface; kinectInterface = NULL;
+//            kinectInterface = new kinectIO();
         }
         
         
@@ -237,88 +264,86 @@ void ofApp::guiEvent(ofxUIEventArgs &e) {
             cout << "ON BLUR: ";
             myPort = ti->getTextString();
         }
-       
         
-    } else if (nameStr == "application mode") {
-        ofxUIRadio *radioAppMode = (ofxUIRadio *) e.widget;
+        
+    } else if (nameStr == "application mode" ||nameStr=="i"||nameStr=="d"||nameStr=="t") {
+        ofxUIRadio *radioAppMode;
+        if (kind == OFX_UI_WIDGET_RADIO) radioAppMode = (ofxUIRadio *) e.widget;
+        else radioAppMode = (ofxUIRadio *) e.widget -> getParent();
         switch (radioAppMode -> getValue()) {
             case 0: // interactive
-                if (displayState != 'i') setDisplayState('i');
+                if (displayState != 'i') {
+                    displayStateString = "interactive";
+                    setDisplayState('i');
+                }
                 break;
                 
             case 1: // debug
-                if (displayState != 'd') setDisplayState('d');
+                if (displayState != 'd') {
+                    displayStateString = "debug";
+
+                    setDisplayState('d');
+                }
                 break;
                 
             case 2: // training
-                if (displayState != 't') setDisplayState('t');
+                if (displayState != 't') {
+                    displayStateString = "training";
+                    setDisplayState('t');
+                }
                 break;
                 
             default:
                 break;
         }
+        
+
     } else if (nameStr == "save main settings") {
         gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
     } else if (nameStr == "save color settings") {
         guiColor -> saveSettings("guiSettings_" + ofToString(displayState) + "_color.xml");
         
         
-    } else if (nameStr == "image blend mode") {
-        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-        imgBlendMode = radio -> getValue();
-    } else if (nameStr == "i0"||nameStr == "iA"||nameStr == "i+"||nameStr == "i-"||nameStr == "i*"||nameStr == "iS") {
-        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-        /**/ if (nameStr == "i0" && toggle -> getValue()) imgBlendMode = 0;
-        else if (nameStr == "iA" && toggle -> getValue()) imgBlendMode = 1;
-        else if (nameStr == "i+" && toggle -> getValue()) imgBlendMode = 2;
-        else if (nameStr == "i-" && toggle -> getValue()) imgBlendMode = 3;
-        else if (nameStr == "i*" && toggle -> getValue()) imgBlendMode = 4;
-        else if (nameStr == "iS" && toggle -> getValue()) imgBlendMode = 5;
-    } else if (nameStr == "depth color mode"||nameStr == "PSYCHEDELIC_SHADES"||nameStr == "PSYCHEDELIC"||nameStr == "RAINBOW"||nameStr == "CYCLIC_RAINBOW"||nameStr == "BLUES"||nameStr == "BLUES_INV"||nameStr == "GREY"||nameStr == "STATUS") {
-        if (nameStr == "depth color mode") {
-            ofxUIRadio *radio = (ofxUIRadio *) e.widget;
-            depthColorMode = radio -> getValue();
+    } else if (nameStr == "image blend mode"||nameStr == "i0"||nameStr == "iA"||nameStr == "i+"||nameStr == "i-"||nameStr == "i*"||nameStr == "iS") {
+        ofxUIRadio *radio;
+        if (nameStr == "image blend mode") {
+            radio = (ofxUIRadio *) e.widget;
         } else {
-            ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-            /**/ if (nameStr == "PSYCHEDELIC_SHADES"    && toggle -> getValue()) depthColorMode = 0;
-            else if (nameStr == "PSYCHEDELIC"           && toggle -> getValue()) depthColorMode = 1;
-            else if (nameStr == "RAINBOW+"              && toggle -> getValue()) depthColorMode = 2;
-            else if (nameStr == "CYCLIC_RAINBOW-"       && toggle -> getValue()) depthColorMode = 3;
-            else if (nameStr == "BLUES*"                && toggle -> getValue()) depthColorMode = 4;
-            else if (nameStr == "BLUES_INV"             && toggle -> getValue()) depthColorMode = 5;
-            else if (nameStr == "GREY"                  && toggle -> getValue()) depthColorMode = 6;
-            else if (nameStr == "STATUS"                && toggle -> getValue()) depthColorMode = 7;
+            radio = (ofxUIRadio *) e.widget->getParent();
         }
-        openNIPlayer.setDepthColoring((DepthColoring)depthColorMode);
-    } else if (nameStr == "depth blend mode") {
-        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+        imgBlendMode = radio -> getValue();
+    } else if (nameStr == "depth color mode"||nameStr == "PSYCHEDELIC_SHADES"||nameStr == "PSYCHEDELIC"||nameStr == "RAINBOW"||nameStr == "CYCLIC_RAINBOW"||nameStr == "BLUES"||nameStr == "BLUES_INV"||nameStr == "GREY"||nameStr == "STATUS") {
+        ofxUIRadio *radio;
+        if (nameStr == "depth color mode") {
+            radio = (ofxUIRadio *) e.widget;
+        } else {
+            radio = (ofxUIRadio *) e.widget->getParent();
+        }
+        depthColorMode = radio -> getValue();
+        kinectInterface->setDepthColoring((DepthColoring)depthColorMode);
+    } else if (nameStr == "depth blend mode"||nameStr == "d0"||nameStr == "dA"||nameStr == "d+"||nameStr == "d-"||nameStr == "d*"||nameStr == "dS") {
+        ofxUIRadio *radio;
+        if (nameStr == "depth blend mode") {
+            radio = (ofxUIRadio *) e.widget;
+        } else {
+            radio = (ofxUIRadio *) e.widget->getParent();
+        }
         depthBlendMode = radio -> getValue();
-    } else if (nameStr == "d0"||nameStr == "dA"||nameStr == "d+"||nameStr == "d-"||nameStr == "d*"||nameStr == "dS") {
-        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-        /**/ if (nameStr == "d0" && toggle -> getValue()) depthBlendMode = 0;
-        else if (nameStr == "dA" && toggle -> getValue()) depthBlendMode = 1;
-        else if (nameStr == "d+" && toggle -> getValue()) depthBlendMode = 2;
-        else if (nameStr == "d-" && toggle -> getValue()) depthBlendMode = 3;
-        else if (nameStr == "d*" && toggle -> getValue()) depthBlendMode = 4;
-        else if (nameStr == "dS" && toggle -> getValue()) depthBlendMode = 5;
-    } else if (nameStr == "skleton blend mode") {
-        ofxUIRadio *radio = (ofxUIRadio *) e.widget;
+    } else if (nameStr == "skleton blend mode"||nameStr == "s0"||nameStr == "sA"||nameStr == "s+"||nameStr == "s-"||nameStr == "s*"||nameStr == "sS") {
+        ofxUIRadio *radio;
+        if (nameStr == "depth blend mode") {
+            radio = (ofxUIRadio *) e.widget;
+        } else {
+            radio = (ofxUIRadio *) e.widget->getParent();
+        }
         skelBlendMode = radio -> getValue();
-    } else if (nameStr == "s0"||nameStr == "sA"||nameStr == "s+"||nameStr == "s-"||nameStr == "s*"||nameStr == "sS") {
-        ofxUIToggle * toggle = (ofxUIToggle *) e.widget;
-        /**/ if (nameStr == "s0" && toggle -> getValue()) skelBlendMode = 0;
-        else if (nameStr == "sA" && toggle -> getValue()) skelBlendMode = 1;
-        else if (nameStr == "s+" && toggle -> getValue()) skelBlendMode = 2;
-        else if (nameStr == "s-" && toggle -> getValue()) skelBlendMode = 3;
-        else if (nameStr == "s*" && toggle -> getValue()) skelBlendMode = 4;
-        else if (nameStr == "sS" && toggle -> getValue()) skelBlendMode = 5;
-    
+        
         
     } else {
         // default
         noCallbackForWidget = true;
     }
-
+    
     // debug
     if(ofGetLogLevel() == OF_LOG_VERBOSE){
         if (noCallbackForWidget) {
@@ -330,122 +355,26 @@ void ofApp::guiEvent(ofxUIEventArgs &e) {
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
-    
-    imgEdtr->update(testUserJoints);
-    
-    
-//    openNIPlayer.update();
-//    if (trainModelsNow) trainModelsNow = GRTEdtr->trainModel();
-//
-//    // clear joint data for next iteration
-//    trackedUserJointsPosABS.clear();
-//    trackedUserJointsPosABSDouble.clear();
-//    trackedUserJointsPosRel.clear();
-//    trackedUserJointsPosRelDouble.clear();
-//    trackedUserJointsRotAxisA.clear();
-//    trackedUserJointsRotAxisADouble.clear();
-//    trackedUserCentersProjective.clear();
-//
-//    // create some local vectors for user position storage
-//    vector< ofPoint >   singleUserJointsPosABS;
-//    vector< double >    singleUserJointsPosABSDoubles;
-//    vector< ofPoint >   singleUserJointsPosRel;
-//    vector< double >    singleUserJointsPosRelDoubles;
-//    vector< ofPoint >   singleUserJointsRotAxisA;
-//    vector< double >    singleUserJointsRotAxisADoubles;
-//    
-//    // local variables for looping
-//    int numUsers;
-//    int numJoints;
-//    if (kinected) {
-//        numUsers = openNIPlayer.getNumTrackedUsers();
-//        if (numUsers) numJoints = openNIPlayer.getTrackedUser(0).joints.size();
-//    } else {
-//        numUsers = 3;
-//        numJoints = 15;
-//    }
-//    
-//    // build joint position vectors
-//    for (int j = 0; j < numUsers; j++) {
-//        singleUserJointsPosABS.clear();
-//        singleUserJointsPosRel.clear();
-//        singleUserJointsRotAxisA.clear();
-//
-//        if (kinected) {
-//            // store center positions in both world space and projective space
-//            ofPoint userJCenter = openNIPlayer.getTrackedUser(j).getCenter();
-//            ofPoint userJcenterProjective = openNIPlayer.worldToProjective(userJCenter);
-//            //            ofPoint userJcenterProjective = openNIPlayer.getTrackedUser(j).joints[0].getProjectivePosition(); // TODO: use the root position of the hips for relative joint data instead?
-//            trackedUserCentersProjective.push_back(
-//                                                   userJcenterProjective *
-//                                                   ofPoint(
-//                                                           float( ofGetWidth() ) / 640.0f,
-//                                                           float( ofGetHeight()  ) / 480.0f,
-//                                                           1
-//                                                           )
-//                                                   );
-//            for (int i = 0; i < numJoints; ++i) {
-//                ofPoint jointIworldPos = openNIPlayer.getTrackedUser(j).joints[i].getWorldPosition();
-//                singleUserJointsPosABS.push_back(jointIworldPos);
-//                singleUserJointsPosRel.push_back(jointIworldPos - userJCenter);
-//                singleUserJointsRotAxisA.push_back(jointIworldPos);
-//                // TODO: calculate axis angles properly and store with something like singleUserJointsAxisA.push_back(findAxisAngle(userJCenter, jointIworldPos));
-//            }
-//        } else {
-//            for (int j = 0; j < numUsers; j++)
-//                trackedUserCentersProjective.push_back(ofPoint(
-//                                                               float( ofGetWidth() ) * (j+1.0f) / (numUsers+1.0f),
-//                                                               float( ofGetHeight()  ) / 2.0f,
-//                                                               2500.0f
-//                                                               )
-//                                                       );
-//            
-//            singleUserJointsPosABS = testUserJoints[j];
-//            singleUserJointsPosRel = testUserJoints[j];
-//            singleUserJointsRotAxisA = testUserJoints[j];
-//        }
-//        trackedUserJointsPosABS.push_back(singleUserJointsPosABS);
-//        trackedUserJointsPosRel.push_back(singleUserJointsPosRel);
-//        trackedUserJointsRotAxisA.push_back(singleUserJointsRotAxisA);
-//    }
-//    
-//    // build training vectors based on joint positions
-//    if (trackedUserJointsPosABS.size())
-//    {
-//        for (int j = 0; j < trackedUserJointsPosABS.size(); ++j) {
-//            singleUserJointsPosABSDoubles.clear();
-//            singleUserJointsPosRelDoubles.clear();
-//            singleUserJointsRotAxisADoubles.clear();
-//            for (int i = 0; i < trackedUserJointsPosABS[j].size(); ++i) {
-//                for (int axis = 0; axis < 3; ++axis)
-//                {
-//                    // axis = should be {0,1,2} which correlates to ofPoint {x, y, z}
-//                    singleUserJointsPosABSDoubles.push_back(trackedUserJointsPosABS[j][i][axis]);
-//                    singleUserJointsPosRelDoubles.push_back(trackedUserJointsPosRel[j][i][axis]);
-//                    singleUserJointsRotAxisADoubles.push_back(trackedUserJointsRotAxisA[j][i][axis]);
-//                }
-//            }
-//            trackedUserJointsPosABSDouble.push_back(singleUserJointsPosABSDoubles);
-//            trackedUserJointsPosRelDouble.push_back(singleUserJointsPosRelDoubles);
-//            trackedUserJointsRotAxisADouble.push_back(singleUserJointsRotAxisADoubles);
-//
-//        }
-//    }
-}
-
-
-//--------------------------------------------------------------
 void ofApp::draw() {
     
     ofBackground(bgRed, bgGreen, bgBlue);
     
+    string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
+    ofPoint jointsCenterProjective;
+    ofPoint imgRefPoint;
+    ofPoint imgPTRRefPoint;
+    ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
+    vector< vector< double > > trackedUserJointsPosABSDouble = kinectInterface -> getUserJointsDoubles();
+    vector< vector< double > > trackedUserJointsPosRelDouble = kinectInterface -> getUserJointsDoubles();
+    vector< ofPoint > trackedUserCentersProjective = kinectInterface -> getTrackedUserCentersProjective();
 
+    
     // idle until it's time to draw the next frame
     while (ofGetElapsedTimeMillis() < drawNextFrameMilliseconds) {
         // TODO: put streaming events here
-        //  - should this be moved to the "update()" function?
+        //  - should this be moved to the end of the "update()" function?
     }
+    
     // calculate new time to wait until drawing next frame
     if (drawFrameRate != 0) {
         drawNextFrameMilliseconds = ofGetElapsedTimeMillis() + 1000 / drawFrameRate;
@@ -454,39 +383,32 @@ void ofApp::draw() {
     // draw depth
     if (drawDepth and drawDepthBehind){
         ofPushStyle();
-
+        
         ofEnableBlendMode((ofBlendMode)depthBlendMode);
         ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
-        openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+        kinectInterface->drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
         
         ofPopStyle();
     }
-
     
-    ofPoint jointsCenterProjective;
-    ofPoint imgRefPoint;
-    ofPoint imgPTRRefPoint;
-    ofPoint screenCenter = ofVec3f(ofGetWidth()/2.0f, ofGetHeight()/2.0f, 1.0f);
+    // manage image drawing call style and drawing matrix
+    ofPushStyle();
+    ofPushMatrix();
     
-    // Build debug message string
-    string msg = " MILLIS: " + ofToString(ofGetElapsedTimeMillis()) + " FPS: " + ofToString(ofGetFrameRate());
     
     // draw images
     switch (displayState) {
         case 'i':
         case 'd': // debug
-           
-//            // manage style and drawing matrix
-//            ofPushStyle();
-//            ofPushMatrix();
-//
-//            // set colors
-//            ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
-//            ofEnableBlendMode((ofBlendMode)imgBlendMode);
-//            // TODO: change data type for GUI variables like imBlendMode et al, and cast data as proper format when changed by the GUI
-//            
-//            for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
-//
+            
+            // set colors
+            ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
+            ofEnableBlendMode((ofBlendMode)imgBlendMode);
+            
+            // TODO: change data type for GUI variables like imBlendMode et al, and cast data as proper format when changed by the GUI
+            
+            for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
+                
 //                // select label: Relative Position model
 //                if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && images.size())
 //                {
@@ -496,99 +418,93 @@ void ofApp::draw() {
 //                    if (label > images.size()) // if predicted label image hasn't been loaded, display a random image
 //                    {
 //                        label = ofRandom(0, images.size() - 1);
-////                        cout << "predicted label is too high —- images.size() = " << ofToString(images.size()) << "; label = " << label << endl;
-////                        cout << " - displaying a random image instead." << endl;
+//                        //                        cout << "predicted label is too high —- images.size() = " << ofToString(images.size()) << "; label = " << label << endl;
+//                        //                        cout << " - displaying a random image instead." << endl;
 //                    }
 //                    
-////                    img_name = imageNames[label];
+//                    //                    img_name = imageNames[label];
 //                    //                    cout << "img_name = " << img_name << endl;
 //                }
 //                else
 //                {
-////                    img_name = "";
+//                    //                    img_name = "";
 //                    cout << "trainingModelJointsPosRel could not predict" << endl;
 //                }
-//                
-//                // TODO: implement SSD option selection GUI & implemnet loading images directly from HD
-//                //if (img->loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
-//
-//                if (trackedUserCentersProjective.size() >= j+1) {
-//                    jointsCenterProjective = trackedUserCentersProjective[j];
-//                    //                    cout << "jointsCenterProjective = trackedUserCentersProjective[j];" << endl;
-//                } else {
-//                    jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);
-//                    //                    cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
-//                }
-//                
-//                if (images.size())
-//                {
-//                    // set image to draw
-//                    ofImage img;
-//                    img = images[label];
-//                    ofImage* imgPTR = new ofImage();
-//                    imgPTR = imagesPTRs[label];
-//                    
-//                    // calculate reference points for drawing
-//                    if(jointsCenterProjective.z != 0) { // scale
-//                        imgRefPoint.z = 1500.0f / float( jointsCenterProjective.z);
-//                    } else {
-//                        imgRefPoint.z = 1.0f;
-//                    }
-//                    float xOffset = float( img.width  ) * imgRefPoint.z * imageScale / 2.0f;
-//                    float yOffset = float( img.height  ) * imgRefPoint.z * imageScale / 2.0f;
-//                    float xOffsetPTR = float( imgPTR->width *2 ) * imgRefPoint.z * imageScale / 2.0f;
-//                    float yOffsetPTR = float( imgPTR->height *2 ) * imgRefPoint.z * imageScale / 2.0f;
-//                    imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
-//                    imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
-//                    imgPTRRefPoint.x = jointsCenterProjective.x - xOffsetPTR;
-//                    imgPTRRefPoint.y = jointsCenterProjective.y - yOffsetPTR;
-//                    
-//                    img.mirror(0, drawMirrored);
-//                    imgPTR->mirror(0, drawMirrored);
-//                    if (imgInvertColors) {
-//                        invertImage(img);
-//                        invertImage(imgPTR);
-//                    }
-//
-//                    // TODO: image drawing should be z-sorted so further images draw behind closer ones
-//                    // draw image at position and scale relative to center of screen and image
-//                    // ofSetDepthTest()?
-////                    img.draw(imgRefPoint.x,
-////                             imgRefPoint.y,
-////                             img.width * imgRefPoint.z * imageScale,
-////                             img.height * imgRefPoint.z * imageScale);
-////                    imgPTR->update();
-//
-//                    // image pointer drawing tests
-////                    bikersPTR->draw(0, 100);
-////                    bikersPTR->draw(100, 100, 50, 50);
-//
-//                    imgPTR->draw(imgPTRRefPoint.x,
-//                                 imgPTRRefPoint.y,
-//                                 imgPTR->width * imgPTRRefPoint.z * imageScale,
-//                                 imgPTR->height * imgPTRRefPoint.z * imageScale);
-//
-//                    // Build debug message string
-//                    msg = msg + "\n jointsCenterProjective = " + ofToString(jointsCenterProjective);
-//                    msg = msg + "\n xOffset = " + ofToString(xOffset);
-//                    msg = msg + "\n yOffset = " + ofToString(yOffset);
-//                    msg = msg + "\n imgRef = " + ofToString(imgRefPoint);
-//                    msg = msg + "\n sceenCenter = " + ofToString(screenCenter);
-//                }
-//            }
-//            
-//            // reset drawing matrix and style
-//            ofPopMatrix();
-//            ofPopStyle();
-//            
-//            break;
+                
+                label = ofRandom(0, images.size() - 1);
+                
+                // TODO: implement SSD option selection GUI & implemnet loading images directly from HD
+                //if (img->loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
+                
+                if (trackedUserCentersProjective.size() >= j+1) {
+                    jointsCenterProjective = trackedUserCentersProjective[j];
+                    //                    cout << "jointsCenterProjective = trackedUserCentersProjective[j];" << endl;
+                } else {
+                    jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);
+                    //                    cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
+                }
+                
+                if (images.size())
+                {
+                    // set image to draw
+                    ofImage img;
+                    img = images[label];
+                    ofImage* imgPTR = new ofImage();
+                    imgPTR = imagesPTRs[label];
+                    
+                    // calculate reference points for drawing
+                    if(jointsCenterProjective.z != 0) { // scale
+                        imgRefPoint.z = 1500.0f / float( jointsCenterProjective.z);
+                    } else {
+                        imgRefPoint.z = 1.0f;
+                    }
+                    float xOffset = float( img.width  ) * imgRefPoint.z * imageScale / 2.0f;
+                    float yOffset = float( img.height  ) * imgRefPoint.z * imageScale / 2.0f;
+                    float xOffsetPTR = float( imgPTR->width *2 ) * imgRefPoint.z * imageScale / 2.0f;
+                    float yOffsetPTR = float( imgPTR->height *2 ) * imgRefPoint.z * imageScale / 2.0f;
+                    imgRefPoint.x = jointsCenterProjective.x - xOffset; // left side
+                    imgRefPoint.y = jointsCenterProjective.y - yOffset; // top side
+                    imgPTRRefPoint.x = jointsCenterProjective.x - xOffsetPTR;
+                    imgPTRRefPoint.y = jointsCenterProjective.y - yOffsetPTR;
+                    
+                    img.mirror(0, drawMirrored);
+                    imgPTR->mirror(0, drawMirrored);
+                    if (imgInvertColors) {
+                        invertImage(img);
+                        invertImage(imgPTR);
+                    }
+                    
+                    // TODO: image drawing should be z-sorted so further images draw behind closer ones
+                    // draw image at position and scale relative to center of screen and image
+                    // ofSetDepthTest()?
+                    //                    img.draw(imgRefPoint.x,
+                    //                             imgRefPoint.y,
+                    //                             img.width * imgRefPoint.z * imageScale,
+                    //                             img.height * imgRefPoint.z * imageScale);
+                    //                    imgPTR->update();
+                    
+                    // image pointer drawing tests
+                    //                    bikersPTR->draw(0, 100);
+                    //                    bikersPTR->draw(100, 100, 50, 50);
+                    
+                    imgPTR->draw(imgPTRRefPoint.x,
+                                 imgPTRRefPoint.y,
+                                 imgPTR->width * imgPTRRefPoint.z * imageScale,
+                                 imgPTR->height * imgPTRRefPoint.z * imageScale);
+                    
+                    // Build debug message string
+                    msg = msg + "\n jointsCenterProjective = " + ofToString(jointsCenterProjective);
+                    msg = msg + "\n xOffset = " + ofToString(xOffset);
+                    msg = msg + "\n yOffset = " + ofToString(yOffset);
+                    msg = msg + "\n imgRef = " + ofToString(imgRefPoint);
+                    msg = msg + "\n sceenCenter = " + ofToString(screenCenter);
+                }
+            }
+            
+            break;
             
         case 't': // training // move these to an "if (flag) statement" so that flags can be set in GUI, and get wrid of this complicated switch statement
         default:
-
-            // manage style and drawing matrix
-            ofPushStyle();
-            ofPushMatrix();
             
             // set colors
             ofSetColor(imgRed, imgGreen, imgBlue, imgAlpha);
@@ -596,13 +512,12 @@ void ofApp::draw() {
             
             // draw image editor image
             imgEdtr->draw(drawMirrored);
-
-            // reset drawing matrix and style
-            ofPopMatrix();
-            ofPopStyle();
-
+            
             break;
     }
+    // reset drawing matrix and style
+    ofPopMatrix();
+    ofPopStyle();
     
     if (drawSkeletons or drawDepth){
         ofPushStyle();
@@ -611,13 +526,13 @@ void ofApp::draw() {
         {
             ofEnableBlendMode((ofBlendMode)depthBlendMode);
             ofSetColor(depthRed, depthGreen, depthBlue, depthAlpha);
-            openNIPlayer.drawDepth(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+            kinectInterface->drawDepth(0, 0, ofGetWidth(), ofGetHeight());
         }
         if (drawSkeletons)
         {
             ofSetColor(skelRed, skelGreen, skelBlue, skelAlpha);
             ofEnableBlendMode((ofBlendMode)skelBlendMode);
-            openNIPlayer.drawSkeletons(0.0f, 0.0f, float( ofGetWidth() ), float( ofGetHeight() ));
+            kinectInterface->drawSkeletons(0, 0, ofGetWidth(), ofGetHeight());
         }
         
         ofPopStyle();
@@ -625,19 +540,20 @@ void ofApp::draw() {
     
     if (drawJoints2MSG) {
         // add bone data for tracked user to display message
-        if (trackedUserJointsPosABS.size() > 0) {
+        vector< vector< ofPoint > > trackedUserJoints = kinectInterface->getUserJoints();
+        if (trackedUserJoints.size() > 0) {
             // display joint data
-            for (int j=0; j < trackedUserJointsPosABS.size(); ++j) {
+            for (int j=0; j < trackedUserJoints.size(); ++j) {
                 msg = msg + "\n====\n== User[" + ofToString(j) + "]\n----";
-                for (int i=0; i < trackedUserJointsPosABS[j].size(); ++i) {
-                    msg = msg + "\n    joint[" + ofToString(i) + "] = " + ofToString(trackedUserJointsPosABS[j][i]);
+                for (int i=0; i < trackedUserJoints[j].size(); ++i) {
+                    msg = msg + "\n    joint[" + ofToString(i) + "] = " + ofToString(trackedUserJoints[j][i]);
                 }
                 msg = msg + "\n====";
             }
         }
         // if (trackedUserJointsPosABS.size()) msg = msg + "\n" + ofToString(trackedUserJointsPosABS);
     }
-
+    
     if (drawMSG) {
         // draw debug message
         verdana.drawString(msg, 20, 20);
@@ -653,13 +569,14 @@ void ofApp::draw() {
     }
     
     if (sendOSC){
-        if (trackedUserCentersProjective.size() > 0) {
-            for (int i=0; i < trackedUserCentersProjective.size(); ++i) {
+        vector< ofPoint > trackedUsrCntrsPrjctv = kinectInterface->getTrackedUserCentersProjective();
+        if (trackedUsrCntrsPrjctv.size() > 0) {
+            for (int i=0; i < trackedUsrCntrsPrjctv.size(); ++i) {
                 ofxOscMessage m;
                 m.setAddress("/POS" + ofToString(i) );
-                m.addFloatArg( trackedUserCentersProjective[i].x );
-                m.addFloatArg( trackedUserCentersProjective[i].y );
-                m.addFloatArg( trackedUserCentersProjective[i].z );
+                m.addFloatArg( trackedUsrCntrsPrjctv[i].x );
+                m.addFloatArg( trackedUsrCntrsPrjctv[i].y );
+                m.addFloatArg( trackedUsrCntrsPrjctv[i].z );
                 sender.sendMessage(m);
             }
         }
@@ -683,7 +600,7 @@ void ofApp::invertImage(ofImage &imgREF) {
     // TODO: optimize image inversions. seems to slow down FPS to ~ 22 from ~55 on my ancient MacBook Pro
     ofPixels imgPX = imgREF.getPixelsRef();
     ofTexture imgTEX = imgREF.getTextureReference();
-    invertImage(imgPX, imgTEX);    
+    invertImage(imgPX, imgTEX);
 }
 
 void ofApp::invertImage(ofPixels &imgPX, ofTexture &imgTEX) {
@@ -721,14 +638,14 @@ void ofApp::setDisplayState(char newState) {
         case 'i': // interactive // female
             
             break;
-
+            
         default:
             // TODO: log or cout an error messsage for undefined state change?
             undefinedState = true;
             break;
     }
-
-
+    
+    
     if (!undefinedState)
     {
         displayState = newState;
@@ -750,144 +667,72 @@ void ofApp::setDisplayState(char newState) {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
-//    // initialize flags
-//    bool displayStateKeyed;
-//    
-//    // hand key pressed to editors
-//    GRTEdtr -> keyPressed(key);
-//    
-//    // process key pressed
-//    switch (key) {
-//            
-//        case 'h':
-//            gui->toggleVisible();
-//            guiColor->toggleVisible();
-//            GRTEdtr;
-//            break;
-//            
-//        case 'b': // NOTE: updated to 'b' for BUILD DATA
-//            if (displayState == 'i') break; // do not train data during installation mode
-//
-//            // Store data to associate with currently displayed image
-//            //  - joint positions (0–15) — 0 = center, 1–15 = joints
-//            
-//            if ((displayState == 'd' || displayState == 't') && trackedUserJointsPosABS.size()){
-//                trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
-//                trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
-//                trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
-//            } else {
-//                // TODO: display some kind of error message that says data can only be saved in training mode?
-//            }
-//            
-//            break;
-//        
-//        case '<':
-//        case ',':
-//        case '[':
-//        case 'p': // previous
-//           
-//            GRTEdtr->saveData();
-//            
-//            if (displayState == 'i') break; // do not train data during installation mode
-//            
-//            // display previous image in database
-//            if (label > 0) label--;
-////            img_name = imageNames[label];
-//
-//            break;
-//        
-//        case '>':
-//        case ']':
-//        case 'n': // next
-//            
-//            GRTEdtr->saveData();
-//            
-//            if (displayState == 'i') break; // do not train data during installation mode
-//
-//            // display next image in database
-//            if (label < images.size()-1) label++;
-////            img_name = imageNames[label];
-//
-//            break;
-//        
-//        case 'r': // random image
-//            
-//            GRTEdtr->saveData();
-//
-//            if (displayState == 'i') break; // do not train data during installation mode
-//            
-//            // display random image from database
-//            label = bodyClass->getRandomExcluding(0, images.size() - 1, label);
-////            img_name = imageNames[label];
-//
-//            break;
-//        
-//        case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
-//            if (displayState == 'i') break; // do not train data during installation mode
-//            
-//            GRTEdtr->saveData();
-//            GRTEdtr->saveModel();
-//            
-//            break;
-//            
-//        case 'i': // interactive mode
-//        case 't': // training
-//        case 'd': // debug
-//            
-//            displayStateKeyed = true;
-//            break;
-//    
-//        case '=': // increase drawFrameRate
-//            // fall through (intentional)
-//        case '+': // increase drawFrameRate
-//            
-//            if (drawFrameRate < 90) drawFrameRate = drawFrameRate + 5;
-//            break;
-//            
-//        case '_': // decrease drawFrameRate
-//            // fall through (intentional)
-//        case '-': // decrease drawFrameRate
-//            
-//            if (drawFrameRate > 5) drawFrameRate = drawFrameRate - 5;
-//            break;
-//
-//        case 'k':
-//            break;
-//            
-//        case 'f':
-//            ofToggleFullscreen();
-//            windowResized();
-//            break;
-//            
-//        default:
-//            cout << "Unrecognized key press = " << key << endl;
-//            // TODO: plan error sound when receiving unrecognized key presses.
-//            break;
-//    }
-//    
-//    if (displayStateKeyed && key != displayState)
-//    {
-//        switch(key){
-//            case 'i': // interactive mode
-//                
-//                // TODO: clean out displayStateString code. nothing seems to reference it.
-//                displayStateString = "interactive";
-//                break;
-//                
-//            case 't': // training
-//                
-//                displayStateString = "training";
-//                break;
-//                
-//            case 'd': // debug
-//                
-//                displayStateString = "debug";
-//                break;
-//        }
-//
-//        setDisplayState(key);
-//    }
+    
+        // initialize flags
+        bool displayStateKeyed;
+    
+        // process key pressed
+        switch (key) {
+    
+            case 'h':
+                gui->toggleVisible();
+                guiColor->toggleVisible();
+                GRTEdtr;
+                break;
+    //
+    //        case 'b': // NOTE: updated to 'b' for BUILD DATA
+    //            if (displayState == 'i') break; // do not train data during installation mode
+    //
+    //            // Store data to associate with currently displayed image
+    //            //  - joint positions (0–15) — 0 = center, 1–15 = joints
+    //
+    //            if ((displayState == 'd' || displayState == 't') && trackedUserJointsPosABS.size()){
+    //                trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
+    //                trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
+    //                trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
+    //            } else {
+    //                // TODO: display some kind of error message that says data can only be saved in training mode?
+    //            }
+    //
+    //            break;
+    //
+    //
+    //        case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
+    //            if (displayState == 'i') break; // do not train data during installation mode
+    //
+    //            GRTEdtr->saveData();
+    //            GRTEdtr->saveModel();
+    //
+    //            break;
+    //
+    //        case '=': // increase drawFrameRate
+    //            // fall through (intentional)
+    //        case '+': // increase drawFrameRate
+    //
+    //            if (drawFrameRate < 90) drawFrameRate = drawFrameRate + 5;
+    //            break;
+    //
+    //        case '_': // decrease drawFrameRate
+    //            // fall through (intentional)
+    //        case '-': // decrease drawFrameRate
+    //            
+    //            if (drawFrameRate > 5) drawFrameRate = drawFrameRate - 5;
+    //            break;
+    //
+    //        case 'k':
+    //            break;
+    //            
+    //        case 'f':
+    //            ofToggleFullscreen();
+    //            windowResized();
+    //            break;
+                
+            default:
+                cout << "Unrecognized key press = " << key << endl;
+                // TODO: plan error sound when receiving unrecognized key presses.
+                break;
+        }
+        
 }
 
 //--------------------------------------------------------------

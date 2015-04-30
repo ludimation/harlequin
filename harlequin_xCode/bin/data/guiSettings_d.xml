@@ -43,7 +43,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>kinected</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -63,17 +63,17 @@
 <Widget>
     <Kind>2</Kind>
     <Name>draw skeletons</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>add joints 2 MSG</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>draw MSG</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>

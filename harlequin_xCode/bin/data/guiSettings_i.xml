@@ -43,7 +43,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>kinected</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -94,14 +94,4 @@
     <Kind>2</Kind>
     <Name>send OSC</Name>
     <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>42</Kind>
-    <Name>number of files to load</Name>
-    <Value>26</Value>
-</Widget>
-<Widget>
-    <Kind>17</Kind>
-    <Name>load images</Name>
-    <Value>1</Value>
 </Widget>

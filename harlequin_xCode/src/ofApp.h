@@ -27,13 +27,13 @@ class ofApp : public ofBaseApp {
 
 public:
     
-    ///////////////////////////////////
-    // core openFrameworks functions //
-    ///////////////////////////////////
-	void setup();
+    //////////////////////////////
+    // openFrameworks functions //
+    //////////////////////////////
+    void setup();
+    void exit();
 	void update();
 	void draw();
-    void exit();
     // input
 	void keyPressed(int key);
 	void keyReleased(int key);
@@ -44,6 +44,7 @@ public:
     //////////////////
     // harlequin UI //
     //////////////////
+    void setupGuis();
     void guiEvent(ofxUIEventArgs &e);
     void setDisplayState(char newState);
     // properties
@@ -56,25 +57,18 @@ public:
     ////////////
     // kinect //
     ////////////
-    // 
     // properties
     kinectIO                *kinectInterface;
     bool                    kinectsInitialized;
-    ofxOpenNI               openNIPlayer;
-    ofxOpenNIUser           nTrackedUser;
-    int                     nTrackedUsers;
-    ofFile                  file;
     
     
     ////////////////////////////////////
     // image / training data handling //
     ////////////////////////////////////
-    //
     // properties
-    body                    *bodyClass;
+    imgEditor               *imgEdtr;
     GRTEditor               *GRTEdtr;
     string                  trainedImagesDirectory;
-    float                   imageScale;
     GRT::SVM                trainingModelJointsPosABS;
     GRT::ClassificationData trainingDataJointsPosABS;
     GRT::SVM                trainingModelJointsPosRel;
@@ -92,6 +86,28 @@ public:
     string                  trainingDataJointsRotAxisAfileName;
     string                  testFileName;
     string                  testFileModelName;
+
+    /////////////////////////////
+    // image loading / display // eventually move these to imgLoader and body
+    /////////////////////////////
+    void                    loadImages(bool load);
+    void                    invertImage(ofImage* imgPTRlocal);
+    void                    invertImage(ofImage &imgREF);
+    void                    invertImage(ofPixels &imgPX, ofTexture &imgTEX);
+    // properties
+    body                    *bodyClass;
+    vector < string >       directoriesAll;
+    vector < string >       directoriesToLoad;
+    bool                    loadImagesNow;
+    int                     maxFilesToLoad;
+    int                     nFilesToLoad;
+    string                  img_name;
+    vector< string >        imageNames;
+    vector <ofImage>        images; //TODO: delete ofImage version of images (replace with imagesPTRs).
+    vector <ofImage*>       imagesPTRs;
+    map<string, ofImage*>   imagesMap;
+    float                   imageScale;
+
 
 
 private:
@@ -127,39 +143,6 @@ private:
     float                       depthRed, depthGreen, depthBlue, depthAlpha;
     int                         skelBlendMode;
     float                       skelRed, skelGreen, skelBlue, skelAlpha;
-
-    ////////////////////
-    // image handling //
-    ////////////////////
-    imgEditor                   *imgEdtr;
-    vector < string >           directoriesAll;
-    vector < string >           directoriesToLoad;
-    void                        loadImages(bool load);
-    bool                        loadImagesNow;
-    int                         maxFilesToLoad;
-    int                         nFilesToLoad;
-    void                        invertImage(ofImage* imgPTRlocal);
-    void                        invertImage(ofImage &imgREF);
-    void                        invertImage(ofPixels &imgPX, ofTexture &imgTEX);
-    
-    
-    // kinect
-    vector< ofPoint >           trackedUserCentersProjective;
-    vector< vector< ofPoint > > trackedUserJointsPosABS;
-    vector< vector< double > >  trackedUserJointsPosABSDouble;
-    vector< vector< ofPoint > > trackedUserJointsPosRel;
-    vector< vector< double > >  trackedUserJointsPosRelDouble;
-    vector< vector< ofPoint > > trackedUserJointsRotAxisA;
-    vector< vector< double > >  trackedUserJointsRotAxisADouble;
-    void                        setupTestUserJoints();
-    vector< vector< ofPoint > > testUserJoints;
-    
-    // image display
-    string                  img_name;
-    vector< string >        imageNames;
-    vector <ofImage>        images; //TODO: delete ofImage version of images (replace with imagesPTRs).
-    vector <ofImage*>       imagesPTRs;
-    map<string, ofImage*>   imagesMap;
     
 };
 

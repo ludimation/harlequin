@@ -17,22 +17,45 @@ class kinectIO { // can I extend ofxOpenNI or the ofxKinectForWindows depending 
     
 public:
     
+    kinectIO();
+    ~kinectIO();
+    
     void setup();
     void exit();
+    void update();
+    void drawDepth(int x_, int y_, int w_, int h_);
+    void drawSkeletons(int x_, int y_, int w_, int h_);
     
-    // core functions
+    // core kinect functions
     bool setupKinects(bool drawMirrored);
     bool stopKinects(); // TODO: proper implementation of stopping kinects and starting kinects again. doesn't seem to work properly after kinects have been stopped.
     void userEvent(ofxOpenNIUserEvent & event);
     void gestureEvent(ofxOpenNIGestureEvent & event);
+    void setMirror(bool drawMirrored_);
+    void setDepthColoring(DepthColoring depthColorMode_);
     
-    // debug
-    vector< vector<ofPoint> > setupTestUserJoints();
+    // joints handling
+    vector< vector< ofPoint > > getUserJoints();
+    vector< vector< double > >  getUserJointsDoubles();
+    vector< ofPoint >           getTrackedUserCentersProjective();
+    vector< vector< ofPoint > > setupTestUserJoints();
+    vector< vector< double > >  convertUserJointToDouble(vector< vector < ofPoint > > ofPointJoints_);
 
     // properties
-    ofxOpenNI*      openNIdevice;
+    ofxOpenNI       *openNIdevice;
     ofxOpenNIUser   nTrackedUser;
     bool            initialized;
+    // joints vectors
+    vector< ofPoint >           trackedUserCentersProjective;
+    vector< vector< ofPoint > > trackedUserJointsPosABS;
+    vector< vector< double > >  trackedUserJointsPosABSDouble;
+    vector< vector< ofPoint > > trackedUserJointsPosRel;
+    vector< vector< double > >  trackedUserJointsPosRelDouble;
+    vector< vector< ofPoint > > trackedUserJointsRotAxisA;
+    vector< vector< double > >  trackedUserJointsRotAxisADouble;
+    vector< vector< ofPoint > > testUserJoints;
+    vector< vector< double > >  testUserJointsDouble;
+
     
 private:
     // internal data
