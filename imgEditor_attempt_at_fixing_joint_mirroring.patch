@@ -1,0 +1,1087 @@
+diff --git a/harlequin_xCode/bin/data/guiSettings_d.xml b/harlequin_xCode/bin/data/guiSettings_d.xml
+index 33e6918..88ebe35 100644
+--- a/harlequin_xCode/bin/data/guiSettings_d.xml
++++ b/harlequin_xCode/bin/data/guiSettings_d.xml
+@@ -43,7 +43,7 @@
+ <Widget>
+     <Kind>2</Kind>
+     <Name>kinected</Name>
+-    <Value>1</Value>
++    <Value>0</Value>
+ </Widget>
+ <Widget>
+     <Kind>2</Kind>
+diff --git a/harlequin_xCode/bin/data/guiSettings_t.xml b/harlequin_xCode/bin/data/guiSettings_t.xml
+index 9168b88..f2058ab 100644
+--- a/harlequin_xCode/bin/data/guiSettings_t.xml
++++ b/harlequin_xCode/bin/data/guiSettings_t.xml
+@@ -43,7 +43,7 @@
+ <Widget>
+     <Kind>2</Kind>
+     <Name>kinected</Name>
+-    <Value>1</Value>
++    <Value>0</Value>
+ </Widget>
+ <Widget>
+     <Kind>2</Kind>
+diff --git a/harlequin_xCode/harlequin.xcodeproj/project.xcworkspace/xcshareddata/harlequin.xccheckout b/harlequin_xCode/harlequin.xcodeproj/project.xcworkspace/xcshareddata/harlequin.xccheckout
+index 60f91c6..e73513d 100644
+--- a/harlequin_xCode/harlequin.xcodeproj/project.xcworkspace/xcshareddata/harlequin.xccheckout
++++ b/harlequin_xCode/harlequin.xcodeproj/project.xcworkspace/xcshareddata/harlequin.xccheckout
+@@ -24,13 +24,13 @@
+ 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+ 	<dict>
+ 		<key>328B2D9D97956D43F1C477558678A6865720047A</key>
+-		<string>../../../../../addons/ofxMSAInteractiveObject</string>
++		<string>../../../../addons/ofxMSAInteractiveObject</string>
+ 		<key>7E804D925461714118DB355C65BC964B41D94376</key>
+-		<string>../../../../../addons/ofxUI</string>
++		<string>../../../../addons/ofxUI</string>
+ 		<key>BE57E170D0B00FD3DC5AB5DF566D9172F89BC0E1</key>
+ 		<string>../../..</string>
+ 		<key>D8811CE32924E36E8903BAF4011407E4BAF64556</key>
+-		<string>../../../../../addons/ofxOpenNI</string>
++		<string>../../../../addons/ofxOpenNI</string>
+ 	</dict>
+ 	<key>IDESourceControlProjectURL</key>
+ 	<string>https://github.com/ludimation/harlequin.git</string>
+diff --git a/harlequin_xCode/src/imgEditor/MSAjoint.h b/harlequin_xCode/src/imgEditor/MSAjoint.h
+index 500a282..2b6e9d0 100755
+--- a/harlequin_xCode/src/imgEditor/MSAjoint.h
++++ b/harlequin_xCode/src/imgEditor/MSAjoint.h
+@@ -17,12 +17,16 @@ public:
+     bool draggable, dragging;
+     int colorIdle, colorOver, colorDown;
+     float z;
++    ofPoint offset, scale;
+     
+     MSAjoint() {
+         setColors(IDLE_COLOR, OVER_COLOR, DOWN_COLOR);
+         dragging = false;
+         draggable = false;
+         z = 0;
++        
++        offset = ofPoint(ofGetWidth() / 2.0f, ofGetHeight() / 2.0f, 0.0f);
++        scale = ofPoint(0.5f, 0.5f, 1.0f);
+     }
+     
+     ~MSAjoint() {
+@@ -50,7 +54,11 @@ public:
+ 		else if(isMouseOver()) ofSetHexColor(colorOver);
+ 		else ofSetHexColor(colorIdle);
+ 		
+-        ofRect(x, y, width, height);
++        ofPushMatrix();
++        ofTranslate(offset);
++        ofScale(scale.x, scale.y, scale.z);
++        ofRect(x, y, width/scale.x, height/scale.y);
++        ofPopMatrix();
+     }
+     
+     void setColors(int colorIdle_, int colorOver_, int colorDown_) {
+@@ -60,8 +68,13 @@ public:
+     }
+     
+     void setPosition3D(float _x, float _y, float _z) {
+-        z = _z;
+-        this->setPosition(_x, _y);
++        ofPoint p(_x, _y, _z);
++        
++        setPosition(p);
++    }
++    void setPosition3D(ofPoint _p) {
++        z = _p.z;
++        this->setPosition(_p.x, _p.y);
+     }
+     
+     void setDraggable(bool draggable_) {
+diff --git a/harlequin_xCode/src/imgEditor/imgData.h b/harlequin_xCode/src/imgEditor/imgData.h
+index 3aea396..94e8ceb 100644
+--- a/harlequin_xCode/src/imgEditor/imgData.h
++++ b/harlequin_xCode/src/imgEditor/imgData.h
+@@ -21,10 +21,13 @@ using namespace GRT;
+ #define		IMG_IDLE_COLOR          0xFFFFFF // white
+ #define		IMG_OVER_COLOR          0x888888 // grey
+ #define		IMG_DOWN_COLOR          0x000088 // dark blue
+-#define		MY_JNT_IDLE_COLOR       0xFFFF00 // yellow
+-#define		MY_JNT_OVER_COLOR       0xFF00FF // magenta
+-#define		MY_JNT_DOWN_COLOR       0xFFFF00 // cyan
+-#define     MY_ROOT_JNT_COLOR       0xFF8800 // orange
++#define		TRACKED_JNT_IDLE_COLOR  0x00FFFF // cyan
++#define		TRACKED_JNT_OVER_COLOR  0x0000FF // blue
++#define		TRACKED_JNT_DOWN_COLOR  0xFFFF00 // yellow
++#define		EDITABLE_JNT_IDLE_COLOR 0xFFFF00 // yellow
++#define		EDITABLE_JNT_OVER_COLOR 0xFF00FF // magenta
++#define		EDITABLE_JNT_DOWN_COLOR 0xFFFF00 // cyan
++#define     EDITABLE_ROOT_JNT_COLOR 0xFF8800 // orange
+ #define		TRNDATA_JNT_IDLE_COLOR  0x880088 // dark violet
+ #define		TRNDATA_JNT_OVER_COLOR  0xFFFFFF // white
+ #define		TRNDATA_JNT_DOWN_COLOR  0x00FF00 // dark green
+@@ -35,115 +38,155 @@ class imgData : public ofxMSAInteractiveObject { // can I extend ": public ofIma
+     
+ public:
+     
+-    // properties
+-    string                          myBaseName;
+-    vector< string >                myImgPaths;
+-    string                          mySavePath;
+-    bool                            readOnly;
+-    vector< ofImage* >              myImgs;
+-    int                             colorIdle, colorDown, colorOver;
++    // paths
++    string                          baseName;
++    string                          savePath;
++    // image handling
++    vector< ofImage* >              imgs;
++    vector< string >                imgPaths;
+     bool                            imgsMirrored;
+-    int                             currentImgIndex;
+-    map< string, float >            myImgsPathScaleMap; // map of paths and their perspective scales relative to the joints skeleton
+-    float                           jointsScale;
+-    int                             myJointsCount;
+-    vector< MSAjoint* >             myJoints;
+-    vector< vector< MSAjoint* > >   myTrnJointSets;
+-    int                             myTrnJointSetsSize;
+-    bool                            myJointsEdited;
++    int                             imgIndex;
++    map< string, float >            imgsPathScaleMap; // map of paths and their perspective scales relative to the joints skeleton
++    // interactions properties
++    int                             colorIdle, colorDown, colorOver;
++    bool                            readOnly;
+     bool                            dragging; // flag to check to see if the joints have been edited yet
+-    int                             myJointSize;
+-    int                             myTrainingDataJointSize;
+-    ofVec2f                         myAnchorInPercentages;
++    
++    // joints display
++    ofPoint                         jointsScale; //TODO: make this a 3D ofPoint
++    int                             jointsCount;
++    vector< MSAjoint* >             editableJoints;
++    vector< MSAjoint* >             trackedUserJoints;
++    vector< vector< MSAjoint* > >   trnJointSets;
++    int                             trnJointSetsCount;
++    bool                            jointsEdited;
++    int                             trackedUserIndex, trackedUsersCount;
++    ofVec2f                         jointsAnchorInPercentages;
++    int                             jointSetsCount;
++    int                             editableJntDrawSize;
++    int                             trackedUserJntDrawSize; // used to be trackedUserJointsSize
++
++    int                             trnJntDrawSize;
++    ofVec2f                         imgAnchorInPercentages;
++
+ 
+     // obj creator
+     imgData() {
+         // declare variables
+-        myBaseName = "";
+-        mySavePath = "";
+-        jointsScale = 1.0f;
+-        readOnly = false;
+-        myJointsCount = 15;
+-        myJointsEdited = false;
++        baseName = "";
++        savePath = "";
++        jointsScale = ofPoint(1.0f, 1.0f, 1.0f);
++        jointsCount = 15;
+         dragging = false;
+-        myJointSize = 15;
+-        myTrainingDataJointSize = 5;
+-        myAnchorInPercentages.set(0.5f, 0.35f);
+-        currentImgIndex = 0;
+-        myTrnJointSetsSize = myTrnJointSets.size();
++        trackedUserJntDrawSize = 10;
++        editableJntDrawSize = 15;
++        jointsEdited = false;
++        trnJntDrawSize = 5;
++        imgAnchorInPercentages.set(0.5f, 0.35f);
++        imgIndex = 0;
++        trnJointSetsCount = trnJointSets.size();
+         imgsMirrored = false;
++        readOnly = false;
++        
++        setPosition(ofGetWidth()*imgAnchorInPercentages.x, ofGetHeight()*imgAnchorInPercentages.y);
+         
+-        // populate gui joints vector
+-        for(int jnt = 0; jnt < myJointsCount; ++jnt) {
++        // populate tracked user joints vector
++        for(int jnt = 0; jnt < jointsCount; ++jnt) {
+             MSAjoint *obj = new MSAjoint();
+-            obj->set(830 + (jnt * (myJointSize + 5)), myJointSize*3, myJointSize, myJointSize);
++            obj->set(
++                     jnt * (trackedUserJntDrawSize + 5)
++                     , 0
++                     , trackedUserJntDrawSize
++                     , trackedUserJntDrawSize
++                     );
++            
++            obj->offset = ofPoint(x, y, 0);
++            obj->scale = jointsScale;
++            obj->setColors(TRACKED_JNT_IDLE_COLOR, TRACKED_JNT_OVER_COLOR, TRACKED_JNT_DOWN_COLOR);
++            trackedUserJoints.push_back(obj);
++        }
++        
++        // populate editable joints vector
++        for(int jnt = 0; jnt < jointsCount; ++jnt) {
++            MSAjoint *obj = new MSAjoint();
++            obj->set(jnt * (editableJntDrawSize + 5), editableJntDrawSize*2, editableJntDrawSize, editableJntDrawSize);
++            obj->offset = ofPoint(x, y, 0);
++            obj->scale = jointsScale;
+             // set user-specified joint color
+             if (jnt == 0) { // set special properties for root joint
+-                obj->setSize(myJointSize*1.5f, myJointSize*1.5f);
+-                obj->setColors(MY_ROOT_JNT_COLOR, MY_ROOT_JNT_COLOR, MY_ROOT_JNT_COLOR);
++                obj->setSize(editableJntDrawSize*1.5f, editableJntDrawSize*1.5f);
++                obj->setColors(EDITABLE_ROOT_JNT_COLOR, EDITABLE_ROOT_JNT_COLOR, EDITABLE_ROOT_JNT_COLOR);
+                 // obj->enableMouseEvents(); NOTE: this is ommitted so that the root joint cannot be moved
+             } else {
+-                obj->setColors(MY_JNT_IDLE_COLOR, MY_JNT_OVER_COLOR, MY_JNT_DOWN_COLOR);
++                obj->setColors(EDITABLE_JNT_IDLE_COLOR, EDITABLE_JNT_OVER_COLOR, EDITABLE_JNT_DOWN_COLOR);
+                 obj->enableMouseEvents();
+                 obj->setDraggable(true);
+             }
+-            myJoints.push_back(obj);
++            editableJoints.push_back(obj);
+         }
+         
+         // handle interactive properties and functions
+         setColors(IMG_IDLE_COLOR, IMG_OVER_COLOR, IMG_DOWN_COLOR);
+         dragging = false;
+         enableMouseEvents(); // needs to appear AFTER MSAjoint declarations so that mousePressed event catches updates to MSAjoints based on their mouse events
+-        setPosition(ofGetWidth()*myAnchorInPercentages.x, ofGetHeight()*myAnchorInPercentages.y);
+     };
+     // obj destructor
+     ~imgData() {
+         
+         // clean up images
+-        for (int i = 0; i < myImgs.size(); ++i) {
+-            delete myImgs[i]; myImgs[i] = NULL;
++        for (int i = 0; i < imgs.size(); ++i) {
++            delete imgs[i]; imgs[i] = NULL;
++        }
++        vector<ofImage*>().swap(imgs);
++        
++        // clean up tracked user joints
++        for (int i = 0; i < trackedUserJoints.size(); ++i) {
++            delete trackedUserJoints[i]; trackedUserJoints[i] = NULL;
+         }
+-        vector<ofImage*>().swap(myImgs);
++        vector<MSAjoint*>().swap(trackedUserJoints); // TODO: joints -- does swapping it for an empty vector call "delete" for each object pointed to?
+ 
+-        // clean up user-specified joints
+-        for (int jnt = 0; jnt < myJointsCount; ++jnt) {
++        // clean up editable joints
++        for (int jnt = 0; jnt < jointsCount; ++jnt) {
+             // user-set joints
+-            delete myJoints[jnt]; myJoints[jnt] = NULL;
++            delete editableJoints[jnt]; editableJoints[jnt] = NULL;
+         }
+-        vector<MSAjoint*>().swap(myJoints);
++        vector<MSAjoint*>().swap(editableJoints);
+         
+         // clean up training joint sets
+-        for (int set = 0; set < myTrnJointSets.size(); ++set) {
++        for (int set = 0; set < trnJointSets.size(); ++set) {
+             eraseTrnData(set);
+         }
+-        vector<vector<MSAjoint*> >().swap(myTrnJointSets);
++        vector<vector<MSAjoint*> >().swap(trnJointSets);
+     };
+     
+     // core functions
+-    bool open(map <string, vector<string> >::iterator it_, string imageJointDataDirectory_, float jointsScale_) {
++    bool open(map <string, vector<string> >::iterator it_, string imageJointDataDirectory_, ofPoint jointsScale_) {
+         // store arguments
+-        myBaseName = it_->first;
+-        myImgPaths = it_->second;
+-        mySavePath = ofToDataPath( imageJointDataDirectory_ + "/" + myBaseName + ".xml" );
++        baseName = it_->first;
++        imgPaths = it_->second;
++        savePath = ofToDataPath( imageJointDataDirectory_ + "/" + baseName + ".xml" );
+         jointsScale = jointsScale_;
+         
+-        open(mySavePath, false);
++        open(savePath, false);
+     };
+     
+     bool open(string path_, bool readOnly_ = true) {
+-        mySavePath = path_;
++        savePath = path_;
+         readOnly = readOnly_;
+         
+         if (readOnly) {
+             disableAllEvents(); // disable all inherited ofxMSAInteractiveObject events
+-            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
+-                myJoints[jnt]->disableAllEvents();
++            for (int jnt = 0; jnt < editableJoints.size(); ++jnt) {
++                editableJoints[jnt]->disableAllEvents();
++            }
++            for (int jnt=0; jnt<trackedUserJoints.size(); ++jnt) {
++                trackedUserJoints[jnt]->disableAllEvents();
+             }
+         }
+         
+         // try to load settings from XML file
+         ofxXmlSettings imgDataXML;
+-        if(imgDataXML.loadFile(mySavePath)){
++        if(imgDataXML.loadFile(savePath)){
+             // if it exists, set imgData properties to match
+             
+             // common variables
+@@ -154,8 +197,8 @@ public:
+             //
+             // image anchor
+             imgDataXML.pushTag("anchorPct");
+-            myAnchorInPercentages.x = imgDataXML.getValue("x", myAnchorInPercentages.x);
+-            myAnchorInPercentages.y = imgDataXML.getValue("y", myAnchorInPercentages.y);
++            imgAnchorInPercentages.x = imgDataXML.getValue("x", imgAnchorInPercentages.x);
++            imgAnchorInPercentages.y = imgDataXML.getValue("y", imgAnchorInPercentages.y);
+             imgDataXML.popTag(); // pop "anchorPct"
+             //
+             // path scale map values
+@@ -168,38 +211,41 @@ public:
+                 // try to load image
+                 string imgPath = imgDataXML.getValue("path", "");
+                 float imgScale = imgDataXML.getValue("scale", 0.0f);
+-                myImgsPathScaleMap[imgPath] = imgScale;
++                imgsPathScaleMap[imgPath] = imgScale;
+                 if (!readOnly) { // don't load images in read-only mode
+                     ofImage *img = new ofImage();
+                     if(img->loadImage(imgPath)) {
+-                        img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
+-                        myImgs.push_back(img);
++                        img->setAnchorPercent(imgAnchorInPercentages.x, imgAnchorInPercentages.y);
++                        imgs.push_back(img);
+                     } else {
+                         cout << "imgData::open() -- failed to load imgPath = " << imgPath << endl;
+                     }
+                 }
+                 imgDataXML.popTag();//pop "entry"
+             }
+-            currentImgIndex = myImgs.size() -1;
++            imgIndex = imgs.size() -1;
+             imgDataXML.popTag(); //pop "pathScales"
+             //
+             // artist-specified joint positions (relative to the root joint)
+             imgDataXML.pushTag("joints");
+             entriesCount = imgDataXML.getNumTags("entry");
+-            if (myJointsCount == entriesCount) {
+-                myJointsEdited = true;
++            if (jointsCount == entriesCount) {
++                jointsEdited = true;
+                 for (int jnt = 0; jnt < entriesCount; ++jnt) {
+                     // each joint entry contains x, y, and z values for one joint
+                     imgDataXML.pushTag("entry", jnt);
+-                    // set path and its corresponding scale
+-                    float jntX = imgDataXML.getValue("x", 0.0f) * jointsScale + x   ;
+-                    float jntY = imgDataXML.getValue("y", 0.0f) * jointsScale + y   ;
+-                    float jntZ = imgDataXML.getValue("z", 0.0f) * jointsScale       ;
+-                    myJoints[jnt]->setPosition3D(jntX, jntY, jntZ);
++                    // get editable joint positions
++                    float jntX = imgDataXML.getValue("x", 0.0f);
++                    float jntY = imgDataXML.getValue("y", 0.0f);
++                    float jntZ = imgDataXML.getValue("z", 0.0f);
++                    ofPoint jntOfPnt(jntX, jntY, jntZ);
++                    editableJoints[jnt]->setPosition3D(jntOfPnt);
++                    editableJoints[jnt]->offset = ofPoint(x, y, 0);
++                    editableJoints[jnt]->scale = jointsScale;
+                     imgDataXML.popTag();//pop "entry"
+                 }
+             } else {
+-                cout << "imgData::open() -- number of joints in XML = " << entriesCount << ", but loader expects myJointsCount = " << myJointsCount << endl;
++                cout << "imgData::open() -- number of joints in XML = " << entriesCount << ", but loader expects myJointsCount = " << jointsCount << endl;
+             }
+             imgDataXML.popTag(); //pop "joints"
+             //
+@@ -211,22 +257,23 @@ public:
+                     //each set contains one complete set of joints
+                     imgDataXML.pushTag("set",set);
+                     entriesCount = imgDataXML.getNumTags("entry");
+-                    if (myJointsCount == entriesCount) {
++                    if (jointsCount == entriesCount) {
+                         vector<ofPoint> jntsOfPnts;
+                         for (int jnt = 0; jnt < entriesCount; ++jnt) {
+                             // each joint entry contains x, y, and z values for one joint
+                             imgDataXML.pushTag("entry",jnt);
+                             // set path and its corresponding scale
+-                            float jntX = imgDataXML.getValue("x", 0.0f) * jointsScale + x   ;
+-                            float jntY = imgDataXML.getValue("y", 0.0f) * jointsScale + y   ;
+-                            float jntZ = imgDataXML.getValue("z", 0.0f) * jointsScale       ;
++                            float jntX = imgDataXML.getValue("x", 0.0f);
++                            float jntY = imgDataXML.getValue("y", 0.0f);
++                            float jntZ = imgDataXML.getValue("z", 0.0f);
+                             ofPoint jntOfPnt(jntX, jntY, jntZ);
++                            // scale it
+                             jntsOfPnts.push_back(jntOfPnt);
+                             imgDataXML.popTag();//pop "entry"
+                         }
+                         pushTrnData(jntsOfPnts);
+                     } else {
+-                        cout << "imgData::open() -- number of joints in XML trainingJointSets[" << set << "] = " << entriesCount << ", but loader expects myJointsCount = " << myJointsCount << endl;
++                        cout << "imgData::open() -- number of joints in XML trainingJointSets[" << set << "] = " << entriesCount << ", but loader expects myJointsCount = " << jointsCount << endl;
+                     }
+                     imgDataXML.popTag();//pop "set"
+                 }
+@@ -239,12 +286,12 @@ public:
+ 
+         } else {
+             // otherwise, load images from "it" and calculate scales, using default falues for everything else
+-            for (int imgPathIndex = 0; imgPathIndex < myImgPaths.size(); ++imgPathIndex) {
++            for (int imgPathIndex = 0; imgPathIndex < imgPaths.size(); ++imgPathIndex) {
+                 ofImage *img = new ofImage();
+-                string path = myImgPaths[imgPathIndex];
++                string path = imgPaths[imgPathIndex];
+                 if (img->loadImage(path)) {
+-                    img->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
+-                    myImgs.push_back(img);
++                    img->setAnchorPercent(imgAnchorInPercentages.x, imgAnchorInPercentages.y);
++                    imgs.push_back(img);
+                     
+                     // calculate imageScale
+                     float imgRatioX;
+@@ -266,24 +313,57 @@ public:
+                         imgScale = imgRatioY;
+                     }
+                     
+-                    myImgsPathScaleMap[path]= imgScale;
++                    imgsPathScaleMap[path]= imgScale;
+                 } else {
+                     cout << "imgData::open() -- could not load image at path = " << path << endl;
+                 }
+             }
+             //
+             // set data loading-dependent properties
+-            currentImgIndex = myImgs.size() -1;
++            imgIndex = imgs.size() -1;
+         }
+     };
+     
++    void update() {
++        
++    };
++    
++    // update MSAjoints positions to match trackedUserJoints
++    void updateTrackedUserJoints(vector< ofPoint > trackedUserJointsOfPoints_) {
++        
++        // update positions of track user MSAjoint objects
++        for(int jnt = 0; jnt < trackedUserJoints.size(); ++jnt) {
++            MSAjoint *obj = trackedUserJoints[jnt];
++            obj->setPosition3D(trackedUserJointsOfPoints_[jnt]);
++            obj->offset = ofPoint(x, y, 0);
++            obj->scale = jointsScale;
++        }
++    }
++    
++    void resetTrackedUserJoints() {
++        // update positions of track user MSAjoint objects
++        for(int jnt = 0; jnt < trackedUserJoints.size(); ++jnt) {
++            MSAjoint *obj = trackedUserJoints[jnt];
++            obj->set(jnt*(trackedUserJntDrawSize+5), trackedUserJntDrawSize+5, trackedUserJntDrawSize, trackedUserJntDrawSize);
++            obj->offset = ofPoint(x, y, 0);
++            obj->scale = jointsScale;
++        }
++    };
++
+     void draw(bool drawMirrored_) {
+         // store image scale for quick reference
+-        float imgScale = myImgsPathScaleMap[myImgPaths[currentImgIndex]]; // TODO: use ".at()" function instead? i.e.: myImgsPathScaleMap.at(it->second[currentImgIndex]);
++        float imgScale = imgsPathScaleMap[imgPaths[imgIndex]]; // TODO: use ".at()" function instead? i.e.: myImgsPathScaleMap.at(it->second[currentImgIndex]);
+         // mirror image if necessary // TODO: is there a way to do this with a transformation instead?
+         if (imgsMirrored != drawMirrored_) {
+-            for (int imgIndx = 0; imgIndx < myImgs.size(); ++imgIndx) {
+-                myImgs[imgIndx]->mirror(0, true);
++            for (int imgIndx = 0; imgIndx < imgs.size(); ++imgIndx) {
++                imgs[imgIndx]->mirror(0, true);
++                // mirror joint data as well
++                jointsScale *= ofPoint(-1.0f, 1.0f, 1.0f);
++                setMSAjointsScale(editableJoints, jointsScale);
++                setMSAjointsScale(trackedUserJoints, jointsScale);
++                for(int set=0; set<trnJointSets.size(); ++set ) {
++                    setMSAjointsScale(trnJointSets[set], jointsScale);
++                }
+             }
+             imgsMirrored = drawMirrored_;
+         }
+@@ -295,11 +375,11 @@ public:
+         else if(isMouseOver()) ofSetHexColor(colorOver);
+         else ofSetHexColor(colorIdle);
+ 
+-        myImgs[currentImgIndex]->draw(
++        imgs[imgIndex]->draw(
+                                         x
+                                       , y
+-                                      , myImgs[currentImgIndex]->width * imgScale
+-                                      , myImgs[currentImgIndex]->height * imgScale
++                                      , imgs[imgIndex]->width * imgScale
++                                      , imgs[imgIndex]->height * imgScale
+                                       );
+         ofPopStyle();
+ 
+@@ -323,15 +403,15 @@ public:
+         // image anchor
+         imgDataXML.addTag("anchorPct");
+         imgDataXML.pushTag("anchorPct");
+-        imgDataXML.addValue("x", myAnchorInPercentages.x);
+-        imgDataXML.addValue("y", myAnchorInPercentages.y);
++        imgDataXML.addValue("x", imgAnchorInPercentages.x);
++        imgDataXML.addValue("y", imgAnchorInPercentages.y);
+         imgDataXML.popTag(); // pop "anchorPct"
+         //
+         // path scale map values
+         imgDataXML.addTag("pathScales");
+         imgDataXML.pushTag("pathScales");
+         int entryIndx = 0;
+-        for(map<string, float>::iterator it = myImgsPathScaleMap.begin(); it != myImgsPathScaleMap.end(); ++it){
++        for(map<string, float>::iterator it = imgsPathScaleMap.begin(); it != imgsPathScaleMap.end(); ++it){
+             // each entry tag represents one path
+             imgDataXML.addTag("entry");
+             imgDataXML.pushTag("entry", entryIndx);
+@@ -344,18 +424,20 @@ public:
+         imgDataXML.popTag(); //pop "pathScales"
+         //
+         // artist-specified joint positions (relative to the root joint)
+-        if (myJointsEdited) {
++        if (jointsEdited) {
+             imgDataXML.addTag("joints");
+             imgDataXML.pushTag("joints");
+-            ofPoint baseJoint(myJoints[0]->x, myJoints[0]->y, myJoints[0]->z);
+-            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
++            ofPoint baseJoint(editableJoints[0]->x, editableJoints[0]->y, editableJoints[0]->z);
++            for (int jnt = 0; jnt < editableJoints.size(); ++jnt) {
+                 // each joint entry contains x, y, and z values for one joint
+                 imgDataXML.addTag("entry");
+                 imgDataXML.pushTag("entry",jnt);
+-                // undo affect of jointsScale by dividing MSAjoint positions / jointsScale;
+-                imgDataXML.addValue("x", (myJoints[jnt]->x - baseJoint.x) / jointsScale);
+-                imgDataXML.addValue("y", (myJoints[jnt]->y - baseJoint.y) / jointsScale);
+-                imgDataXML.addValue("z", (myJoints[jnt]->z - baseJoint.z) / jointsScale);
++                // store all joints relative to torso joint
++                ofPoint relativeJoint(editableJoints[jnt]->x, editableJoints[jnt]->y, editableJoints[jnt]->z);
++                relativeJoint = relativeJoint - baseJoint;
++                imgDataXML.addValue("x", relativeJoint.x);
++                imgDataXML.addValue("y", relativeJoint.y);
++                imgDataXML.addValue("z", relativeJoint.z);
+                 imgDataXML.popTag();//pop "entry"
+             }
+             imgDataXML.popTag(); //pop "joints"
+@@ -364,19 +446,21 @@ public:
+         // training data joints
+         imgDataXML.addTag("trainingJointSets");
+         imgDataXML.pushTag("trainingJointSets");
+-        for(int set = 0; set < myTrnJointSets.size(); ++set){
++        for(int set = 0; set < trnJointSets.size(); ++set){
+             //each set contains one complete set of joints
+             imgDataXML.addTag("set");
+             imgDataXML.pushTag("set",set);
+-            ofPoint baseJoint(myTrnJointSets[set][0]->x, myTrnJointSets[set][0]->y, myTrnJointSets[set][0]->z);
+-            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
++            ofPoint baseJoint(trnJointSets[set][0]->x, trnJointSets[set][0]->y, trnJointSets[set][0]->z);
++            for (int jnt = 0; jnt < editableJoints.size(); ++jnt) {
+                 // each joint entry contains x, y, and z values for one joint
+                 imgDataXML.addTag("entry");
+                 imgDataXML.pushTag("entry",jnt);
+-                // undo affect of jointsScale by dividing MSAjoint positions / jointsScale;
+-                imgDataXML.addValue("x", (myTrnJointSets[set][jnt]->x - baseJoint.x) / jointsScale);
+-                imgDataXML.addValue("y", (myTrnJointSets[set][jnt]->y - baseJoint.y) / jointsScale);
+-                imgDataXML.addValue("z", (myTrnJointSets[set][jnt]->z - baseJoint.z) / jointsScale);
++                // store all joints relative to torso joint
++                ofPoint relativeJoint(trnJointSets[set][jnt]->x, trnJointSets[set][jnt]->y, trnJointSets[set][jnt]->z);
++                relativeJoint = relativeJoint - baseJoint;
++                imgDataXML.addValue("x", relativeJoint.x);
++                imgDataXML.addValue("y", relativeJoint.y);
++                imgDataXML.addValue("z", relativeJoint.z);
+                 imgDataXML.popTag();//pop "entry"
+             }
+             imgDataXML.popTag();//pop "set"
+@@ -387,14 +471,14 @@ public:
+         //////////////////
+         // save it to the save directory with myBaseName + ".xml"
+         //////////////////
+-        imgDataXML.saveFile(mySavePath);
++        imgDataXML.saveFile(savePath);
+         
+     };
+     
+     // get training data functions
+     vector<string> getImgPaths() {
+         vector<string> imgPaths;
+-        for(map<string, float>::iterator imgIT = myImgsPathScaleMap.begin(); imgIT != myImgsPathScaleMap.end(); ++imgIT) {
++        for(map<string, float>::iterator imgIT = imgsPathScaleMap.begin(); imgIT != imgsPathScaleMap.end(); ++imgIT) {
+             imgPaths.push_back(imgIT->first);
+         }
+         
+@@ -403,11 +487,17 @@ public:
+     
+     // training data manipulation functions
+     void scaleImages(float pct_) {
+-        for(map<string, float>::iterator imgIT = myImgsPathScaleMap.begin(); imgIT != myImgsPathScaleMap.end(); ++imgIT) {
++        for(map<string, float>::iterator imgIT = imgsPathScaleMap.begin(); imgIT != imgsPathScaleMap.end(); ++imgIT) {
+             imgIT->second *= pct_;
+         }
+     }
+     
++    void setMSAjointsScale( vector< MSAjoint* > MSAJoints_, ofPoint scale_ ) {
++        for(int jnt=0; jnt<MSAJoints_.size(); ++jnt ) {
++            MSAJoints_[jnt]->scale = scale_;
++        }
++    }
++    
+     void setColors(int colorIdle_, int colorOver_, int colorDown_) {
+         colorIdle = colorIdle_;
+         colorOver = colorOver_;
+@@ -417,17 +507,21 @@ public:
+     //////////////
+     // training data handling
+     //////////////
++    
++    void pushTrnData() {
++        pushTrnData(trackedUserJoints);
++    };
+     void pushTrnData(vector< ofPoint > jntsOfPnts_) {
+         // if the number of pushed joints matches the expected number of joints
+-        if (jntsOfPnts_.size() != myJointsCount) {
++        if (jntsOfPnts_.size() != jointsCount) {
+             cout << "imgData::pushTrnData(vector<ofPoint> jntsOfPnts_) -- jntsOfPnts_.size() != myJointsCount " << endl;
+-            cout << " -- jntsOfPnts_.size() = " << ofToString(jntsOfPnts_.size()) << ", myJointsCount = " << myJointsCount << endl;
++            cout << " -- jntsOfPnts_.size() = " << ofToString(jntsOfPnts_.size()) << ", myJointsCount = " << jointsCount << endl;
+             return;
+         }
+         
+         // create a vector of MSAjoint objects for each joint
+         vector<MSAjoint*> tJoints;
+-        for (int jnt = 0; jnt < myJointsCount; ++jnt) {
++        for (int jnt = 0; jnt < jointsCount; ++jnt) {
+             MSAjoint *obj = new MSAjoint();
+             float jntX = jntsOfPnts_[jnt].x ;
+             float jntY = jntsOfPnts_[jnt].y ;
+@@ -435,15 +529,17 @@ public:
+             obj->setPosition3D(jntX, jntY, jntZ);
+             if (readOnly) obj->disableAllEvents(); // joints should not draw or update in read-only mode
+             else {
+-                obj->setSize(myTrainingDataJointSize, myTrainingDataJointSize);
++                obj->setSize(trnJntDrawSize, trnJntDrawSize);
+                 obj->setColors(TRNDATA_JNT_IDLE_COLOR, TRNDATA_JNT_OVER_COLOR, TRNDATA_JNT_DOWN_COLOR);
+             }
++            obj->offset = ofPoint(x, y, 0);
++            obj->scale = jointsScale;
+             tJoints.push_back(obj);
+         }
+         // push the vector to the vector of training joint sets
+-        myTrnJointSets.push_back(tJoints);
++        trnJointSets.push_back(tJoints);
+         
+-        myTrnJointSetsSize = myTrnJointSets.size();
++        trnJointSetsCount = trnJointSets.size();
+         
+         // cout << "imgData::pushTrnData(vector<ofPoint> &jntsOfPnts_) -- executed" << endl;
+         // cout << " -- myTrnJointSetsSize = " << ofToString(myTrnJointSetsSize) << endl;
+@@ -451,9 +547,9 @@ public:
+     //
+     void pushTrnData(vector< MSAjoint* > &tJoints_) {
+         // if the number of pushed joints matches the expected number of joints
+-        if (tJoints_.size() != myJointsCount) {
++        if (tJoints_.size() != jointsCount) {
+             cout << "imgData::pushTrnData(vector<MSAjoint *> tJoints_) -- tJoints_.size() != myJointsCount " << endl;
+-            cout << " -- tJoints_.size() = " << ofToString(tJoints_.size()) << ", myJointsCount = " << myJointsCount << endl;
++            cout << " -- tJoints_.size() = " << ofToString(tJoints_.size()) << ", myJointsCount = " << jointsCount << endl;
+             return;
+         }
+         
+@@ -461,20 +557,20 @@ public:
+         ofPoint rootPos(tJoints_[0]->x, tJoints_[0]->y, tJoints_[0]->z);
+         // create a vector of MSAjoint objects for each joint
+         vector<MSAjoint*> tJoints;
+-        for (int jnt = 0; jnt < myJointsCount; ++jnt) {
++        for (int jnt = 0; jnt < jointsCount; ++jnt) {
+             MSAjoint *obj = new MSAjoint();
+             float jntX = tJoints_[jnt]->x - rootPos.x   + this->x   ;
+             float jntY = tJoints_[jnt]->y - rootPos.y   + this->y   ;
+             float jntZ = tJoints_[jnt]->z - rootPos.z               ;
+             obj->setPosition3D(jntX, jntY, jntZ);
+-            obj->setSize(myTrainingDataJointSize, myTrainingDataJointSize);
++            obj->setSize(trnJntDrawSize, trnJntDrawSize);
+             obj->setColors(TRNDATA_JNT_IDLE_COLOR, TRNDATA_JNT_OVER_COLOR, TRNDATA_JNT_DOWN_COLOR);
+             tJoints.push_back(obj);
+         }
+         // push the vector to the vector of training joint sets
+-        myTrnJointSets.push_back(tJoints);
++        trnJointSets.push_back(tJoints);
+ 
+-        myTrnJointSetsSize = myTrnJointSets.size();
++        trnJointSetsCount = trnJointSets.size();
+         
+         // cout << "imgData::pushTrnData(vector<MSAjoint *> &tJoints_) -- executed" << endl;
+         // cout << " -- myTrnJointSetsSize = " << ofToString(myTrnJointSetsSize) << endl;
+@@ -482,34 +578,34 @@ public:
+     //
+     void eraseTrnData(int i_) {
+         // if specified training set exists
+-        if (myTrnJointSets.size() < i_) {
++        if (trnJointSets.size() < i_) {
+             cout << "imgData::eraseTrnData(int i_) -- there is no training joint set i_ = " << ofToString(i_) << endl;
+-            cout << " -- myTrnJointSets.size() = " << ofToString(myTrnJointSets.size()) << endl;
++            cout << " -- myTrnJointSets.size() = " << ofToString(trnJointSets.size()) << endl;
+             return;
+         }
+         
+-        for (int jnt = 0; jnt < myJointsCount; ++jnt) {
+-            delete myTrnJointSets[i_][jnt]; myTrnJointSets[i_][jnt] = NULL;
++        for (int jnt = 0; jnt < jointsCount; ++jnt) {
++            delete trnJointSets[i_][jnt]; trnJointSets[i_][jnt] = NULL;
+         }
+-        myTrnJointSets.erase(myTrnJointSets.begin() + i_);
+-        myTrnJointSetsSize = myTrnJointSets.size();
++        trnJointSets.erase(trnJointSets.begin() + i_);
++        trnJointSetsCount = trnJointSets.size();
+     };
+     //
+     void setJointsFromTrainingJointSet(int i_) {
+         // if specified training set exists
+-        if (myTrnJointSets.size() < i_) {
++        if (trnJointSets.size() < i_) {
+             cout << "imgData::setJointsFromJointSet(int i_) -- there is no training joint set i_ = " << ofToString(i_) << endl;
+-            cout << " -- myTrnJointSets.size() = " << ofToString(myTrnJointSets.size()) << endl;
++            cout << " -- myTrnJointSets.size() = " << ofToString(trnJointSets.size()) << endl;
+             return;
+         }
+         
+         // copy positions from training set to user-specified joints vector
+-        for (int jnt = 0; jnt < myJointsCount; ++jnt) {
+-            myJoints[jnt]->setPosition3D(myTrnJointSets[i_][jnt]->x, myTrnJointSets[i_][jnt]->y, myTrnJointSets[i_][jnt]->z);
++        for (int jnt = 0; jnt < jointsCount; ++jnt) {
++            editableJoints[jnt]->setPosition3D(trnJointSets[i_][jnt]->x, trnJointSets[i_][jnt]->y, trnJointSets[i_][jnt]->z);
+         }
+         
+         // set a flag to make sure user-specified skeleton gets saved
+-        myJointsEdited = true;
++        jointsEdited = true;
+     };
+     //
+     //    enum Joint { // joint reference from OpenNI code
+@@ -544,20 +640,20 @@ public:
+     //    };
+     //
+     int getTrnDataSize () {
+-        return myTrnJointSetsSize;
++        return trnJointSetsCount;
+     }
+     //
+     vector< double > getJntDataDoubles() {
+         // return a vector of user-trained joints in double format;
+-        vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(myJoints);
++        vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(editableJoints);
+         return jointsDoubles;
+     }
+     //
+     vector< vector< double > > getTrnDataDoubles() {
+         // return a vector of training data joint vectors in double format;
+         vector< vector< double > > trnDataJointsDoubles;
+-        for( int set=0; set<myTrnJointSets.size(); ++set ) {
+-            vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(myTrnJointSets[set]);
++        for( int set=0; set<trnJointSets.size(); ++set ) {
++            vector <double> jointsDoubles = convertMSAJointstoDoubleJoints(trnJointSets[set]);
+             trnDataJointsDoubles.push_back( jointsDoubles );
+         }
+         return trnDataJointsDoubles;
+@@ -583,22 +679,28 @@ public:
+             if (visible_) joints_[jnt]->enableAppEvents();
+             else joints_[jnt]->disableAppEvents();
+         }
+-    }
++    };
+     //
+-    void setMSAJntVisibility(bool visible_) {
++    void setAllJntVisibility(bool visible_) {
+         // all joints
+-        setUsrJntVisibility(visible_);
++        setTrackedUsrJntVisibility(visible_);
++        setEditableJntVisibility(visible_);
+         setTrnDataVisibility(visible_);
+-    }
++    };
++    //
++    void setTrackedUsrJntVisibility(bool visible_){
++        // tracked user joints
++        setMSAJntVisibility(trackedUserJoints, visible_);
++    };
+     //
+-    void setUsrJntVisibility(bool visible_) {
+-        // user-specified joints
+-        if(myJoints.size()) setMSAJntVisibility(myJoints, visible_);
++    void setEditableJntVisibility(bool visible_) {
++        // editable joints
++        setMSAJntVisibility(editableJoints, visible_);
+     }
+     //
+     void setTrnDataVisibility(bool visible_) {
+         // all training data
+-        for(int set=0; set<myTrnJointSets.size(); ++set ) {
++        for(int set=0; set<trnJointSets.size(); ++set ) {
+             setTrnDataVisibilty(set, visible_);
+         }
+     }
+@@ -607,24 +709,24 @@ public:
+         // a specific training data set
+         
+         // if specified training set exists
+-        if (myTrnJointSets.size() < set_) {
++        if (trnJointSets.size() < set_) {
+             cout << "imgData::setTrnDataVisibilty(int i_) -- there is no training joint set i_ = " << ofToString(set_) << endl;
+-            cout << " -- myTrnJointSets.size() = " << ofToString(myTrnJointSets.size()) << endl;
++            cout << " -- myTrnJointSets.size() = " << ofToString(trnJointSets.size()) << endl;
+             return;
+         }
+         // set its MSAjoints visibility
+-        setMSAJntVisibility(myTrnJointSets[set_], visible_);
++        setMSAJntVisibility(trnJointSets[set_], visible_);
+     };
+     
+     ///////////////
+     // mouse interaction
+     ///////////////
+     bool hitTest(int tx, int ty) const { // redefines hitTest function of ofxMSAInteractiveObject
+-        float imgScale = myImgsPathScaleMap.at(myImgPaths[currentImgIndex]);
+-        int imgWidth   = myImgs[currentImgIndex]->getWidth();
+-        int imgHeight  = myImgs[currentImgIndex]->getHeight();
+-        tx += myAnchorInPercentages.x * imgWidth * imgScale;
+-        ty += myAnchorInPercentages.y * imgHeight * imgScale;
++        float imgScale = imgsPathScaleMap.at(imgPaths[imgIndex]);
++        int imgWidth   = imgs[imgIndex]->getWidth();
++        int imgHeight  = imgs[imgIndex]->getHeight();
++        tx += imgAnchorInPercentages.x * imgWidth * imgScale;
++        ty += imgAnchorInPercentages.y * imgHeight * imgScale;
+         return ((tx > x) && (tx < x + imgWidth * imgScale) && (ty > y) && (ty < y + imgHeight * imgScale));
+     }
+     //
+@@ -635,8 +737,8 @@ public:
+         int jntBeingDragged = -1;
+         
+         // cycle through myJoints to see if any of them are being dragged
+-        for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
+-            if (myJoints[jnt] -> getDragging()) {
++        for (int jnt = 0; jnt < editableJoints.size(); ++jnt) {
++            if (editableJoints[jnt] -> getDragging()) {
+                 jntBeingDragged = jnt;
+             }
+         }
+@@ -649,10 +751,10 @@ public:
+         //    - restrict x-y axis movement as well
+         //    - switch from fwd to behind with modifier key
+         if (jntBeingDragged != -1) {
+-            for (int jnt = 0; jnt < myJoints.size(); ++jnt) {
++            for (int jnt = 0; jnt < editableJoints.size(); ++jnt) {
+                 // if (jnt != jntBeingDragged) myJoints[jnt]->onPress(x, y, button);
+             }
+-            myJointsEdited = true;
++            jointsEdited = true;
+         }
+     }
+     //
+@@ -669,14 +771,14 @@ public:
+     }
+     //
+     void updatePosition(int x, int y) {
+-        float imgWidth = myImgs[currentImgIndex]->width;
+-        float imgHeight = myImgs[currentImgIndex]->height;
++        float imgWidth = imgs[imgIndex]->width;
++        float imgHeight = imgs[imgIndex]->height;
+         float dx = (x - ofGetPreviousMouseX()) / imgWidth;
+         float dy = (y - ofGetPreviousMouseY()) / imgHeight;
+-        this->myAnchorInPercentages.x -= dx;
+-        this->myAnchorInPercentages.y -= dy;
+-        for(int imgIndx = 0; imgIndx < myImgs.size(); imgIndx++) {
+-            myImgs[imgIndx]->setAnchorPercent(myAnchorInPercentages.x, myAnchorInPercentages.y);
++        this->imgAnchorInPercentages.x -= dx;
++        this->imgAnchorInPercentages.y -= dy;
++        for(int imgIndx = 0; imgIndx < imgs.size(); imgIndx++) {
++            imgs[imgIndx]->setAnchorPercent(imgAnchorInPercentages.x, imgAnchorInPercentages.y);
+         }
+         
+         // TODO: make sure images cannnot get dragged off the edge of the screen
+diff --git a/harlequin_xCode/src/imgEditor/imgEditor.cpp b/harlequin_xCode/src/imgEditor/imgEditor.cpp
+index 5758fb6..bd4b44f 100644
+--- a/harlequin_xCode/src/imgEditor/imgEditor.cpp
++++ b/harlequin_xCode/src/imgEditor/imgEditor.cpp
+@@ -11,12 +11,11 @@
+ //--------------------------------------------------------------
+ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string imageJointDataDirectory_) {
+     
++    // properties
+     initializing = true; // flag to check to make sure application is not running initialization operations twice
+     currentImgBaseName = "";
+     guiJntDataTglMtxSize = 16;
+-    jointsScale = -0.5f;
+-    trackedUserJointsSize = 10;
+-
++    // directories
+     guiSettingsPath = guiSettingsPath_;
+     imagesDirectory = imagesDirectory_;
+     imageJointDataDirectory = imageJointDataDirectory_;
+@@ -28,36 +27,10 @@ void imgEditor::setup(string guiSettingsPath_, string imagesDirectory_, string i
+     mapAllImages();
+     
+     ///////////////////
+-    // 2) setup objects and interactive elements for training image metadata
+-    //     - load metadata for an image if it already exists
+-    ///////////////////
+-    // MSA joints for displaying joint position data before capturing it
+-    jointsCount = 15; // TODO: move these into imgData object to clean up this editor
+-    jointsAnchorInPercentages.set(0.5f, 0.5f);
+-    for(int jnt = 0; jnt < jointsCount; ++jnt) {
+-        MSAjoint *obj = new MSAjoint();
+-        obj->set(
+-                   830 + (jnt * (trackedUserJointsSize + 5))
+-                 , trackedUserJointsSize + 5
+-                 , trackedUserJointsSize
+-                 , trackedUserJointsSize
+-                 );
+-
+-        obj->setColors(0x00FFFF, 0x0000FF, 0xFFFF00);
+-        joints.push_back(obj);
+-    }
+-
+-    ///////////////////
+-    // 3) setup a gui & keybindings for displaying pathMap & selecting which image to load training
++    // 2) setup a gui & keybindings for displaying and editing image training data
+     ///////////////////
+     setupGui();
+     
+-    ///////////////////
+-    // 4) setup gui & functions that save image metadata
+-    //     - at comon directory level of all image paths (remove "_540" / "_1080" portion)
+-    //     - include multiple paths in XML file for selection later on
+-    ///////////////////
+-    
+     initializing = false; // done initializing
+ }
+ 
+@@ -68,39 +41,20 @@ void imgEditor::exit() {
+     delete gui; gui = NULL;
+     delete imgDataObj; imgDataObj = NULL;
+     
+-    // MSAjoints list
+-    for (int i = 0; i < joints.size(); ++i) {
+-        delete joints[i]; joints[i] = NULL;
+-    }
+-    vector<MSAjoint*>().swap(joints); // TODO: joints -- does swapping it for an empty vector call "delete" for each object pointed to?
+ }
+ 
+ //--------------------------------------------------------------
+ void imgEditor::enable() {
+     enabled = true;
+     if (gui) gui->enable();
+-    if (imgDataObj) imgDataObj->setMSAJntVisibility(true);
+-    setMSAJntVisibility(true);
++    if (imgDataObj) imgDataObj->setAllJntVisibility(true);
+ }
+ 
+ //--------------------------------------------------------------
+ void imgEditor::disable() {
+     enabled = false;
+     if (gui) gui->disable();
+-    if (imgDataObj) imgDataObj->setMSAJntVisibility(false);
+-    setMSAJntVisibility(false);
+-}
+-
+-//--------------------------------------------------------------
+-void imgEditor::setMSAJntVisibility(bool visible_) {
+-    setMSAJntVisibility(joints, visible_);
+-}
+-void imgEditor::setMSAJntVisibility(vector< MSAjoint* > joints_, bool visible_) {
+-    // iterate through joints and set visibility
+-    for (int jnt = 0; jnt < joints_.size(); ++jnt) {
+-        if (visible_) joints_[jnt]->enableAppEvents();
+-        else joints_[jnt]->disableAppEvents();
+-    }
++    if (imgDataObj) imgDataObj->setAllJntVisibility(false);
+ }
+ 
+ //--------------------------------------------------------------
+@@ -144,20 +98,9 @@ void imgEditor::update(vector< vector<ofPoint> > trackedUserJoints_) {
+     }
+     
+     // update MSAjoints positions to match trackedUserJoints
+-    // create a vector of an MSAjoint object per joint
+-    for(int jnt = 0; jnt < jointsCount; ++jnt) {
+-        MSAjoint *obj = joints[jnt];
+-        if (trackedUserIndex < trackedUsersCount) {
+-            ofPoint j = trackedUserJoints_[trackedUserIndex][jnt];
+-            obj->setPosition3D(
+-                                 ofGetWidth()  * jointsAnchorInPercentages.x    + j.x * jointsScale
+-                               , ofGetHeight() * jointsAnchorInPercentages.y    + j.y * jointsScale
+-                               ,                                                + j.z * jointsScale
+-                             );
+-        } else {
+-            obj->set(830 + (jnt*15), 15, 10, 10);
+-        }
+-    }
++    if (trackedUserIndex < trackedUsersCount) imgDataObj -> updateTrackedUserJoints(trackedUserJoints_[trackedUserIndex]);
++    else imgDataObj -> resetTrackedUserJoints();
++    
+ }
+ 
+ //--------------------------------------------------------------
+@@ -184,8 +127,6 @@ void imgEditor::mapAllImages() {
+     string path = ofToDataPath(imagesDirectory);
+     string ext = "jpg";
+     ofDirectory dir(path);
+-//    ofDirUtils dirUtils;
+-//    vector<string> fileListing = dirUtils.listFilesOfType(dir, ext);
+     vector<string> fileListing = listFilesOfType(dir, ext);
+     
+     // pupulate map
+@@ -266,7 +207,7 @@ void imgEditor::reiterateIt() {
+ void imgEditor::loadImgData() {
+     delete imgDataObj; imgDataObj = NULL;
+     imgDataObj = new imgData();
+-    imgDataObj -> open(it, imageJointDataDirectory, jointsScale);
++    imgDataObj -> open(it, imageJointDataDirectory, ofPoint(0.5f, -0.5f, 0.5f));
+     
+     if(gui) {
+         // reset imgDataObj dependent gui elements
+@@ -444,7 +385,7 @@ void imgEditor::guiEvent(ofxUIEventArgs &e) {
+             int trnDataSize = imgDataObj -> getTrnDataSize();
+             if (trnDataSize < guiJntDataTglMtxSize) {
+                 // store training joint positions imgDataObj
+-                imgDataObj -> pushTrnData(joints);
++                imgDataObj -> pushTrnData();
+                 // update "';' ''' captured data joints" gui to reflect an added data point
+                 guiJntDataTglMtxTgls[imgDataObj -> getTrnDataSize()-1] -> toggleVisible();
+                 guiJntDataTglMtx -> setAllToggles(false);
+diff --git a/harlequin_xCode/src/imgEditor/imgEditor.h b/harlequin_xCode/src/imgEditor/imgEditor.h
+index 3a593c6..ab9bf0e 100644
+--- a/harlequin_xCode/src/imgEditor/imgEditor.h
++++ b/harlequin_xCode/src/imgEditor/imgEditor.h
+@@ -25,8 +25,6 @@ public:
+     void exit();
+     void enable();
+     void disable();
+-    void setMSAJntVisibility(bool visible_);
+-    void setMSAJntVisibility(vector< MSAjoint* > joints_, bool visible_);
+     void update(vector< vector<ofPoint> > trackedUserJoints_);
+     void draw(bool drawMirrored_);
+     
+@@ -50,13 +48,6 @@ public:
+     ofxUIToggleMatrix               *guiJntDataTglMtx;
+     vector<ofxUIToggle*>            guiJntDataTglMtxTgls;
+     //
+-    // joint tracking
+-    int                             trackedUserIndex, trackedUsersCount, trackedUserJointsSize;
+-    vector<MSAjoint*>               joints;
+-    ofVec2f                         jointsAnchorInPercentages;
+-    float                           jointsScale;
+-    int                             jointSetsCount, jointsCount;
+-    //
+     // images
+     map <string, vector<string> >   imagePathMap; // <string imgFileName, vector<string> imgPaths>
+     map <string, vector<string> >::iterator it; // iterator storage for paths to image that is currently being edited
+@@ -64,6 +55,9 @@ public:
+     float                           currentImgIndexFloat;
+     string                          currentImgBaseName;
+     imgData                         *imgDataObj;
++    //
++    // user tracking
++    int                             trackedUserIndex, trackedUsersCount;
+     
+ private:
+     
