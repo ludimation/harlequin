@@ -345,42 +345,6 @@ void GRTEditor::draw() {
 }
 
 //--------------------------------------------------------------
-void GRTEditor::keyPressed(int key){
-    
-    ////    // process key pressed
-    ////    switch (key) {
-    ////
-    ////        case 'h':
-    ////            gui->toggleVisible();
-    ////            break;
-    ////
-    ////        case 'b': // NOTE: updated to 'b' for BUILD DATA
-    ////            if (displayState == 'i') break; // do not train data during installation mode
-    ////
-    ////            // Store data to associate with currently displayed image
-    ////            //  - joint positions (0–15) — 0 = center, 1–15 = joints
-    ////
-    ////            if ((displayState == 'd' || displayState == 't') && trackedUserJointsPosABS.size()){
-    ////                trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
-    ////                trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
-    ////                trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
-    ////            } else {
-    ////                // TODO: display some kind of error message that says data can only be saved in training mode?
-    ////            }
-    ////
-    ////
-    ////        case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
-    ////            if (displayState == 'i') break; // do not train data during installation mode
-    ////
-    ////            GRTMngr->saveData();
-    ////            GRTMngr->saveModel();
-    ////
-    ////            break;
-    ////
-    
-}
-
-//--------------------------------------------------------------
 bool GRTEditor::loadData() {
     //    /////////////////////////////////////////
     //    // load training data and setup models //
@@ -501,37 +465,37 @@ void GRTEditor::mapAllGRTData(string imageJntDataDir_, string imgsDir_) {
         string imgPath = ofToDataPath(it->first);
         ofFile imgFile(imgPath);
         string imgParentPath = ofToDataPath(imgFile.getEnclosingDirectory());
-        cout << "GRTEditor::setup() -- imgParentPath = " << imgParentPath << endl;
-        cout << "                   -- imgsDirPath = " << imgsDirPath << endl;
+//        cout << "GRTEditor::mapAllGRTData() -- imgParentPath = " << imgParentPath << endl;
+//        cout << "                   -- imgsDirPath = " << imgsDirPath << endl;
         ofStringReplace(imgParentPath, imgsDirPath, "");
-        cout << "                   -- truncated imgPath = " << imgParentPath << endl;
+//        cout << "                   -- truncated imgPath = " << imgParentPath << endl;
         // split trunkated directory into tags
         vector< string > imgPathSplit = ofSplitString(imgParentPath, "/");
         if (imgPathSplit.size() == 1) { // try backslash delimiter
             imgPathSplit = ofSplitString(imgPathSplit[0], "\\");
-            cout << "GRTEditor::setup() -- forward slash '/' didn't work as split delimiter. Trying backslash '\\'" << endl;
+            cout << "GRTEditor::mapAllGRTData() -- forward slash '/' didn't work as split delimiter. Trying backslash '\\'" << endl;
         }
         // add each enclosing directory to the tagImgPathMap
         for(int i = 0; i < imgPathSplit.size(); ++i) {
             string pathTag = imgPathSplit[i];
-            cout << "GRTEditor::setup() -- pathTag = " << pathTag << endl;
+//            cout << "GRTEditor::mapAllGRTData() -- pathTag = " << pathTag << endl;
             if (pathTag != "") tagImgPathMap[pathTag].push_back(imgPath);
         }
         // split file's baseName
         string imgBaseName = imgFile.getBaseName();
-        cout << "                   -- imgBaseName = " << imgBaseName << endl;
+//        cout << "                   -- imgBaseName = " << imgBaseName << endl;
         vector< string > imgBaseNameSplit = ofSplitString(imgBaseName, "_");
         // add a subselection of fileName tags to tags map
         for(int i = 0; i < imgBaseNameSplit.size(); ++i) {
             string imgNameTag = imgBaseNameSplit[i];
-            cout << "GRTEditor::setup() -- imgNameTag = " << imgNameTag << endl;
+//            cout << "GRTEditor::mapAllGRTData() -- imgNameTag = " << imgNameTag << endl;
             int imgNmTgInt = ofToInt(imgNameTag);
             // cout << "                   -- imgNmTgInt = " << imgNmTgInt << endl;
             if ((imgNameTag != "" && imgNameTag.length() != 4 && imgNameTag.length() != 8) || !imgNmTgInt) {
                 tagImgPathMap[imgPath].push_back(imgNameTag);
             } else {
                 // do nothing - ignore tages with dates and sequence numbers (i.e.: "00000000" through "99999999" and "0000" through "9999")
-                cout << "                   -- ignoring this tag because it is a date or series number" << endl;
+//                cout << "                   -- ignoring this tag because it is a date or series number" << endl;
             }
         }
         
