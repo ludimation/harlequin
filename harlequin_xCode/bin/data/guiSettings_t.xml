@@ -6,21 +6,6 @@
     <YPosition>0.000000000</YPosition>
 </Canvas>
 <Widget>
-    <Kind>2</Kind>
-    <Name>i</Name>
-    <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>2</Kind>
-    <Name>d</Name>
-    <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>2</Kind>
-    <Name>t</Name>
-    <Value>1</Value>
-</Widget>
-<Widget>
     <Kind>42</Kind>
     <Name>set fps</Name>
     <Value>30</Value>
@@ -43,7 +28,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>kinected</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -98,7 +83,7 @@
 <Widget>
     <Kind>42</Kind>
     <Name>number of files to load</Name>
-    <Value>51</Value>
+    <Value>547</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>

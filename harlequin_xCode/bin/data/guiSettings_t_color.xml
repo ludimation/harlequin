@@ -2,13 +2,13 @@
     <Kind>40</Kind>
     <Name>OFX_UI_WIDGET_CANVAS</Name>
     <IsMinified>0</IsMinified>
-    <XPosition>1060.000000000</XPosition>
+    <XPosition>1680.000000000</XPosition>
     <YPosition>0.000000000</YPosition>
 </Canvas>
 <Widget>
     <Kind>2</Kind>
     <Name>i0</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -118,7 +118,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>d*</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -158,7 +158,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>s+</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>

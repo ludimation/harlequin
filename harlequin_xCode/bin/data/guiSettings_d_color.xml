@@ -2,7 +2,7 @@
     <Kind>40</Kind>
     <Name>OFX_UI_WIDGET_CANVAS</Name>
     <IsMinified>0</IsMinified>
-    <XPosition>1060.000000000</XPosition>
+    <XPosition>1700.000000000</XPosition>
     <YPosition>0.000000000</YPosition>
 </Canvas>
 <Widget>
@@ -48,12 +48,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>image green</Name>
-    <Value>204.753692627</Value>
+    <Value>167.068969727</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>image blue</Name>
-    <Value>157.019699097</Value>
+    <Value>125.615768433</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -113,12 +113,12 @@
 <Widget>
     <Kind>2</Kind>
     <Name>d+</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>d-</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -133,22 +133,22 @@
 <Widget>
     <Kind>4</Kind>
     <Name>depth red</Name>
-    <Value>246.206893921</Value>
+    <Value>50.246303558</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth green</Name>
-    <Value>38.940887451</Value>
+    <Value>55.270938873</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth blue</Name>
-    <Value>37.684730530</Value>
+    <Value>55.270938873</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth alpha</Name>
-    <Value>247.463058472</Value>
+    <Value>87.931037903</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
