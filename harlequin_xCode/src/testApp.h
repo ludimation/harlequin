@@ -44,6 +44,7 @@ public:
     int                     nTrackedUsers;
     ofFile                  file;
     string                  trainedImagesDirectory;
+    int                     trainedImagesDirectoryIndex;
     float                   imageScale;
     string                  trainingModelJointsPosABSfileName;
     string                  trainingDataJointsPosABSfileName;
@@ -60,6 +61,7 @@ public:
     void                    gestureEvent(ofxOpenNIGestureEvent & event);
     
     ofxUISuperCanvas        *gui;
+    ofxUIIntSlider          *guiFilesToLoadSlider;
     ofxUISuperCanvas        *guiColor;
     void                    guiEvent(ofxUIEventArgs &e);
     

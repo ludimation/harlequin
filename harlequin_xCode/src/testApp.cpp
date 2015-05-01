@@ -31,16 +31,20 @@ public:
 //--------------------------------------------------------------
 void testApp::setup() {
     
+    ofSetVerticalSync(true);
     
     ///////////////////////////
     // Image Data Properties //
     ///////////////////////////
-    trainedImagesDirectory = "images/hand_drawings/LT/";
-    //    trainedImagesDirectory = "images/hand_drawings/PC/";
-    //    trainedImagesDirectory = "images/hand_drawings/V/";
     // TODO: make image directory selection dynamic (1. include text input in GUI, 2. separate out data loading into a function that can be called when target data set is changed)
+    trainedImagesDirectory = "images/hand_drawings/LT/";
     directoriesAll.push_back(trainedImagesDirectory + "_540"); // i = 0
     directoriesAll.push_back(trainedImagesDirectory + "_1080"); // i = 1
+    trainedImagesDirectory = "images/hand_drawings/PC/";
+    directoriesAll.push_back(trainedImagesDirectory + "_540"); // i = 2
+    directoriesAll.push_back(trainedImagesDirectory + "_1080"); // i = 3
+    //    trainedImagesDirectory = "images/hand_drawings/V/";
+    trainedImagesDirectoryIndex = 0;
     //
     // declare local variables
     string          directoryPath;
@@ -49,7 +53,7 @@ void testApp::setup() {
     
     //
     nFilesToLoad = 64; // for testing purposes only (quick load)
-    directoryPath = directoriesAll[0]; // loading _540 images
+    directoryPath = directoriesAll[trainedImagesDirectoryIndex]; // loading _540 images
     imageScale = 2.0f; // TODO: scale image dynamically based on artist-specified data per image
     nFiles = dir.listDir(directoryPath);
     maxFilesToLoad = dir.size();
@@ -140,7 +144,7 @@ void testApp::setup() {
     gui -> addSpacer();
     //
     // Load files
-    gui -> addIntSlider("number of files to load", 0, maxFilesToLoad, &nFilesToLoad);
+    guiFilesToLoadSlider = gui -> addIntSlider("number of files to load", 0, maxFilesToLoad, &nFilesToLoad);
     gui -> addLabelToggle("load images", &loadImagesNow);
     gui -> addSpacer();
     //
@@ -207,6 +211,9 @@ void testApp::loadImages(bool load, bool reloadAll) {
 
     if (load) {
         cout << "testApp::loadImages(load = " << load /*<< "; " << "reloadAll = " << reloadAll*/ << ")" << endl;
+        cout << "                       -- trainedImagesDirectory = " << trainedImagesDirectory << endl;
+        cout << "                       -- trainedImagesDirectoryIndex = " << trainedImagesDirectoryIndex << endl;
+        cout << "                       -- directoriesAll[trainedImagesDirectoryIndex] = " << directoriesAll[trainedImagesDirectoryIndex] << endl;
         
         /////////////////
         // load images //
@@ -216,15 +223,21 @@ void testApp::loadImages(bool load, bool reloadAll) {
         string          filePath;
         ofDirectory     dir;
         int             nFilesInDir;
-        int             nFilesLoaded = images.size();
+        int             nFilesLoaded;
         ofImage         imgTMP;
         //
         // initialize
-        directoryPath = directoriesAll[0];
+        directoryPath = directoriesAll[trainedImagesDirectoryIndex];
         nFilesInDir = dir.listDir(directoryPath);
         maxFilesToLoad = dir.size();//TODO: update maximum for GUI slider named "number of files to load"
+        guiFilesToLoadSlider -> setMax(maxFilesToLoad);
+        if (reloadAll) {
+            images.clear();
+            //        imageNames.clear();
+        }
+        nFilesLoaded = images.size();
         images.resize(nFilesToLoad);
-//        imageNames.resize(nFilesToLoad);
+        //        imageNames.resize(nFilesToLoad);
         imgTMP.setCompression(OF_COMPRESS_ARB); // OF_COMPRESS_NONE || OF_COMPRESS_SRGB || OF_COMPRESS_ARB
         //
         // load files
@@ -234,8 +247,7 @@ void testApp::loadImages(bool load, bool reloadAll) {
 
                 // add the image name to a list
                 filePath = dir.getPath(i);
-                if (imgTMP.loadImage(filePath))
-                {
+                if (imgTMP.loadImage(filePath)) {
 //                    imageNames[nFilesLoaded] = filePath;
                     images[nFilesLoaded] = imgTMP;
                     nFilesLoaded++;
@@ -373,15 +385,15 @@ void testApp::guiEvent(ofxUIEventArgs &e) {
         ofxUIRadio *radioAppMode = (ofxUIRadio *) e.widget;
         switch (radioAppMode -> getValue()) {
             case 0: // interactive
-                if (displayState != 'i') setDisplayState('i');
+                setDisplayState('i');
                 break;
                 
             case 1: // debug
-                if (displayState != 'd') setDisplayState('d');
+                setDisplayState('d');
                 break;
                 
             case 2: // training
-                if (displayState != 't') setDisplayState('t');
+                setDisplayState('t');
                 break;
                 
             default:
@@ -842,19 +854,34 @@ void testApp::exit(){
 
 //--------------------------------------------------------------
 void testApp::setDisplayState(char newState) {
+    if (displayState == newState) return;
+    
     bool undefinedState = false;
     
     switch (newState) {
         case 't': // training
-            // fall through (intentional)
-        case 'd': // debug
-            // fall through (intentional)
-        case 'i':
+            // keeps current directory and images so that they can be trained
+            // TODO: clean out displayStateString code. nothing seems to reference it.
+            displayStateString = "training";
+            break;
 
-            // save & train model before switching modes
-            saveData();
-            saveModel();
-            
+        case 'd': // LT directory
+            displayStateString = "debug";
+            if (trainedImagesDirectory != "images/hand_drawings/LT/") {
+                trainedImagesDirectory = "images/hand_drawings/LT/";
+                trainedImagesDirectoryIndex = 0;
+                loadImages(loadImagesNow, true);
+            }
+            break;
+        
+        case 'i': // PC directory
+            displayStateString = "interactive";
+            if (trainedImagesDirectory != "images/hand_drawings/PC/") {
+                trainedImagesDirectory = "images/hand_drawings/PC/";
+                trainedImagesDirectoryIndex = 2;
+                loadImages(loadImagesNow, true);
+            }
+            loadImages(loadImagesNow, true);
             break;
 
         default:
@@ -866,6 +893,10 @@ void testApp::setDisplayState(char newState) {
 
     if (!undefinedState)
     {
+        // save & train model before switching modes
+        saveData();
+        saveModel();
+
         displayState = newState;
         
         // Load GUI settings // TODO: load setting xml files into memory to speed up switching states?
@@ -1050,24 +1081,6 @@ void testApp::keyPressed(int key){
     
     if (displayStateKeyed && key != displayState)
     {
-        switch(key){
-            case 'i': // interactive mode
-                
-                // TODO: clean out displayStateString code. nothing seems to reference it.
-                displayStateString = "interactive";
-                break;
-                
-            case 't': // training
-                
-                displayStateString = "training";
-                break;
-                
-            case 'd': // debug
-                
-                displayStateString = "debug";
-                break;
-        }
-
         setDisplayState(key);
     }
 }
