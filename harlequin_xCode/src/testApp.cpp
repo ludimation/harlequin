@@ -206,7 +206,7 @@ void testApp::setup() {
 void testApp::loadImages(bool load) {
 
     if (load) {
-        cout << "testApp::loadImages(load = " << load <<"; reloadAll = " << reloadAll << ")" << endl;
+        cout << "testApp::loadImages(load = " << load /*<< "; " << "reloadAll = " << reloadAll*/ << ")" << endl;
         
         /////////////////
         // load images //
