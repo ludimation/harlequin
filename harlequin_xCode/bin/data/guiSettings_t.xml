@@ -6,21 +6,6 @@
     <YPosition>0.000000000</YPosition>
 </Canvas>
 <Widget>
-    <Kind>2</Kind>
-    <Name>i</Name>
-    <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>2</Kind>
-    <Name>d</Name>
-    <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>2</Kind>
-    <Name>t</Name>
-    <Value>1</Value>
-</Widget>
-<Widget>
     <Kind>42</Kind>
     <Name>set fps</Name>
     <Value>30</Value>
@@ -58,7 +43,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>draw depth behind</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -67,7 +52,7 @@
 </Widget>
 <Widget>
     <Kind>2</Kind>
-    <Name>add joints 2 MSG</Name>
+    <Name>drawJoints2MSG</Name>
     <Value>1</Value>
 </Widget>
 <Widget>
@@ -98,7 +83,7 @@
 <Widget>
     <Kind>42</Kind>
     <Name>number of files to load</Name>
-    <Value>154</Value>
+    <Value>665</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>

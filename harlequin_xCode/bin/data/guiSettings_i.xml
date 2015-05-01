@@ -8,7 +8,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>i</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -63,17 +63,17 @@
 <Widget>
     <Kind>2</Kind>
     <Name>draw skeletons</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>add joints 2 MSG</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>draw MSG</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -98,7 +98,7 @@
 <Widget>
     <Kind>42</Kind>
     <Name>number of files to load</Name>
-    <Value>665</Value>
+    <Value>547</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>
