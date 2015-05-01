@@ -36,7 +36,8 @@ void testApp::setup() {
     // Image Data Properties //
     ///////////////////////////
     trainedImagesDirectory = "images/hand_drawings/LT/";
-//    trainedImagesDirectory = "images/hand_drawings/V/";
+    //    trainedImagesDirectory = "images/hand_drawings/PC/";
+    //    trainedImagesDirectory = "images/hand_drawings/V/";
     // TODO: make image directory selection dynamic (1. include text input in GUI, 2. separate out data loading into a function that can be called when target data set is changed)
     directoriesAll.push_back(trainedImagesDirectory + "_540"); // i = 0
     directoriesAll.push_back(trainedImagesDirectory + "_1080"); // i = 1
@@ -45,6 +46,7 @@ void testApp::setup() {
     string          directoryPath;
     ofDirectory     dir;
     int             nFiles;
+    
     //
     nFilesToLoad = 64; // for testing purposes only (quick load)
     directoryPath = directoriesAll[0]; // loading _540 images
@@ -204,6 +206,7 @@ void testApp::setup() {
 void testApp::loadImages(bool load) {
 
     if (load) {
+        cout << "testApp::loadImages(load = " << load <<"; reloadAll = " << reloadAll << ")" << endl;
         
         /////////////////
         // load images //
@@ -236,7 +239,7 @@ void testApp::loadImages(bool load) {
 //                    imageNames[nFilesLoaded] = filePath;
                     images[nFilesLoaded] = imgTMP;
                     nFilesLoaded++;
-                    cout << "loaded image [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
+//                    cout << "loaded image [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
                 }
             }
         } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
@@ -272,6 +275,8 @@ void testApp::loadImages(bool load) {
         cout << "loaded training data" << endl;
         
         trainModelsNow = true;
+        
+        // TODO: GRT::KNN impementation
 
         // TODO: implement the suggested pipeline setup
         GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
@@ -445,7 +450,7 @@ void testApp::guiEvent(ofxUIEventArgs &e) {
     
         
     } else { // default
-        cout << "testApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
+//        cout << "testApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
     }
     
 }
@@ -1130,6 +1135,7 @@ void testApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void testApp::setupKinects() {
+    
     ofSetLogLevel(OF_LOG_VERBOSE);
     
     //    if (kinectsInitialized) {
@@ -1153,6 +1159,7 @@ void testApp::setupKinects() {
 }
 
 void testApp::stopKinects() {
+    
     ofSetLogLevel(OF_LOG_VERBOSE);
     
 //    openNIPlayer.removeDepthGenerator();
@@ -1160,8 +1167,10 @@ void testApp::stopKinects() {
 //    openNIPlayer.setRegister(false);
 //    openNIPlayer.removeUserGenerator();
     openNIPlayer.stop();
+    
     ofSetLogLevel(OF_LOG_WARNING);
 }
+
 
 void testApp::setupTestUserJoints() { //TODO: make setting test user joints data more data-driven––load an external XML file or atual positions from a GRT joint data file
     vector< ofPoint > tempSingleUserJoints;

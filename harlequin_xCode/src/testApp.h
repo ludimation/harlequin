@@ -72,6 +72,7 @@ private:
     // artist specified settings
     int                             drawFrameRate;
     int                             drawNextFrameMilliseconds;
+    bool                            kinected;
     bool                            drawMirrored;
     char                            displayState;
     string                          displayStateString;
@@ -79,6 +80,7 @@ private:
     int                             imgBlendMode;
     bool                            imgInvertColors;
     float                           imgRed, imgGreen, imgBlue, imgAlpha;
+    
     // debug drawing flags
     bool                            drawDepth;
     bool                            drawDepthBehind;
@@ -91,15 +93,15 @@ private:
     bool                            drawJoints2MSG;
     bool                            drawMSG;
     
+    // OSC control
     bool                            sendOSC;
     bool                            setupOSC;
     string                          myHost;
     string                          myPort;
-    
-    
+
+    // image editor
     vector < string >               directoriesAll;
     vector < string >               directoriesToLoad;
-    bool                            kinected;
     
     void                            loadImages(bool load);
     bool                            loadImagesNow;
@@ -108,6 +110,7 @@ private:
     ofImage                         img;
     void                            invertImage(ofImage &imgREF);
     
+    // training data handling
     GRT::SVM                        trainingModelJointsPosABS;
     GRT::ClassificationData         trainingDataJointsPosABS;
     GRT::SVM                        trainingModelJointsPosRel;
@@ -119,7 +122,6 @@ private:
     bool                            trainModelsNow;
     void                            trainModels();
     
-
     vector< vector< ofPoint > >     trackedUserJointsPosABS;
     vector< vector< double > >      trackedUserJointsPosABSDouble;
     vector< vector< ofPoint > >     trackedUserJointsPosRel;
@@ -132,6 +134,7 @@ private:
     
     vector< ofPoint >               trackedUserCentersProjective;
     
+    // image display
     string                  img_name;
     vector< string >        imageNames;
     vector <ofImage>        images;
