@@ -203,7 +203,7 @@ void testApp::setup() {
     setupTestUserJoints();
 }
 
-void testApp::loadImages(bool load) {
+void testApp::loadImages(bool load, bool reloadAll) {
 
     if (load) {
         cout << "testApp::loadImages(load = " << load /*<< "; " << "reloadAll = " << reloadAll*/ << ")" << endl;

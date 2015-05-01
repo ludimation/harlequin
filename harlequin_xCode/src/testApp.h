@@ -103,7 +103,7 @@ private:
     vector < string >               directoriesAll;
     vector < string >               directoriesToLoad;
     
-    void                            loadImages(bool load);
+    void                            loadImages(bool load, bool reloadAll = false);
     bool                            loadImagesNow;
     int                             maxFilesToLoad;
     int                             nFilesToLoad;
