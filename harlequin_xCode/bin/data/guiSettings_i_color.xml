@@ -48,12 +48,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>image green</Name>
-    <Value>255.000000000</Value>
+    <Value>167.068969727</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>image blue</Name>
-    <Value>255.000000000</Value>
+    <Value>125.615768433</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -118,12 +118,12 @@
 <Widget>
     <Kind>2</Kind>
     <Name>d-</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>d*</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -133,27 +133,27 @@
 <Widget>
     <Kind>4</Kind>
     <Name>depth red</Name>
-    <Value>139.433502197</Value>
+    <Value>134.408859253</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth green</Name>
-    <Value>116.822654724</Value>
+    <Value>135.665023804</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth blue</Name>
-    <Value>100.492607117</Value>
+    <Value>135.665023804</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth alpha</Name>
-    <Value>169.581283569</Value>
+    <Value>92.955665588</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>s0</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -173,7 +173,7 @@
 <Widget>
     <Kind>2</Kind>
     <Name>s*</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
