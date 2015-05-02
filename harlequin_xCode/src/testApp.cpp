@@ -978,12 +978,12 @@ void testApp::keyPressed(int key){
             break;
             
         case 'b': // NOTE: updated to 'b' for BUILD DATA
-            if (displayState == 'i') break; // do not train data during installation mode
+            if (displayState == 'i' || displayState == 'd') break; // do not train data during installation mode
 
             // Store data to associate with currently displayed image
             //  - joint positions (0–15) — 0 = center, 1–15 = joints
             
-            if ((displayState == 'd' || displayState == 't') && trackedUserJointsPosABS.size()){
+            if (displayState == 't' && trackedUserJointsPosABS.size()){
                 trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
                 trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
                 trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
@@ -993,10 +993,21 @@ void testApp::keyPressed(int key){
             
             break;
         
-        case '<':
-        case ',':
-        case '[':
-        case 'p': // previous
+        case 127: // DELETE KEY // delete data for displayed image
+            if (displayState == 'i' || displayState == 'd') break; // do not train data during installation mode
+            
+            if (displayState == 't') {
+                trainingDataJointsPosABS.eraseAllSamplesWithClassLabel(label);
+                trainingDataJointsPosRel.eraseAllSamplesWithClassLabel(label);
+                trainingDataJointsRotAxisA.eraseAllSamplesWithClassLabel(label);
+            } else {
+                // TODO: display some kind of error message that says data can only be saved in training mode?
+            }
+            
+            break;
+
+        case '[': // previous
+        case '{': // previous
            
             saveData();
             
@@ -1008,9 +1019,8 @@ void testApp::keyPressed(int key){
 
             break;
         
-        case '>':
-        case ']':
-        case 'n': // next
+        case ']': // next
+        case '}': // next
             
             saveData();
             
