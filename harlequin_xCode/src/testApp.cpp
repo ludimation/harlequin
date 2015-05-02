@@ -256,7 +256,7 @@ void testApp::loadImages(bool load, bool reloadAll) {
             }
         } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
         //
-        // Select image to start with
+        // Select image to start with // TODO: Fix label setting/calling, it should never be 0 for prediction data.
         label = 0;
         if (imageNames.size()) img_name = imageNames[label];
         // TODO: use "img_name" to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
@@ -868,6 +868,10 @@ void testApp::setDisplayState(char newState) {
         case 'd': // LT directory
             displayStateString = "debug";
             if (trainedImagesDirectory != "images/hand_drawings/LT/") {
+                // save & train model before switching states
+                saveData();
+                saveModel();
+
                 trainedImagesDirectory = "images/hand_drawings/LT/";
                 trainedImagesDirectoryIndex = 0;
                 loadImages(loadImagesNow, true);
@@ -877,6 +881,10 @@ void testApp::setDisplayState(char newState) {
         case 'i': // PC directory
             displayStateString = "interactive";
             if (trainedImagesDirectory != "images/hand_drawings/PC/") {
+                // save & train model before switching states
+                saveData();
+                saveModel();
+
                 trainedImagesDirectory = "images/hand_drawings/PC/";
                 trainedImagesDirectoryIndex = 2;
                 loadImages(loadImagesNow, true);
@@ -893,10 +901,6 @@ void testApp::setDisplayState(char newState) {
 
     if (!undefinedState)
     {
-        // save & train model before switching modes
-        saveData();
-        saveModel();
-
         displayState = newState;
         
         // Load GUI settings // TODO: load setting xml files into memory to speed up switching states?
@@ -1150,12 +1154,13 @@ void testApp::windowResized(int w, int h){
 void testApp::setupKinects() {
     
     ofSetLogLevel(OF_LOG_VERBOSE);
-    
-    //    if (kinectsInitialized) {
-    //        openNIPlayer.start();
-    //        return;
-    //    }
-    
+
+    if (kinectsInitialized) {
+        //        openNIPlayer.start();
+        ofSetLogLevel(OF_LOG_WARNING);
+        return;
+    }
+
     openNIPlayer.setup();
     openNIPlayer.addDepthGenerator();
     openNIPlayer.addImageGenerator();
