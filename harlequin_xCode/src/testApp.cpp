@@ -251,7 +251,7 @@ void testApp::loadImages(bool load, bool reloadAll) {
 //                    imageNames[nFilesLoaded] = filePath;
                     images[nFilesLoaded] = imgTMP;
                     nFilesLoaded++;
-//                    cout << "loaded image [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
+                    cout << "loaded image [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
                 }
             }
         } else cout << "Could not find \"" << ofToString(directoryPath) << " directory\n" << endl;
