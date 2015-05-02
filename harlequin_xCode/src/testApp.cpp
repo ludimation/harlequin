@@ -898,6 +898,13 @@ void testApp::exit(){
 void testApp::setDisplayState(char newState) {
     if (displayState == newState) return;
     
+    if (displayState=='t') {
+        // save & train model before switching states
+        saveData();
+        saveModel();
+        
+    }
+
     bool undefinedState = false;
     
     switch (newState) {
@@ -908,12 +915,9 @@ void testApp::setDisplayState(char newState) {
             break;
 
         case 'd': // LT directory
+            
             displayStateString = "debug";
             if (trainedImagesDirectory != "images/hand_drawings/LT/") {
-                // save & train model before switching states
-                saveData();
-                saveModel();
-
                 trainedImagesDirectory = "images/hand_drawings/LT/";
                 trainedImagesDirectoryIndex = 0;
                 loadImages(loadImagesNow, true);
@@ -923,10 +927,6 @@ void testApp::setDisplayState(char newState) {
         case 'i': // PC directory
             displayStateString = "interactive";
             if (trainedImagesDirectory != "images/hand_drawings/PC/") {
-                // save & train model before switching states
-                saveData();
-                saveModel();
-
                 trainedImagesDirectory = "images/hand_drawings/PC/";
                 trainedImagesDirectoryIndex = 2;
                 loadImages(loadImagesNow, true);
