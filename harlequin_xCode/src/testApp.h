@@ -52,6 +52,9 @@ public:
     string                  trainingDataJointsPosRelfileName;
     string                  trainingModelJointsRotAxisAfileName;
     string                  trainingDataJointsRotAxisAfileName;
+    string                  knnTrnMdlJntsPosABSfileName;
+    string                  knnTrnMdlJntsPosRelfileName;
+    string                  knnTrnMdlJntsPosAxisAfileName;
     string                  testFileName;
     string                  testFileModelName;
 
@@ -119,6 +122,9 @@ private:
     GRT::ClassificationData         trainingDataJointsPosRel;
     GRT::SVM                        trainingModelJointsRotAxisA;
     GRT::ClassificationData         trainingDataJointsRotAxisA;
+    GRT::KNN                        knnTrnMdlJntsPosABS;
+    GRT::KNN                        knnTrnMdlJntsPosRel;
+    GRT::KNN                        knnTrnMdlJntsPosAxisA;
     GRT::UINT label;
     GRT::UINT lbl;
     bool                            trainModelsNow;

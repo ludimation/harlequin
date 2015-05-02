@@ -272,6 +272,9 @@ void testApp::loadImages(bool load, bool reloadAll) {
         trainingModelJointsPosRelfileName   = trainedImagesDirectory + "JointsPosRelmodel.txt";
         trainingDataJointsRotAxisAfileName  = trainedImagesDirectory + "JointsRotAxisAdata.txt";
         trainingModelJointsRotAxisAfileName = trainedImagesDirectory + "JointsRotAxisAmodel.txt";
+        knnTrnMdlJntsPosABSfileName         = trainedImagesDirectory + "knnJntsRotABSmodel.txt";
+        knnTrnMdlJntsPosRelfileName         = trainedImagesDirectory + "knnJntsRotRelmodel.txt";
+        knnTrnMdlJntsPosAxisAfileName       = trainedImagesDirectory + "knnJntsRotAxisAmodel.txt";
         //
         trainingDataJointsPosABS.setDatasetName("harlequinPosABS");
         trainingDataJointsPosABS.setNumDimensions(45);
@@ -288,13 +291,15 @@ void testApp::loadImages(bool load, bool reloadAll) {
         
         trainModelsNow = true;
         
-        // TODO: GRT::KNN impementation
-
         // TODO: implement the suggested pipeline setup
         GRT::SVM trainingModelJointsPosABS(GRT::SVM::LINEAR_KERNEL);
         GRT::SVM trainingModelJointsPosRel(GRT::SVM::LINEAR_KERNEL);
         GRT::SVM trainingModelJointsRotAxisA(GRT::SVM::LINEAR_KERNEL);
-    
+        
+        // TODO: GRT::KNN impementation
+        GRT::KNN knnTrnMdlJntsPosABS(5);
+        GRT::KNN knnTrnMdlJntsPosRel(5);
+        GRT::KNN knnTrnMdlJntsPosAxisA(5);
     }
     else
     {
@@ -306,6 +311,33 @@ void testApp::loadImages(bool load, bool reloadAll) {
     }
 }
 
+//--------------------------------------------------------------
+void testApp::saveData(){
+    trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
+    trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
+    trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
+}
+
+//--------------------------------------------------------------
+void testApp::saveModel(){
+    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
+    trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
+    
+    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
+    trainingModelJointsPosRel.saveModelToFile(ofToDataPath(trainingModelJointsPosRelfileName));
+    
+    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+    trainingModelJointsRotAxisA.saveModelToFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
+    
+    knnTrnMdlJntsPosABS.train(trainingDataJointsPosABS);
+    knnTrnMdlJntsPosABS.saveModelToFile(knnTrnMdlJntsPosABSfileName);
+    knnTrnMdlJntsPosRel.train(trainingDataJointsPosRel);
+    knnTrnMdlJntsPosRel.saveModelToFile(knnTrnMdlJntsPosRelfileName);
+    knnTrnMdlJntsPosAxisA.train(trainingDataJointsRotAxisA);
+    knnTrnMdlJntsPosAxisA.saveModelToFile(knnTrnMdlJntsPosAxisAfileName);
+    
+}
+
 void testApp::trainModels()
 {
     
@@ -313,11 +345,19 @@ void testApp::trainModels()
     trainingModelJointsPosABS.loadModelFromFile(ofToDataPath(trainingModelJointsPosABSfileName));
     trainingModelJointsPosRel.loadModelFromFile(ofToDataPath(trainingModelJointsPosRelfileName));
     trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
-
+    
     // TODO: training model data only works when called outside startup()——could this also be fixed by implementing the suggested pipeline setup?
 //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
 //    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
 //    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+
+    //    knnTrnMdlJntsPosABS.loadModelFromFile(knnTrnMdlJntsPosABSfileName);
+    //    knnTrnMdlJntsPosRel.loadModelFromFile(knnTrnMdlJntsPosRelfileName);
+    //    knnTrnMdlJntsPosAxisA.loadModelFromFile(knnTrnMdlJntsPosAxisAfileName);
+    
+    knnTrnMdlJntsPosABS.train(trainingDataJointsPosABS);
+    knnTrnMdlJntsPosRel.train(trainingDataJointsPosRel);
+    knnTrnMdlJntsPosAxisA.train(trainingDataJointsRotAxisA);
     
     cout << "trained models" << endl;
 
@@ -621,8 +661,10 @@ void testApp::draw(){
 
                 // select label: Relative Position model
                 if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && images.size())
+//                if (knnTrnMdlJntsPosABS.predict(trackedUserJointsPosRelDouble[j]) && images.size())
                 {
                     label = trainingModelJointsPosRel.getPredictedClassLabel();
+//                    label = knnTrnMdlJntsPosABS.getPredictedClassLabel();
                     //                    cout << "predicted label:" << label << endl;
                     
                     if (label > images.size()) // if predicted label image hasn't been loaded, display a random image
@@ -1087,25 +1129,6 @@ void testApp::keyPressed(int key){
     {
         setDisplayState(key);
     }
-}
-
-//--------------------------------------------------------------
-void testApp::saveData(){
-    trainingDataJointsPosABS.saveDatasetToFile(ofToDataPath(trainingDataJointsPosABSfileName));
-    trainingDataJointsPosRel.saveDatasetToFile(ofToDataPath(trainingDataJointsPosRelfileName));
-    trainingDataJointsRotAxisA.saveDatasetToFile(ofToDataPath(trainingDataJointsRotAxisAfileName));
-}
-
-//--------------------------------------------------------------
-void testApp::saveModel(){
-    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
-    trainingModelJointsPosABS.saveModelToFile(ofToDataPath(trainingModelJointsPosABSfileName));
-    
-    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
-    trainingModelJointsPosRel.saveModelToFile(ofToDataPath(trainingModelJointsPosRelfileName));
-    
-    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
-    trainingModelJointsRotAxisA.saveModelToFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
 }
 
 //--------------------------------------------------------------
