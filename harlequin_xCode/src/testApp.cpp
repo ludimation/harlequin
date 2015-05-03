@@ -994,11 +994,15 @@ void testApp::keyPressed(int key){
             if (gui) guiPredictionModelTxtArea -> setTextString("'m' or 'j' prediction model: " + predictionModel);
             cout << "testApp::keyPressed() -- switching prediction model = " << predictionModel << endl;
             
+            break;
+            
         case 'j':
             // set prediction model to KNN
             predictionModel = "SVM";
             if (gui) guiPredictionModelTxtArea -> setTextString("'m' or 'j' prediction model: " + predictionModel);
             cout << "testApp::keyPressed() -- switching prediction model = " << predictionModel << endl;
+            
+            break;
             
         case 'b': // NOTE: updated to 'b' for BUILD DATA
             if (displayState == 'i' || displayState == 'd') break; // do not train data during installation mode
