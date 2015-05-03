@@ -46,6 +46,7 @@ public:
     string                  trainedImagesDirectory;
     int                     trainedImagesDirectoryIndex;
     float                   imageScale;
+    string                  predictionModel;
     string                  trainingModelJointsPosABSfileName;
     string                  trainingDataJointsPosABSfileName;
     string                  trainingModelJointsPosRelfileName;
@@ -65,6 +66,8 @@ public:
     
     ofxUISuperCanvas        *gui;
     ofxUIIntSlider          *guiFilesToLoadSlider;
+    ofxUITextArea           *guiImageTxtArea;
+    ofxUITextArea           *guiPredictionModelTxtArea;
     ofxUISuperCanvas        *guiColor;
     void                    guiEvent(ofxUIEventArgs &e);
     

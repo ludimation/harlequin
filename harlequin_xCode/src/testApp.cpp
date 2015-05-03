@@ -33,6 +33,13 @@ void testApp::setup() {
     
     ofSetVerticalSync(true);
     
+    /////////////////////////
+    // Initialize settings //
+    /////////////////////////
+    predictionModel = "SVM";
+    drawNextFrameMilliseconds = 0;
+
+    
     ///////////////////////////
     // Image Data Properties //
     ///////////////////////////
@@ -143,7 +150,10 @@ void testApp::setup() {
     gui -> addToggle("send OSC", &sendOSC);
     gui -> addSpacer();
     //
-    // Load files
+    // image settings
+    gui -> addLabel("image settings");
+    guiImageTxtArea = gui -> addTextArea("image label", "'[' ']' current image label: " + ofToString(label));
+    guiPredictionModelTxtArea = gui -> addTextArea("prediction model", "'m' or 'j' prediction model: " + ofToString(predictionModel));
     guiFilesToLoadSlider = gui -> addIntSlider("number of files to load", 0, maxFilesToLoad, &nFilesToLoad);
     gui -> addLabelToggle("load images", &loadImagesNow);
     gui -> addSpacer();
@@ -194,10 +204,9 @@ void testApp::setup() {
     guiColor -> autoSizeToFitWidgets();
     
 
-    /////////////////////////
-    // Initialize settings //
-    /////////////////////////
-    drawNextFrameMilliseconds = 0;
+    ///////////////////////////
+    // Initial Display State //
+    ///////////////////////////
     setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
     
     ///////////////
@@ -259,6 +268,7 @@ void testApp::loadImages(bool load, bool reloadAll) {
         // Select image to start with // TODO: Fix label setting/calling, it should never be 0 for prediction data.
         label = 0;
         if (imageNames.size()) img_name = imageNames[label];
+        if (gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
         // TODO: use "img_name" to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
         // TODO: clear out the imageNames array code after the data handling re-structuring takes place
         
@@ -330,11 +340,11 @@ void testApp::saveModel(){
     trainingModelJointsRotAxisA.saveModelToFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
     
     knnTrnMdlJntsPosABS.train(trainingDataJointsPosABS);
-    knnTrnMdlJntsPosABS.saveModelToFile(knnTrnMdlJntsPosABSfileName);
+    knnTrnMdlJntsPosABS.saveModelToFile(ofToDataPath(knnTrnMdlJntsPosABSfileName));
     knnTrnMdlJntsPosRel.train(trainingDataJointsPosRel);
-    knnTrnMdlJntsPosRel.saveModelToFile(knnTrnMdlJntsPosRelfileName);
+    knnTrnMdlJntsPosRel.saveModelToFile(ofToDataPath(knnTrnMdlJntsPosRelfileName));
     knnTrnMdlJntsPosAxisA.train(trainingDataJointsRotAxisA);
-    knnTrnMdlJntsPosAxisA.saveModelToFile(knnTrnMdlJntsPosAxisAfileName);
+    knnTrnMdlJntsPosAxisA.saveModelToFile(ofToDataPath(knnTrnMdlJntsPosAxisAfileName));
     
 }
 
@@ -351,13 +361,13 @@ void testApp::trainModels()
 //    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
 //    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
 
-    //    knnTrnMdlJntsPosABS.loadModelFromFile(knnTrnMdlJntsPosABSfileName);
-    //    knnTrnMdlJntsPosRel.loadModelFromFile(knnTrnMdlJntsPosRelfileName);
-    //    knnTrnMdlJntsPosAxisA.loadModelFromFile(knnTrnMdlJntsPosAxisAfileName);
+    knnTrnMdlJntsPosABS.loadModelFromFile(ofToDataPath(knnTrnMdlJntsPosABSfileName));
+    knnTrnMdlJntsPosRel.loadModelFromFile(ofToDataPath(knnTrnMdlJntsPosRelfileName));
+    knnTrnMdlJntsPosAxisA.loadModelFromFile(ofToDataPath(knnTrnMdlJntsPosAxisAfileName));
     
-    knnTrnMdlJntsPosABS.train(trainingDataJointsPosABS);
-    knnTrnMdlJntsPosRel.train(trainingDataJointsPosRel);
-    knnTrnMdlJntsPosAxisA.train(trainingDataJointsRotAxisA);
+    //    knnTrnMdlJntsPosABS.train(trainingDataJointsPosABS);
+    //    knnTrnMdlJntsPosRel.train(trainingDataJointsPosRel);
+    //    knnTrnMdlJntsPosAxisA.train(trainingDataJointsRotAxisA);
     
     cout << "trained models" << endl;
 
@@ -660,29 +670,30 @@ void testApp::draw(){
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
 
                 // select label: Relative Position model
-                if (trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && images.size())
-//                if (knnTrnMdlJntsPosABS.predict(trackedUserJointsPosRelDouble[j]) && images.size())
-                {
+                if (predictionModel == "SVM" && trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && images.size()) {
                     label = trainingModelJointsPosRel.getPredictedClassLabel();
-//                    label = knnTrnMdlJntsPosABS.getPredictedClassLabel();
-                    //                    cout << "predicted label:" << label << endl;
-                    
-                    if (label > images.size()) // if predicted label image hasn't been loaded, display a random image
-                    {
-                        label = ofRandom(0, images.size() - 1);
-//                        cout << "predicted label is too high —- images.size() = " << ofToString(images.size()) << "; label = " << label << endl;
-//                        cout << " - displaying a random image instead." << endl;
-                    }
-                    
-//                    img_name = imageNames[label];
-                    //                    cout << "img_name = " << img_name << endl;
-                }
-                else
-                {
-//                    img_name = "";
-                    cout << "trainingModelJointsPosRel could not predict" << endl;
+                    // cout << "predicted label:" << label << endl;
+                    // img_name = imageNames[label];
+                    // cout << "img_name = " << img_name << endl;
+                } else if (predictionModel == "KNN" && knnTrnMdlJntsPosABS.predict(trackedUserJointsPosRelDouble[j]) && images.size()) {
+                    label = knnTrnMdlJntsPosABS.getPredictedClassLabel();
+                    // cout << "predicted label:" << label << endl;
+                    // img_name = imageNames[label];
+                    // cout << "img_name = " << img_name << endl;
+                } else {
+                    // img_name = "";
+                    label = ofRandom(0, images.size() - 1);
+                    cout << "trainingModels could not predict" << endl;
                 }
                 
+                // if predicted label image hasn't been loaded, display a random image
+                if (label > images.size()) {
+                    label = ofRandom(0, images.size() - 1);
+                    // cout << "predicted img for label hasn't been loaded —- images.size() = " << ofToString(images.size()) << "; label = " << label << endl;
+                    // cout << "            - displaying a random image instead." << endl;
+                }
+                
+                if(gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
                 // TODO: implement SSD option selection GUI & implemnet loading images directly from HD
                 //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
 
@@ -977,6 +988,18 @@ void testApp::keyPressed(int key){
             guiColor ->toggleVisible();
             break;
             
+        case 'n':
+            // set prediction model to KNN
+            predictionModel = "KNN";
+            if (gui) guiPredictionModelTxtArea -> setTextString("'m' or 'j' prediction model: " + predictionModel);
+            cout << "testApp::keyPressed() -- switching prediction model = " << predictionModel << endl;
+            
+        case 'j':
+            // set prediction model to KNN
+            predictionModel = "SVM";
+            if (gui) guiPredictionModelTxtArea -> setTextString("'m' or 'j' prediction model: " + predictionModel);
+            cout << "testApp::keyPressed() -- switching prediction model = " << predictionModel << endl;
+            
         case 'b': // NOTE: updated to 'b' for BUILD DATA
             if (displayState == 'i' || displayState == 'd') break; // do not train data during installation mode
 
@@ -987,6 +1010,9 @@ void testApp::keyPressed(int key){
                 trainingDataJointsPosABS.addSample(label, trackedUserJointsPosABSDouble[0]);
                 trainingDataJointsPosRel.addSample(label, trackedUserJointsPosRelDouble[0]);
                 trainingDataJointsRotAxisA.addSample(label, trackedUserJointsRotAxisADouble[0]);
+                
+                saveData();
+                
             } else {
                 // TODO: display some kind of error message that says data can only be saved in training mode?
             }
@@ -1009,26 +1035,24 @@ void testApp::keyPressed(int key){
         case '[': // previous
         case '{': // previous
            
-            saveData();
-            
             if (displayState == 'i') break; // do not train data during installation mode
             
             // display previous image in database
             if (label > 0) label--;
 //            img_name = imageNames[label];
+            if (gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
 
             break;
         
         case ']': // next
         case '}': // next
             
-            saveData();
-            
             if (displayState == 'i') break; // do not train data during installation mode
 
             // display next image in database
             if (label < images.size()-1) label++;
 //            img_name = imageNames[label];
+            if (gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
 
             break;
         
@@ -1041,11 +1065,11 @@ void testApp::keyPressed(int key){
             // display random image from database
             label = getRandomExcluding(0, images.size() - 1, label);
 //            img_name = imageNames[label];
+            if(gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
 
             break;
         
         case 's': // NOTE: Moved save functionality here to minimize lagging during data building phase
-            if (displayState == 'i') break; // do not train data during installation mode
             
             saveData();
             saveModel();
@@ -1078,8 +1102,12 @@ void testApp::keyPressed(int key){
             }
             else
             {
+                label = ofRandom(0, images.size() - 1);
                 cout << "trainingModelJointsPosRel could not predict" << endl;
             }
+            
+            if(gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+            
             break;
         
         case 'i': // interactive mode
