@@ -924,13 +924,6 @@ void testApp::exit(){
 void testApp::setDisplayState(char newState) {
     if (displayState == newState) return;
     
-    if (displayState=='t') {
-        // save & train model before switching states
-        saveData();
-        saveModel();
-        
-    }
-
     bool undefinedState = false;
     
     switch (newState) {
@@ -969,6 +962,14 @@ void testApp::setDisplayState(char newState) {
 
     if (!undefinedState)
     {
+        
+        if (displayState=='t') {
+            // save & train model before switching states
+            saveData();
+            saveModel();
+            
+        }
+        
         displayState = newState;
         
         // Load GUI settings // TODO: load setting xml files into memory to speed up switching states?
@@ -992,7 +993,7 @@ void testApp::keyPressed(int key){
     int cloudRes = -1;
     bool fileWritten;
     string testJointBuff;
-    bool displayStateKeyed;
+    bool displayStateKeyed = false;
     
     ofImage img;
     
