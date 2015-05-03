@@ -121,13 +121,6 @@ void testApp::setup() {
     gui -> addIntSlider("set fps", 1, 60, &drawFrameRate);
     gui -> addSpacer();
     //
-    // Background Color
-    gui -> addTextArea("text", "background color");
-    gui -> addSlider("red",   0.0, 255.0,    &bgRed   );
-    gui -> addSlider("green", 0.0, 255.0,    &bgGreen );
-    gui -> addSlider("blue",  0.0, 255.0,    &bgBlue  );
-    gui -> addSpacer();
-    //
     // Kinect
     gui -> addTextArea("text", "'k' to connect to kinect");
     gui -> addToggle("kinected", &kinected);
@@ -169,6 +162,14 @@ void testApp::setup() {
     ofAddListener(guiColor -> newGUIEvent, this, &testApp::guiEvent);
     guiColor -> addSpacer();
     //
+    // background color
+    guiColor -> addTextArea("text", "background color");
+    guiColor -> addSlider("red",   0.0, 255.0,    &bgRed   );
+    guiColor -> addSlider("green", 0.0, 255.0,    &bgGreen );
+    guiColor -> addSlider("blue",  0.0, 255.0,    &bgBlue  );
+    guiColor -> addSpacer();
+    //
+    // image color
     guiColor -> addLabel("image color settings", OFX_UI_FONT_MEDIUM);
     vector< string > vnamesBlendIMG; vnamesBlendIMG.push_back("i0"); vnamesBlendIMG.push_back("iA"); vnamesBlendIMG.push_back("i+"); vnamesBlendIMG.push_back("i-"); vnamesBlendIMG.push_back("i*"); vnamesBlendIMG.push_back("iS");
     ofxUIRadio *radioBlendIMG = guiColor -> addRadio("image blend mode", vnamesBlendIMG, OFX_UI_ORIENTATION_HORIZONTAL);

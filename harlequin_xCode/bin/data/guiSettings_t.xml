@@ -26,21 +26,6 @@
     <Value>30</Value>
 </Widget>
 <Widget>
-    <Kind>4</Kind>
-    <Name>red</Name>
-    <Value>10.049261093</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>green</Name>
-    <Value>31.403942108</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>blue</Name>
-    <Value>28.891626358</Value>
-</Widget>
-<Widget>
     <Kind>2</Kind>
     <Name>kinected</Name>
     <Value>1</Value>
