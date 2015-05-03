@@ -18,7 +18,7 @@
 <Widget>
     <Kind>4</Kind>
     <Name>blue</Name>
-    <Value>0.000000000</Value>
+    <Value>54.014778137</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -63,12 +63,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>image green</Name>
-    <Value>167.068969727</Value>
+    <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>image blue</Name>
-    <Value>125.615768433</Value>
+    <Value>103.004928589</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -148,22 +148,22 @@
 <Widget>
     <Kind>4</Kind>
     <Name>depth red</Name>
-    <Value>134.408859253</Value>
+    <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth green</Name>
-    <Value>135.665023804</Value>
+    <Value>255.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth blue</Name>
-    <Value>135.665023804</Value>
+    <Value>11.305418015</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>depth alpha</Name>
-    <Value>92.955665588</Value>
+    <Value>80.394088745</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
