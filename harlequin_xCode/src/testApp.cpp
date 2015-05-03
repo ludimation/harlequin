@@ -209,6 +209,7 @@ void testApp::setup() {
     // Initial Display State //
     ///////////////////////////
     setDisplayState('d'); // start in installation mode by default (other options are 't' / 'd' for training / debug modes) // this load gui and guiColor settings, so it should appear after those are created
+
     
     ///////////////
     // Test Data //
@@ -258,7 +259,7 @@ void testApp::loadImages(bool load, bool reloadAll) {
                 // add the image name to a list
                 filePath = dir.getPath(i);
                 if (imgTMP.loadImage(filePath)) {
-//                    imageNames[nFilesLoaded] = filePath;
+                    // imageNames[nFilesLoaded] = filePath;
                     images[nFilesLoaded] = imgTMP;
                     nFilesLoaded++;
                     cout << "loaded image [" << ofToString(nFilesLoaded) << "/" << ofToString(nFilesToLoad) << "] : " << filePath << endl;
@@ -268,8 +269,8 @@ void testApp::loadImages(bool load, bool reloadAll) {
         //
         // Select image to start with // TODO: Fix label setting/calling, it should never be 0 for prediction data.
         label = 0;
-        if (imageNames.size()) img_name = imageNames[label];
         if (gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+        // if (imageNames.size()) img_name = imageNames[label];
         // TODO: use "img_name" to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
         // TODO: clear out the imageNames array code after the data handling re-structuring takes place
         
@@ -358,9 +359,9 @@ void testApp::trainModels()
     trainingModelJointsRotAxisA.loadModelFromFile(ofToDataPath(trainingModelJointsRotAxisAfileName));
     
     // TODO: training model data only works when called outside startup()——could this also be fixed by implementing the suggested pipeline setup?
-//    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
-//    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
-//    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
+    //    trainingModelJointsPosABS.train(trainingDataJointsPosABS);
+    //    trainingModelJointsPosRel.train(trainingDataJointsPosRel);
+    //    trainingModelJointsRotAxisA.train(trainingDataJointsRotAxisA);
 
     knnTrnMdlJntsPosABS.loadModelFromFile(ofToDataPath(knnTrnMdlJntsPosABSfileName));
     knnTrnMdlJntsPosRel.loadModelFromFile(ofToDataPath(knnTrnMdlJntsPosRelfileName));
@@ -450,11 +451,11 @@ void testApp::guiEvent(ofxUIEventArgs &e) {
             default:
                 break;
         }
-//    } else if (nameStr == "i" || nameStr == "d" || nameStr == "t") {
-//        ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
-//        if (toggle -> getValue()) //do something
-//            ;
-//            
+    //    } else if (nameStr == "i" || nameStr == "d" || nameStr == "t") {
+    //        ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
+    //        if (toggle -> getValue()) //do something
+    //            ;
+    //            
     } else if (nameStr == "save main settings") {
         gui -> saveSettings("guiSettings_" + ofToString(displayState) + ".xml");
     } else if (nameStr == "save color settings") {
@@ -513,7 +514,7 @@ void testApp::guiEvent(ofxUIEventArgs &e) {
     
         
     } else { // default
-//        cout << "testApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
+        // cout << "testApp::guiEvent(ofxUIEventArgs &e) -- unset callback for gui element name = " << nameStr << endl;
     }
     
 }
@@ -669,7 +670,7 @@ void testApp::draw(){
             // TODO: change data type for GUI variables like imBlendMode et al, and cast data as proper format when changed by the GUI
             
             for (int j = 0; j < trackedUserJointsPosABSDouble.size(); ++j) {
-
+                
                 // select label: Relative Position model
                 if (predictionModel == "SVM" && trainingModelJointsPosRel.predict(trackedUserJointsPosRelDouble[j]) && images.size()) {
                     label = trainingModelJointsPosRel.getPredictedClassLabel();
@@ -695,6 +696,7 @@ void testApp::draw(){
                 }
                 
                 if(gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+                
                 // TODO: implement SSD option selection GUI & implemnet loading images directly from HD
                 //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
 
@@ -706,8 +708,7 @@ void testApp::draw(){
                     //                    cout << "jointsCenterProjective = ofVec3f(screenCenter.x, screenCenter.y, 1400.0f);" << endl;
                 }
                 
-                if (images.size())
-                {
+                if (images.size()) {
                     // set image to draw
                     img = images[label];
                     
@@ -1103,7 +1104,7 @@ void testApp::keyPressed(int key){
                     //                        cout << " - displaying a random image instead." << endl;
                 }
                 
-//                img_name = imageNames[label];
+                // img_name = imageNames[label];
             }
             else
             {
