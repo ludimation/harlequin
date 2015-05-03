@@ -145,8 +145,8 @@ void testApp::setup() {
     //
     // image settings
     gui -> addLabel("image settings");
-    guiImageTxtArea = gui -> addTextArea("image label", "'[' ']' current image label: " + ofToString(label));
-    guiPredictionModelTxtArea = gui -> addTextArea("prediction model", "'m' or 'j' prediction model: " + ofToString(predictionModel));
+    guiImageTxtArea = gui -> addTextArea("image label", "'[' ']' current image label: " + ofToString(label), OFX_UI_FONT_SMALL);
+    guiPredictionModelTxtArea = gui -> addTextArea("prediction model", "'n' 'j' prediction model: " + ofToString(predictionModel), OFX_UI_FONT_SMALL);
     guiFilesToLoadSlider = gui -> addIntSlider("number of files to load", 0, maxFilesToLoad, &nFilesToLoad);
     gui -> addLabelToggle("load images", &loadImagesNow);
     gui -> addSpacer();
@@ -216,6 +216,19 @@ void testApp::setup() {
     ///////////////
     // user joints for testing while Kinect is offline
     setupTestUserJoints();
+
+}
+
+void testApp::updateGuiImgTxtArea() {
+    if (guiImageTxtArea)
+        guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+    else cout << "testApp::updateGuiImgTxtArea() -- guiImageTxtArea has not been initialized yet and cannot be updated." << endl;
+}
+
+void testApp::updateGuiPrdctnTxtArea() {
+    if (guiPredictionModelTxtArea)
+        guiPredictionModelTxtArea -> setTextString("'n' 'j' prediction model: " + predictionModel);
+    else cout << "testApp::updateGuiPrdctnTxtArea() -- guiPredictionModelTxtArea has not been initialized yet and cannot be updated." << endl;
 }
 
 void testApp::loadImages(bool load, bool reloadAll) {
@@ -269,7 +282,7 @@ void testApp::loadImages(bool load, bool reloadAll) {
         //
         // Select image to start with // TODO: Fix label setting/calling, it should never be 0 for prediction data.
         label = 0;
-        if (gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+        updateGuiImgTxtArea();
         // if (imageNames.size()) img_name = imageNames[label];
         // TODO: use "img_name" to stream images from HD (can set a global vairable called streamFromSSD to determine whether or not to stream images every frame or use our current pre-loading method
         // TODO: clear out the imageNames array code after the data handling re-structuring takes place
@@ -695,7 +708,7 @@ void testApp::draw(){
                     // cout << "            - displaying a random image instead." << endl;
                 }
                 
-                if(gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+                if(gui) updateGuiImgTxtArea();
                 
                 // TODO: implement SSD option selection GUI & implemnet loading images directly from HD
                 //if (img.loadImage(img_name)) { cout << "img loaded" << endl; } else { cout << "img not loaded" << endl; //find another image if image could not be loaded}
@@ -993,7 +1006,7 @@ void testApp::keyPressed(int key){
         case 'n':
             // set prediction model to KNN
             predictionModel = "KNN";
-            if (gui) guiPredictionModelTxtArea -> setTextString("'m' or 'j' prediction model: " + predictionModel);
+            updateGuiPrdctnTxtArea();
             cout << "testApp::keyPressed() -- switching prediction model = " << predictionModel << endl;
             
             break;
@@ -1001,7 +1014,7 @@ void testApp::keyPressed(int key){
         case 'j':
             // set prediction model to KNN
             predictionModel = "SVM";
-            if (gui) guiPredictionModelTxtArea -> setTextString("'m' or 'j' prediction model: " + predictionModel);
+            updateGuiPrdctnTxtArea();
             cout << "testApp::keyPressed() -- switching prediction model = " << predictionModel << endl;
             
             break;
@@ -1046,7 +1059,7 @@ void testApp::keyPressed(int key){
             // display previous image in database
             if (label > 0) label--;
 //            img_name = imageNames[label];
-            if (gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+            updateGuiImgTxtArea();
 
             break;
         
@@ -1058,7 +1071,7 @@ void testApp::keyPressed(int key){
             // display next image in database
             if (label < images.size()-1) label++;
 //            img_name = imageNames[label];
-            if (gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+            updateGuiImgTxtArea();
 
             break;
         
@@ -1071,7 +1084,7 @@ void testApp::keyPressed(int key){
             // display random image from database
             label = getRandomExcluding(0, images.size() - 1, label);
 //            img_name = imageNames[label];
-            if(gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+            if(gui) updateGuiImgTxtArea();
 
             break;
         
@@ -1112,7 +1125,7 @@ void testApp::keyPressed(int key){
                 cout << "trainingModelJointsPosRel could not predict" << endl;
             }
             
-            if(gui) guiImageTxtArea -> setTextString("'[' ']' current image label: " + ofToString(label));
+            if(gui) updateGuiImgTxtArea();
             
             break;
         

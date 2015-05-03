@@ -64,6 +64,9 @@ public:
     void                    userEvent(ofxOpenNIUserEvent & event);
     void                    gestureEvent(ofxOpenNIGestureEvent & event);
     
+    void                    updateGuiImgTxtArea();
+    void                    updateGuiPrdctnTxtArea();
+    
     ofxUISuperCanvas        *gui;
     ofxUIIntSlider          *guiFilesToLoadSlider;
     ofxUITextArea           *guiImageTxtArea;
